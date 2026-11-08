@@ -1,13 +1,14 @@
-# Team Sprint Board
+# Cohort
 
-A sprint and team tracker that runs on GitHub alone. The app is a single web page; everything your team adds is stored as files in this repository:
+Cohort is a sprint and team tracker that runs on GitHub alone. The app is a single web page; everything your team adds is stored as files in this repository:
 
-- `data/` holds members, roles and levels, sprints, epics (E-1, E-2…), tasks (T-1, T-2…), subtasks (ST-1, ST-2…), meetings and docs, one JSON file each.
+- `data/` holds members, roles and levels, sprints, epics (E-1, E-2…), tasks (T-1, T-2…), subtasks (ST-1, ST-2…), meetings, docs and reviews, one JSON file each.
 - `assets/` holds images, videos and files uploaded into docs.
 - Every save is a commit, so you get full history and can roll back any change.
 
 ## What's in it
 
+- **Help**: the top-bar **Help** tab opens the *Cohort guide*, a doc in the Docs section (`data/docs/cohort-guide.json`) that explains every page and field, with flow diagrams. Edit it like any doc. If it's missing or deleted, Help offers to add it back.
 - **Epics → Tasks → Subtasks**, like Jira. Epics group related tasks and show progress (% of tasks done, plus subtask counts), dates, owner and color. Each task can belong to one epic.
 - **Board swimlanes** (switch at the top of the Tasks board):
   - **Subtasks** (default): one lane per task that has subtasks, with its subtasks as cards in To do, In progress, On test and Done, and a progress bar. Drag subtask cards across their lane. When every subtask is done, the lane offers a button to finish the parent task. Tasks without subtasks share a lane at the bottom.
@@ -37,14 +38,14 @@ A sprint and team tracker that runs on GitHub alone. The app is a single web pag
 
 1. **Create a repository** on GitHub and push these files to the `main` branch.
    ```bash
-   cd team-sprint-board
+   cd cohort
    git init -b main
    git add .
-   git commit -m "Add Team Sprint Board"
+   git commit -m "Add Cohort"
    git remote add origin https://github.com/<owner>/<repo>.git
    git push -u origin main
    ```
-2. **Optional:** edit `config.js` with your owner, repo and branch so teammates only have to paste a token.
+2. `config.js` is already set to `arunism/cohort` on `main`. Change it if you move the repository.
 3. **Turn on Pages:** in the repository go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**. The included workflow publishes the app; open the **Actions** tab to watch it and get the site address (`https://<owner>.github.io/<repo>/`).
 4. **Each teammate creates a token:** GitHub → Settings → Developer settings → **Fine-grained personal access tokens** → Generate new token.
    - Repository access: **Only select repositories** → this repository.
@@ -87,3 +88,11 @@ assets/                       uploads written by the app
 
 Review notes and ratings are stored as plain JSON in `data/reviews/`. **Anyone who can read the repository can read them**, including everyone on the internet if the repository is public. Keep the repository private if you write performance reviews here, and limit who has read access. The published Pages site itself contains no data, but anyone with a token for the repo can load it.
 
+
+## Upgrading from Team Sprint Board
+
+Cohort is the same app under a new name, and your data is unchanged. When upgrading an existing repository:
+
+- Replace `index.html`, `config.js`, `README.md`, `data/README.md` and `.github/workflows/pages.yml`.
+- Add `data/docs/cohort-guide.json`, or open **Help** and press **Add the guide to Docs**.
+- Teammates stay signed in, because saved tokens and board settings are carried over automatically. An old `config.js` that still uses `TSB_CONFIG` keeps working too.

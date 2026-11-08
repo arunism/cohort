@@ -1,4 +1,4 @@
-name: Deploy Team Sprint Board
+name: Deploy Cohort
 
 # Publishes only the app (index.html + config.js) to GitHub Pages.
 # Data commits (data/**, assets/**) don't trigger a redeploy and are never copied to the Pages site;

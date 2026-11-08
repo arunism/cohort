@@ -1,6 +1,6 @@
 # Data folder
 
-The Team Sprint Board app writes here. Each record is one JSON file, and every change is a commit, so the Git history doubles as an audit log.
+The Cohort app writes here. Each record is one JSON file, and every change is a commit, so the Git history doubles as an audit log.
 
 | Folder | One file per | File name |
 |---|---|---|
@@ -14,7 +14,7 @@ The Team Sprint Board app writes here. Each record is one JSON file, and every c
 | `reviews/` | one person's review for one sprint or period: rating, notes. **Private, keep the repo private.** | `<period>--<member id>` |
 | `settings/` | team color palette (`palette.json`) | `palette` |
 | `meetings/` | standup, product call or planning record | random id |
-| `docs/` | Markdown doc (images, videos, Mermaid, code) | random id |
+| `docs/` | Markdown doc (images, videos, Mermaid, code). `cohort-guide.json` is the built-in help guide. | random id |
 
 Uploaded images, videos and files go in `../assets/`.
 
