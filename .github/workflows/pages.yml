@@ -1,0 +1,41 @@
+name: Deploy Team Sprint Board
+
+# Publishes only the app (index.html + config.js) to GitHub Pages.
+# Data commits (data/**, assets/**) don't trigger a redeploy and are never copied to the Pages site;
+# the app reads them through the GitHub API with each person's token.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "data/**"
+      - "assets/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp index.html config.js _site/
+          touch _site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

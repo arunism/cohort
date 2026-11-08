@@ -1,0 +1,1540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Team Sprint Board</title>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky header with sprint clock + tabs; each view is a filter bar over a board, grid or list. */
+:root{
+  --bg:#eef2f0; --surface:#ffffff; --sunk:#e4eae7; --ink:#16201b; --muted:#5a6862; --line:#d3dcd8;
+  --accent:#1d6b58; --accent-ink:#ffffff; --accent-soft:#d6ebe4;
+  --s-todo:#66727c; --s-prog:#2c66d1; --s-test:#a8700f; --s-done:#2b8a4b;
+  --s-todo-bg:#e7ebee; --s-prog-bg:#dfe8fa; --s-test-bg:#f6ead2; --s-done-bg:#dcefe2;
+  --danger:#b3342b; --shadow:0 1px 2px rgba(20,40,30,.06),0 4px 14px rgba(20,40,30,.06);
+  --s-over:#c0302a; --s-over-bg:#fbe3e1; --s-near:#c2620c; --s-near-bg:#fdebd9;
+  --code-bg:#f6f8f7; --c-kw:#8a2f9c; --c-str:#1f7a3a; --c-num:#b0560f; --c-com:#7a8781; --c-fn:#2153b8; --c-attr:#9a5b00;
+  --f-display:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111614; --surface:#19201d; --sunk:#141a17; --ink:#e4ebe7; --muted:#97a69f; --line:#2a3430;
+  --accent:#5cc3a6; --accent-ink:#0d1714; --accent-soft:#1d3a32;
+  --s-todo:#9aa6b0; --s-prog:#7ea6f2; --s-test:#e0aa4c; --s-done:#6cc98c;
+  --s-todo-bg:#232a2f; --s-prog-bg:#1d2a44; --s-test-bg:#3a2f18; --s-done-bg:#1c3324;
+  --danger:#f07b70; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --s-over:#f27c72; --s-over-bg:#3d1e1c; --s-near:#f3a35c; --s-near-bg:#3b2814;
+  --code-bg:#151b18; --c-kw:#d39bf0; --c-str:#8fd19e; --c-num:#f2a86b; --c-com:#76857e; --c-fn:#8db4ff; --c-attr:#e6c07b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111614; --surface:#19201d; --sunk:#141a17; --ink:#e4ebe7; --muted:#97a69f; --line:#2a3430;
+  --accent:#5cc3a6; --accent-ink:#0d1714; --accent-soft:#1d3a32;
+  --s-todo:#9aa6b0; --s-prog:#7ea6f2; --s-test:#e0aa4c; --s-done:#6cc98c;
+  --s-todo-bg:#232a2f; --s-prog-bg:#1d2a44; --s-test-bg:#3a2f18; --s-done-bg:#1c3324;
+  --danger:#f07b70; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --s-over:#f27c72; --s-over-bg:#3d1e1c; --s-near:#f3a35c; --s-near-bg:#3b2814;
+  --code-bg:#151b18; --c-kw:#d39bf0; --c-str:#8fd19e; --c-num:#f2a86b; --c-com:#76857e; --c-fn:#8db4ff; --c-attr:#e6c07b; color-scheme:dark}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+.signin{max-width:560px;margin:24px auto}
+.signin h2{font-family:var(--f-display);margin:0;font-size:22px}
+.signin p{margin:0}
+.signin form{padding:0}
+.signin code{font-family:var(--f-mono);font-size:12px;background:var(--sunk);padding:1px 5px;border-radius:4px}
+.err{color:var(--danger);font-size:13px}
+.repo a{color:var(--muted)}
+.signin .note{font-family:var(--f-body);font-size:13px;line-height:1.5}
+.signin a{color:var(--accent)}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;padding-block:12px 0}
+.brand{font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:-.01em;margin:0}
+.clock{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.clock b{color:var(--ink);font-weight:500}
+.clock a{color:var(--accent)}
+.clock .bar{width:84px;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;display:inline-block;vertical-align:middle}
+.clock .bar i{display:block;height:100%;background:var(--accent)}
+.spacer{flex:1}
+nav.tabs{display:flex;gap:2px;width:100%;overflow-x:auto;scrollbar-width:none}
+nav.tabs a{padding:10px 14px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:2px solid transparent;white-space:nowrap}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-color:var(--accent)}
+nav.tabs a .n{font-family:var(--f-mono);font-size:11px;margin-left:6px;color:var(--muted)}
+
+main{padding-block:20px 60px}
+.viewhead{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-bottom:14px}
+.viewhead h2{font-family:var(--f-display);font-weight:600;font-size:26px;margin:0;letter-spacing:-.015em;text-wrap:balance}
+.viewhead p{margin:2px 0 0;color:var(--muted)}
+.viewhead .acts{display:flex;gap:8px;flex-wrap:wrap}
+.subhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:26px 0 10px}
+.subhead h3{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0}
+.subhead p{margin:0;color:var(--muted);font-size:13px}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:7px;cursor:pointer;font-weight:500;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink);background:var(--sunk)}
+.btn.danger{color:var(--danger)}
+.btn.danger.armed{background:var(--danger);color:var(--surface);border-color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:4px 9px;font-size:13px}
+
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.fld{display:flex;flex-direction:column;gap:3px;min-width:0}
+.fld>span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.fld select,.fld input{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px 8px;min-width:0;max-width:100%}
+.fld .hint{font-size:13px;color:var(--muted);padding:6px 0}
+.fld .hint a{color:var(--accent)}
+.seg{display:inline-flex;background:var(--sunk);border-radius:8px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:5px 11px;border-radius:6px;cursor:pointer;color:var(--muted);font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.seg .n{font-family:var(--f-mono);font-size:11px;margin-left:4px}
+.note{font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+
+/* board */
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,.7fr);gap:12px;align-items:start}
+@media (max-width:1100px){.board{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.board{grid-template-columns:minmax(0,1fr)}}
+.col{background:var(--sunk);border-radius:10px;padding:8px;min-height:120px;display:flex;flex-direction:column;gap:8px;border:1px dashed transparent}
+.col.over{border-color:var(--accent);background:var(--accent-soft)}
+.colhead{display:flex;align-items:center;gap:8px;padding:4px 4px 2px;font-weight:600}
+.colhead .cnt{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;cursor:grab;box-shadow:var(--shadow)}
+.card.dragging{opacity:.4}
+.card.is-near{border-color:var(--s-near);background:linear-gradient(var(--s-near-bg),var(--s-near-bg)) top/100% 4px no-repeat,var(--surface);box-shadow:inset 3px 0 0 var(--s-near),var(--shadow)}
+.card.is-over{border-color:var(--s-over);background:linear-gradient(var(--s-over-bg),var(--s-over-bg)) top/100% 4px no-repeat,var(--surface);box-shadow:inset 3px 0 0 var(--s-over),var(--shadow)}
+.timing{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.timing .tbar{flex:1;height:4px;border-radius:2px;background:var(--sunk);overflow:hidden;min-width:40px}
+.timing .tbar i{display:block;height:100%}
+.col.overcol{background:var(--s-over-bg)}
+.st-overdue{background:var(--s-over-bg);color:var(--s-over)} .st-near{background:var(--s-near-bg);color:var(--s-near)}
+.due-over{color:var(--s-over);font-weight:600} .due-near{color:var(--s-near);font-weight:600}
+.card h4{margin:0;font-size:14px;font-weight:600;line-height:1.3;overflow-wrap:anywhere;cursor:pointer}
+.card h4:hover{color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.meta .mono{font-family:var(--f-mono)}
+.card .foot{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.card select,.rowsel{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:3px 6px;font-size:12px;max-width:100%}
+.donezone{align-items:center;justify-content:center;text-align:center;color:var(--muted);gap:6px}
+.donezone .big{font-family:var(--f-display);font-size:34px;font-weight:700;color:var(--s-done);line-height:1}
+.empty-col{color:var(--muted);font-size:13px;padding:10px 4px}
+
+.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:600;color:#fff;flex:none;letter-spacing:.02em}
+.av.lg{width:42px;height:42px;font-size:15px}
+.av.off{filter:grayscale(1);opacity:.6}
+.who{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.st-todo,.sp-planned,.ms-inactive{background:var(--s-todo-bg);color:var(--s-todo)} .st-in-progress,.sp-active{background:var(--s-prog-bg);color:var(--s-prog)}
+.st-on-test{background:var(--s-test-bg);color:var(--s-test)} .st-done,.sp-completed,.ms-active{background:var(--s-done-bg);color:var(--s-done)}
+.pr{font-family:var(--f-mono);font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid var(--line)}
+.pr-urgent{color:var(--danger);border-color:var(--danger)} .pr-high{color:var(--s-test);border-color:var(--s-test)}
+.tag{font-size:11px;background:var(--sunk);padding:1px 6px;border-radius:4px;color:var(--muted)}
+
+/* grids of cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.box.is-active{border-color:var(--s-prog);box-shadow:inset 0 0 0 1px var(--s-prog)}
+.box .id{display:flex;gap:12px;align-items:center;min-width:0}
+.box .id div{min-width:0}
+.box h3{margin:0;font-size:16px;overflow-wrap:anywhere}
+.box .role{color:var(--muted);font-size:13px}
+.box .goal{margin:0;font-size:13px;overflow-wrap:anywhere}
+.box .goal.none{color:var(--muted);font-style:italic}
+.stack{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--sunk)}
+.stack i{display:block}
+.counts{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center}
+.counts b{display:block;font-family:var(--f-mono);font-size:16px;font-weight:500;font-variant-numeric:tabular-nums}
+.counts span{font-size:11px;color:var(--muted)}
+.box .acts{display:flex;gap:6px;flex-wrap:wrap}
+.toprow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.levels{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:3px 4px 3px 10px;font-size:13px;font-weight:500}
+.chip .x{border:0;background:transparent;color:var(--muted);cursor:pointer;width:20px;height:20px;border-radius:50%;line-height:1;font-size:15px}
+.chip .x:hover{background:var(--line);color:var(--danger)}
+.addlevel{display:flex;gap:6px}
+.addlevel input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 8px}
+.btn.ghost.danger{color:var(--danger)}
+/* lists */
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+td.mono{font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+td .t{font-weight:600;cursor:pointer;overflow-wrap:anywhere} td .t:hover{color:var(--accent)}
+td .sub{font-size:12px;color:var(--muted);margin-top:2px;max-width:46ch}
+td .rowacts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+
+.meetings{display:flex;flex-direction:column;gap:10px}
+.mtg{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:grid;grid-template-columns:86px minmax(0,1fr);overflow:hidden}
+.mtg .date{background:var(--sunk);padding:12px 8px;text-align:center;font-family:var(--f-mono);display:flex;flex-direction:column;justify-content:center;gap:2px}
+.mtg .date b{font-family:var(--f-display);font-size:26px;line-height:1;font-weight:700}
+.mtg .date span{font-size:11px;color:var(--muted);text-transform:uppercase}
+.mtg .body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.mtg .row1{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mtg h3{margin:0;font-size:15px;cursor:pointer;overflow-wrap:anywhere}
+.mtg h3:hover{color:var(--accent)}
+.mtg pre{margin:0;white-space:pre-wrap;font-family:var(--f-body);font-size:13px;color:var(--ink);max-height:7.5em;overflow:hidden}
+.mtg.open pre{max-height:none}
+.mtg .sec{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.typ{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent);text-transform:uppercase;letter-spacing:.04em}
+.avs{display:flex}
+.avs .av{margin-left:-5px;border:2px solid var(--surface)} .avs .av:first-child{margin-left:0}
+
+.emptystate{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.emptystate h3{font-family:var(--f-display);margin:0;font-size:19px}
+.emptystate p{margin:0;color:var(--muted);max-width:52ch}
+.emptystate .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.banner{border:1px solid var(--s-test);background:var(--s-test-bg);color:var(--ink);padding:9px 12px;border-radius:8px;margin-bottom:14px;font-size:13px}
+
+/* docs */
+.docs{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.docs{grid-template-columns:minmax(0,1fr)}.docs.has-sel .doclist{display:none}.docs:not(.has-sel) .docpane{display:none}}
+@media (min-width:861px){.backlink{display:none!important}}
+.doclist{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-width:0;position:sticky;top:calc(env(safe-area-inset-top,0px) + 100px);max-height:calc(100vh - 120px)}
+.doclist .dl-f{padding:10px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.doclist .dl-f .row{display:flex;gap:6px}
+.doclist .dl-f .row select{flex:1;min-width:0}
+.doclist input,.doclist select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:6px 8px;width:100%}
+.dl-items{overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:2px}
+.dl-item{display:flex;flex-direction:column;gap:3px;text-align:left;border:0;background:transparent;padding:8px 10px;border-radius:7px;cursor:pointer;width:100%}
+.dl-item:hover{background:var(--sunk)}
+.dl-item[aria-current="true"]{background:var(--accent-soft)}
+.dl-item b{font-weight:600;overflow-wrap:anywhere}
+.dl-item .meta{gap:4px}
+.kind{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line);border-radius:3px;padding:0 4px;color:var(--muted)}
+.cat{font-size:11px;font-weight:600;color:var(--accent)}
+.docpane{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px clamp(16px,3vw,36px) 32px}
+.docpane .dp-head{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+.docpane .dp-head h2{font-family:var(--f-display);font-size:30px;margin:0;letter-spacing:-.015em;text-wrap:balance;overflow-wrap:anywhere}
+.docpane .dp-head .meta{margin-top:6px}
+/* rendered markdown */
+.md{max-width:78ch;font-size:15px;line-height:1.65;overflow-wrap:anywhere}
+.md>*:first-child{margin-top:0}
+.md h1,.md h2,.md h3,.md h4{font-family:var(--f-display);line-height:1.25;margin:1.6em 0 .5em;text-wrap:balance}
+.md h1{font-size:26px}.md h2{font-size:22px}.md h3{font-size:18px}.md h4{font-size:16px}
+.md p,.md ul,.md ol,.md blockquote,.md table{margin:0 0 1em}
+.md a{color:var(--accent)}
+.md img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);display:block;margin:.4em 0}
+.md video{width:100%;max-height:70vh;border-radius:8px;background:#000;display:block;margin:.4em 0}
+.md blockquote{border-left:3px solid var(--accent);padding:2px 14px;color:var(--muted);background:var(--sunk);border-radius:0 6px 6px 0}
+.md code{font-family:var(--f-mono);font-size:.88em;background:var(--sunk);padding:1px 5px;border-radius:4px}
+.md hr{border:0;border-top:1px solid var(--line);margin:1.6em 0}
+.md li input[type=checkbox]{margin-right:6px}
+.md ul:has(input[type=checkbox]){list-style:none;padding-left:4px}
+.md .tbl{overflow-x:auto;margin:0 0 1em}
+.md table{border-collapse:collapse;min-width:0;width:auto}
+.md th,.md td{border:1px solid var(--line);padding:6px 10px;text-transform:none;letter-spacing:0;font-size:14px}
+.md th{background:var(--sunk);color:var(--ink);font-weight:600}
+.codeblk{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0 0 1em;background:var(--code-bg)}
+.codeblk .ch{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 4px 12px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:lowercase}
+.codeblk pre{margin:0;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.55}
+.codeblk pre code{background:none;padding:0;font-size:inherit;white-space:pre}
+.diagram{border:1px solid var(--line);border-radius:8px;padding:14px;margin:0 0 1em;overflow-x:auto;background:var(--surface);text-align:center}
+.diagram svg{max-width:100%;height:auto}
+.diagram pre{text-align:left;margin:0;font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:pre-wrap}
+.diagram .err{color:var(--danger);font-size:12px;text-align:left;margin-top:8px}
+.filecard{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;padding:8px 12px;text-decoration:none;color:var(--ink);background:var(--sunk)}
+.hljs-keyword,.hljs-selector-tag,.hljs-literal,.hljs-type{color:var(--c-kw)}
+.hljs-string,.hljs-regexp,.hljs-addition,.hljs-template-tag{color:var(--c-str)}
+.hljs-number,.hljs-symbol,.hljs-bullet,.hljs-variable.constant_{color:var(--c-num)}
+.hljs-comment,.hljs-quote,.hljs-meta{color:var(--c-com);font-style:italic}
+.hljs-title,.hljs-title.function_,.hljs-section,.hljs-built_in{color:var(--c-fn)}
+.hljs-attr,.hljs-attribute,.hljs-name,.hljs-property,.hljs-selector-class,.hljs-selector-id{color:var(--c-attr)}
+.hljs-deletion{color:var(--danger)}
+/* editor */
+.ed-meta{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-bottom:10px}
+.ed-meta .full{grid-column:1/-1}
+@media (max-width:560px){.ed-meta{grid-template-columns:1fr}}
+.ed-meta label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+.ed-meta input,.ed-meta select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:8px;font-size:14px;color:var(--ink);font-weight:400;width:100%}
+.ed-meta #de-title{font-family:var(--f-display);font-size:20px;font-weight:600}
+.toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:6px;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:var(--sunk);align-items:center}
+.toolbar button{border:1px solid transparent;background:transparent;border-radius:5px;padding:4px 8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink)}
+.toolbar button:hover{background:var(--surface);border-color:var(--line)}
+.toolbar .sep{width:1px;height:18px;background:var(--line);margin:0 4px}
+.toolbar .up{font-size:12px;color:var(--muted);margin-left:auto}
+.ed-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);border-radius:0 0 8px 8px;min-height:480px}
+@media (max-width:1000px){.ed-split{grid-template-columns:minmax(0,1fr)}.ed-split.show-prev #de-body{display:none}.ed-split:not(.show-prev) .ed-prev{display:none}}
+@media (min-width:1001px){.prevtoggle{display:none!important}}
+#de-body{border:0;border-right:1px solid var(--line);background:var(--bg);padding:14px;font-family:var(--f-mono);font-size:13px;line-height:1.6;resize:vertical;min-height:480px;width:100%;color:var(--ink);border-radius:0 0 0 8px}
+#de-body.drop{outline:2px dashed var(--accent);outline-offset:-6px}
+.ed-prev{padding:14px 18px;overflow:auto;max-height:75vh;min-width:0}
+.ed-foot{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+
+/* task keys, subtasks, links */
+.key{font-family:var(--f-mono);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+dialog.wide{width:min(780px,calc(100vw - 32px))}
+.sub-sec{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px}
+.sec-h{display:flex;align-items:baseline;gap:8px;color:var(--ink);font-size:13px}
+.st-row{display:grid;grid-template-columns:56px minmax(0,1fr) 112px 130px 26px;gap:6px;align-items:center}
+@media (max-width:600px){.st-row{grid-template-columns:52px minmax(0,1fr) 26px}.st-row select{grid-column:2/3}}
+.db .st-row input,.db .st-row select{padding:5px 7px;font-size:13px}
+.st-row.is-done .st-title{text-decoration:line-through;color:var(--muted)}
+.x{border:0;background:transparent;color:var(--muted);cursor:pointer;width:24px;height:24px;border-radius:50%;font-size:16px;line-height:1}
+.x:hover,.x.armed{background:var(--sunk);color:var(--danger)}
+.st-add{display:flex;gap:6px}
+.db .st-add input{flex:1}
+.ldocs{display:flex;flex-wrap:wrap;gap:6px}
+.linkbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:13px;color:var(--ink);text-align:left;max-width:100%}
+.linkbtn:hover{border-color:var(--accent)}
+.linkbtn span.tt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.linked{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:-6px 0 18px}
+.linked .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;margin-right:4px}
+.linker{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.linker .chips{display:flex;flex-wrap:wrap;gap:6px}
+.tres{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:6px;padding:4px;background:var(--surface);max-height:220px;overflow-y:auto}
+.tres:empty{display:none}
+.tres button{display:flex;gap:8px;align-items:center;border:0;background:transparent;padding:6px 8px;border-radius:5px;cursor:pointer;text-align:left;color:var(--ink);font-weight:400}
+.tres button:hover,.tres button:focus-visible{background:var(--sunk)}
+/* delete challenge */
+#cdlg{width:min(600px,calc(100vw - 32px))}
+.cf .cf-sub{margin:0;padding:0 18px;color:var(--muted)}
+.cf-body{padding:14px 18px 4px}
+.cf-msg{margin:0;padding:4px 18px 0;min-height:1.5em;font-size:13px;color:var(--ink)}
+.pz-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.pz{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:min(270px,100%);aspect-ratio:1;max-width:100%}
+.pz-t{border:0;padding:0;background-size:300% 300%;cursor:pointer;border-radius:4px;outline:2px solid transparent;outline-offset:-2px;transition:transform .12s}
+.pz-t:hover{transform:scale(.97)}
+.pz-t.sel{outline:3px solid var(--ink);transform:scale(.93)}
+.pz-ref{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.pz-ref img{width:96px;height:96px;border-radius:6px;filter:blur(1.5px) saturate(.7);opacity:.85}
+.dr-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.dr-target{display:flex;align-items:center;gap:10px;font-size:14px}
+.dr-target svg *{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:5 4}
+#dr{width:100%;max-width:420px;aspect-ratio:320/220;height:auto;border:2px dashed var(--line);border-radius:10px;background:var(--bg);touch-action:none;cursor:crosshair}
+/* dialog */
+dialog{border:1px solid var(--line);border-radius:12px;padding:0;background:var(--surface);color:var(--ink);width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 40px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(10,20,15,.45)}
+dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 42px)}
+.dh{padding:16px 18px 6px;font-family:var(--f-display);font-size:20px;font-weight:600;margin:0}
+.db{padding:8px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;overflow-y:auto}
+.db .full{grid-column:1/-1}
+@media (max-width:480px){.db{grid-template-columns:1fr}}
+.db label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+.db input,.db select,.db textarea{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:8px;font-size:14px;font-weight:400;color:var(--ink);width:100%}
+.db textarea{min-height:90px;resize:vertical;line-height:1.45}
+.db p{margin:0}
+.checks{display:flex;flex-wrap:wrap;gap:6px}
+.checks label{flex-direction:row;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 6px;font-weight:500;color:var(--ink);cursor:pointer}
+.checks input{width:auto}
+.radios{display:flex;flex-direction:column;gap:6px}
+.radios label{flex-direction:row;align-items:center;gap:8px;font-weight:500;color:var(--ink);font-size:14px;cursor:pointer}
+.radios input{width:auto}
+.df{display:flex;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--line);margin-top:8px;flex-wrap:wrap}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.swatches label{flex-direction:row;padding:0}
+.swatches input{position:absolute;opacity:0;width:1px}
+.swatches span{width:26px;height:26px;border-radius:50%;display:block;border:3px solid transparent;cursor:pointer}
+.swatches input:checked+span{border-color:var(--ink)}
+.swatches input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1 class="brand">Team Sprint Board</h1>
+    <div class="clock" id="clock"></div>
+    <div class="spacer"></div>
+    <span class="note repo" id="repo"></span>
+    <button class="btn ghost sm" id="btnOut" type="button" hidden>Sign out</button>
+    <nav class="tabs" id="tabs">
+      <a href="#tasks" data-v="tasks">Tasks<span class="n" id="n-tasks"></span></a>
+      <a href="#sprints" data-v="sprints">Sprints &amp; backlog<span class="n" id="n-sprints"></span></a>
+      <a href="#team" data-v="team">Team<span class="n" id="n-team"></span></a>
+      <a href="#meetings" data-v="meetings">Meetings<span class="n" id="n-meetings"></span></a>
+      <a href="#docs" data-v="docs">Docs<span class="n" id="n-docs"></span></a>
+      <a href="#archive" data-v="archive">Archive<span class="n" id="n-archive"></span></a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+<div class="toast" id="toast" role="status"></div>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+<dialog id="cdlg" aria-label="Confirm delete"></dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.9.0/highlight.min.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- constants ---------- */
+const STATUSES=[["todo","To do","var(--s-todo)"],["in-progress","In progress","var(--s-prog)"],["on-test","On test","var(--s-test)"],["done","Done","var(--s-done)"]];
+const SLABEL=Object.fromEntries(STATUSES.map(s=>[s[0],s[1]]));
+const SPLABEL={planned:"Planned",active:"Active",completed:"Completed"};
+const PRIOS=[["low","Low"],["medium","Medium"],["high","High"],["urgent","Urgent"]];
+const PRANK={urgent:0,high:1,medium:2,low:3};
+const MTYPES=[["daily","Daily standup"],["product","Weekly product call"],["sprint-plan","Sprint planning"],["quarter-plan","Quarter planning"]];
+const MLABEL=Object.fromEntries(MTYPES);
+const COLORS=["#1d6b58","#2c66d1","#8a4fc4","#c2456b","#c56a1c","#5d7a14","#127a8a","#6b5b4e"];
+const TEMPLATES={
+  daily:"Yesterday:\n- \n\nToday:\n- \n\nBlockers:\n- ",
+  product:"Progress since last call:\n- \n\nDemos / shipped:\n- \n\nRisks & open questions:\n- \n\nDecisions:\n- ",
+  "sprint-plan":"Sprint goal:\n\nCommitted work:\n- \n\nCapacity / leave:\n- \n\nCarry-over from last sprint:\n- ",
+  "quarter-plan":"Quarter objectives:\n1. \n\nKey results:\n- \n\nMajor initiatives:\n- \n\nRisks & dependencies:\n- "
+};
+const ARCH0={tab:"tasks",q:"",member:"all",role:"all",level:"all",sprint:"all",quarter:"all",prio:"all",tag:"all",from:"",to:""};
+
+/* ---------- state ---------- */
+const S={db:null,members:[],tasks:[],meetings:[],sprints:[],roles:[],docs:[],subtasks:[],assets:null,
+  loaded:{members:false,tasks:false,meetings:false,sprints:false,roles:false,docs:false,subtasks:false},slow:false,offline:false,readOnly:false,
+  view:"tasks",
+  f:{tasks:{mode:"sprint",sprint:null,quarter:null,from:null,to:null,member:"all",role:"all",level:"all",prio:"all",timing:"all",q:""},
+     team:{tab:"members",role:"all",level:"all",q:""},
+     docs:{sel:null,editing:null,q:"",cat:"all",kind:"all"},
+     arch:{...ARCH0},
+     mtg:{type:"all",from:"",to:"",member:"all",q:""}}};
+
+/* ---------- date helpers ---------- */
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today=()=>ymd(new Date());
+const utc=s=>{const[a,b,c]=s.split("-").map(Number);return Date.UTC(a,b-1,c)};
+const addDays=(s,n)=>{const d=new Date(utc(s)+n*864e5);return d.getUTCFullYear()+"-"+pad(d.getUTCMonth()+1)+"-"+pad(d.getUTCDate())};
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt=s=>{if(!s)return"";const[,b,c]=s.split("-");return MON[+b-1]+" "+(+c)};
+const fmtY=s=>s?fmt(s)+", "+s.slice(0,4):"";
+const isoDay=iso=>iso?ymd(new Date(iso)):"";
+const quarterOf=s=>s.slice(0,4)+"-Q"+(Math.floor((+s.slice(5,7)-1)/3)+1);
+const qLabel=q=>q.replace(/(\d{4})-Q(\d)/,"Q$2 $1");
+const curQuarter=()=>quarterOf(today());
+const nextQuarter=()=>{const[y,q]=curQuarter().split("-Q").map(Number);return q===4?(y+1)+"-Q1":y+"-Q"+(q+1)};
+
+/* ---------- sprint helpers ---------- */
+const sprintById=id=>id?S.sprints.find(s=>s.id===id):null;
+const byStart=(a,b)=>(a.startDate||"").localeCompare(b.startDate||"");
+const openSprints=()=>S.sprints.filter(s=>s.status!=="completed").sort(byStart);
+const doneSprints=()=>S.sprints.filter(s=>s.status==="completed").sort((a,b)=>byStart(b,a));
+function currentSprint(){
+  const open=openSprints(),t=today();
+  return open.filter(s=>s.status==="active").pop()||open.find(s=>s.startDate<=t&&s.endDate>=t)||open.find(s=>s.startDate>=t)||open[0]||null;
+}
+const sprintName=id=>{if(!id)return"Backlog";const s=sprintById(id);return s?s.name:"Removed sprint"};
+const sprintLabel=id=>{if(!id)return"Backlog";const s=sprintById(id);return s?s.name+" · "+fmt(s.startDate)+" – "+fmt(s.endDate):"Removed sprint"};
+const sprintLen=s=>Math.round((utc(s.endDate)-utc(s.startDate))/864e5)+1;
+function taskQuarter(t){const s=sprintById(t.sprintId);if(s&&s.startDate)return quarterOf(s.startDate);return quarterOf(t.dueDate||isoDay(t.createdAt)||today())}
+const tasksIn=id=>S.tasks.filter(t=>t.sprintId===id);
+/* Timing: overdue once the due date has passed; "due soon" once 90% of start→due has elapsed. */
+function taskTiming(t){
+  if(!t||t.status==="done"||!t.dueDate)return{state:"ok",frac:0};
+  const[y,m,d]=t.dueDate.split("-").map(Number);const end=new Date(y,m-1,d,23,59,59,999).getTime();const now=Date.now();
+  let start;if(t.startDate){const[a,b,c]=t.startDate.split("-").map(Number);start=new Date(a,b-1,c).getTime()}else start=t.createdAt?new Date(t.createdAt).getTime():now;
+  if(now>end)return{state:"overdue",frac:1,days:Math.max(1,Math.ceil((now-end)/864e5))};
+  const frac=end>start?Math.max(0,(now-start)/(end-start)):1;
+  return{state:frac>=.9?"near":"ok",frac,left:Math.ceil((end-now)/864e5)};
+}
+const isOverdue=t=>taskTiming(t).state==="overdue";
+const statusPill=(t,extra="")=>{const tm=taskTiming(t);const st=t.status||"todo";
+  return tm.state==="overdue"?`<span class="pill st-overdue"${extra}>Overdue</span>`:tm.state==="near"?`<span class="pill st-near"${extra}>Due soon</span>`:`<span class="pill st-${st}"${extra}>${esc(SLABEL[st])}</span>`};
+const dueText=t=>{if(!t.dueDate)return"—";const tm=taskTiming(t);return`<span class="${tm.state==="overdue"?"due-over":tm.state==="near"?"due-near":""}">${fmtY(t.dueDate)}${tm.state==="overdue"?` · ${tm.days}d overdue`:""}</span>`};
+const taskKey=t=>t&&t.num?"T-"+t.num:"T-…";
+const subKey=x=>x&&x.num?"ST-"+x.num:"ST-…";
+const subsOf=id=>S.subtasks.filter(x=>x.taskId===id).sort((a,b)=>(a.num||0)-(b.num||0));
+const subBadge=t=>{const l=subsOf(t.id);return l.length?`<span class="mono" title="Subtasks done">${l.filter(x=>x.status==="done").length}/${l.length} sub</span>`:""};
+/* ---------- misc helpers ---------- */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=s=>document.querySelector(s);
+const memberById=id=>S.members.find(m=>m.id===id);
+const isActive=m=>(m.status||"active")==="active";
+const activeMembers=()=>S.members.filter(isActive).sort((a,b)=>a.name.localeCompare(b.name));
+const inactiveMembers=()=>S.members.filter(m=>!isActive(m)).sort((a,b)=>a.name.localeCompare(b.name));
+const roleById=id=>id?S.roles.find(r=>r.id===id):null;
+const sortedRoles=()=>S.roles.slice().sort((a,b)=>a.name.localeCompare(b.name));
+const roleText=m=>{const r=roleById(m.roleId);if(!r)return m.roleId?"Role removed":"No role set";return r.name+(m.level?" · "+m.level:"")};
+function levelChoices(roleId){if(roleId&&roleId!=="all"){const r=roleById(roleId);return r?(r.levels||[]):[]}return[...new Set(S.roles.flatMap(r=>r.levels||[]))]}
+const levelOptions=(roleId,sel)=>`<option value="all">All levels</option>`+levelChoices(roleId).map(l=>`<option${sel===l?" selected":""}>${esc(l)}</option>`).join("");
+const roleOptions=sel=>`<option value="all">All roles</option>`+sortedRoles().map(r=>`<option value="${esc(r.id)}"${sel===r.id?" selected":""}>${esc(r.name)}</option>`).join("");
+const matchRL=(m,role,level)=>(role==="all"||(m&&m.roleId===role))&&(level==="all"||(m&&m.level===level));
+const rlFields=(p,f)=>`<label class="fld"><span>Role</span><select id="${p}-role">${roleOptions(f.role)}</select></label><label class="fld"><span>Level</span><select id="${p}-level">${levelOptions(f.role,f.level)}</select></label>`;
+const initials=n=>(n||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
+const av=(m,cls="")=>m?`<span class="av ${cls}${isActive(m)?"":" off"}" style="background:${esc(m.color||COLORS[0])}" title="${esc(m.name)}">${esc(initials(m.name))}</span>`:`<span class="av ${cls}" style="background:var(--muted)" title="Unassigned">–</span>`;
+const who=id=>{const m=memberById(id);return`<span class="who">${av(m)}${esc(m?m.name:"Unassigned")}${m&&!isActive(m)?' <span class="note">(inactive)</span>':""}</span>`};
+const pill=(s,cls,label)=>`<span class="pill ${cls}">${esc(label)}</span>`;
+const prio=p=>p&&p!=="medium"?`<span class="pr pr-${p}">${esc(p)}</span>`:"";
+const tagsOf=t=>(t.tags||[]).filter(Boolean);
+const ro=()=>S.readOnly||!S.db?" disabled":"";
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),2400)}
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+function stackBar(list){const c=Object.fromEntries(STATUSES.map(([s])=>[s,list.filter(t=>(t.status||"todo")===s).length]));const tot=list.length||1;
+  return{c,html:`<div class="stack">${STATUSES.map(([s,,col])=>`<i style="width:${c[s]/tot*100}%;background:${col}"></i>`).join("")}</div>`}}
+
+/* ---------- db ---------- */
+async function write(fn,okMsg){
+  if(!S.db){toast("Connect a GitHub repository first");return false}
+  try{await fn(S.db);if(okMsg)toast(okMsg);return true}
+  catch(e){
+    if(e&&e.status===401){toast("Your GitHub token stopped working. Sign in again.");signOut()}
+    else if(e&&(e.status===403||e.code==="invalid_argument")){S.readOnly=true;render();toast("Your token can't write to this repository")}
+    else toast((e&&e.message)||"Couldn't save. Try again.");
+    return false}
+}
+async function moveTasks(list,patch){for(const t of list){await S.db.doc("tasks/"+t.id).update({...patch,updatedAt:new Date().toISOString()})}}
+
+/* ---------- GitHub storage ----------
+   Every record is a JSON file in the repo: data/<collection>/<id>.json
+   Uploads go to assets/. Reads use one GraphQL query; writes are commits via the Contents API. */
+const COLLS=["members","tasks","meetings","sprints","roles","docs","subtasks"];
+const SINGULAR={members:"member",tasks:"task",meetings:"meeting",sprints:"sprint",roles:"role",docs:"doc",subtasks:"subtask"};
+const CFG_KEY="tsb-github";
+const GH={api:"https://api.github.com",owner:"",repo:"",branch:"main",token:"",head:null,files:{},canPush:false,pending:0};
+function ghDefaults(){
+  const c=Object.assign({branch:"main"},window.TSB_CONFIG||{});
+  const m=location.hostname.match(/^([^.]+)\.github\.io$/i);
+  if(m){if(!c.owner)c.owner=m[1];const seg=location.pathname.split("/").filter(Boolean)[0];if(!c.repo)c.repo=seg&&!/\.html?$/.test(seg)?seg:m[1]+".github.io"}
+  return c;
+}
+const encPath=p=>p.split("/").map(encodeURIComponent).join("/");
+const repoPath=()=>`/repos/${encodeURIComponent(GH.owner)}/${encodeURIComponent(GH.repo)}`;
+async function gh(path,{method="GET",body,accept,raw}={}){
+  let r;
+  try{r=await fetch((path.startsWith("http")?"":GH.api)+path,{method,cache:"no-store",
+    headers:Object.assign({Authorization:"Bearer "+GH.token,Accept:accept||"application/vnd.github+json"},body?{"Content-Type":"application/json"}:{}),
+    body:body?JSON.stringify(body):undefined})}
+  catch(e){const err=new Error("Can't reach GitHub. Check your connection.");err.status=0;throw err}
+  if(raw&&r.ok)return r;
+  let j=null;try{j=r.status===204?null:await r.json()}catch(e){}
+  if(!r.ok){const err=new Error((j&&j.message)||("GitHub returned "+r.status));err.status=r.status;throw err}
+  return j;
+}
+const b64enc=bytes=>{let bin="";for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(bin)};
+const b64dec=s=>new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g,"")),c=>c.charCodeAt(0)));
+const jsonB64=d=>b64enc(new TextEncoder().encode(JSON.stringify(d,null,2)+"\n"));
+const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function noteCommit(commit){
+  /* Move our idea of the branch head forward only if nobody else committed in between; otherwise the next poll reloads. */
+  if(!commit)return;const parents=(commit.parents||[]).map(p=>p.sha);
+  if(!GH.head||parents.includes(GH.head))GH.head=commit.sha;
+}
+async function ghLoadAll(){
+  const q=`query($o:String!,$n:String!,$ref:String!${COLLS.map(c=>`,$${c}:String!`).join("")}){repository(owner:$o,name:$n){ref(qualifiedName:$ref){target{oid}} ${COLLS.map(c=>`${c}:object(expression:$${c}){...on Tree{entries{name oid object{...on Blob{text}}}}}`).join(" ")}}}`;
+  const vars={o:GH.owner,n:GH.repo,ref:"refs/heads/"+GH.branch};COLLS.forEach(c=>vars[c]=GH.branch+":data/"+c);
+  const j=await gh(GH.api.replace(/\/$/,"")+"/graphql",{method:"POST",body:{query:q,variables:vars}});
+  if(j&&j.errors&&!(j.data&&j.data.repository)){const e=new Error(j.errors[0].message);e.status=404;throw e}
+  const repo=j.data.repository;
+  if(!repo.ref){const e=new Error(`Branch "${GH.branch}" wasn't found in ${GH.owner}/${GH.repo}.`);e.status=404;throw e}
+  GH.head=repo.ref.target.oid;
+  for(const c of COLLS){
+    const shas=new Map(),list=[];
+    ((repo[c]&&repo[c].entries)||[]).forEach(e=>{
+      if(!/\.json$/.test(e.name)||!e.object||e.object.text==null)return;
+      try{const d=JSON.parse(e.object.text);const id=e.name.slice(0,-5);shas.set(id,e.oid);list.push(Object.assign({},d,{id}))}catch(_){}
+    });
+    GH.files[c]=shas;S[c]=list;S.loaded[c]=true;
+  }
+}
+let wq=Promise.resolve();
+function queued(fn){GH.pending++;const p=wq.then(()=>fn());wq=p.catch(()=>{});return p.finally(()=>{GH.pending--})}
+const recLabel=(c,d)=>((c==="tasks"&&d.num?"T-"+d.num+" ":"")+(c==="subtasks"&&d.num?"ST-"+d.num+" ":"")+(d.title||d.name||d.type||"")).trim().slice(0,72);
+async function putRecord(c,id,data,sha,verb){
+  const j=await gh(`${repoPath()}/contents/${encPath(`data/${c}/${id}.json`)}`,{method:"PUT",body:Object.assign(
+    {message:`${verb} ${SINGULAR[c]||c}: ${recLabel(c,data)||id}`,content:jsonB64(data),branch:GH.branch},sha?{sha}:{})});
+  GH.files[c].set(id,j.content.sha);noteCommit(j.commit);
+}
+async function getRecord(c,id){
+  try{const j=await gh(`${repoPath()}/contents/${encPath(`data/${c}/${id}.json`)}?ref=${encodeURIComponent(GH.branch)}`);return{sha:j.sha,data:JSON.parse(b64dec(j.content))}}
+  catch(e){if(e.status===404)return null;throw e}
+}
+const strip=r=>{const o=Object.assign({},r);delete o.id;return o};
+function localSet(c,id,data){const rec=Object.assign({},data,{id});const i=S[c].findIndex(x=>x.id===id);S[c]=i<0?S[c].concat([rec]):S[c].map(x=>x.id===id?rec:x);render();refreshTaskExtras()}
+function localDel(c,id){S[c]=S[c].filter(x=>x.id!==id);GH.files[c].delete(id);render();refreshTaskExtras()}
+const isConflict=e=>e&&(e.status===409||e.status===422);
+function ghDoc(c,id){
+  const change=(make,verb)=>queued(async()=>{
+    for(let a=0;a<4;a++){
+      let base,sha;
+      if(a===0){const cur=S[c].find(x=>x.id===id);base=cur?strip(cur):null;sha=GH.files[c].get(id)}
+      else{const f=await getRecord(c,id);base=f&&f.data;sha=f&&f.sha}
+      const data=make(base);if(!data){const e=new Error("That record no longer exists.");e.status=404;throw e}
+      try{await putRecord(c,id,data,sha,verb);localSet(c,id,data);return}catch(e){if(isConflict(e))continue;throw e}
+    }
+    throw new Error("Someone else changed this at the same moment. Try again.");
+  });
+  return{id,
+    update:patch=>change(base=>base&&Object.assign({},base,patch),"Update"),
+    set:data=>change(()=>Object.assign({},data),"Save"),
+    delete:()=>queued(async()=>{
+      for(let a=0;a<4;a++){
+        let sha=GH.files[c].get(id);
+        if(a>0){const f=await getRecord(c,id);sha=f&&f.sha}
+        if(!sha){localDel(c,id);return}
+        const cur=S[c].find(x=>x.id===id)||{};
+        try{const j=await gh(`${repoPath()}/contents/${encPath(`data/${c}/${id}.json`)}`,{method:"DELETE",body:{message:`Delete ${SINGULAR[c]||c}: ${recLabel(c,cur)||id}`,sha,branch:GH.branch}});noteCommit(j&&j.commit);localDel(c,id);return}
+        catch(e){if(e.status===404){localDel(c,id);return}if(isConflict(e))continue;throw e}
+      }
+      throw new Error("Someone else changed this at the same moment. Try again.");
+    })};
+}
+function ghColl(c){
+  return{doc:id=>ghDoc(c,id||rid()),
+    /* Tasks and subtasks are stored as T-<n>.json / ST-<n>.json. Creating a file that already exists fails,
+       so if a teammate took the same number a moment ago we move to the next one. */
+    add:data=>queued(async()=>{
+      const numbered=c==="tasks"||c==="subtasks";
+      for(let a=0;a<10;a++){
+        if(numbered&&a>0)data.num=(data.num||0)+1;
+        const id=numbered?(c==="tasks"?"T-":"ST-")+data.num:rid();
+        try{await putRecord(c,id,data,null,"Create");localSet(c,id,data);return{id}}
+        catch(e){if(isConflict(e))continue;throw e}
+      }
+      throw new Error("Couldn't pick a free number after several tries. Try again.");
+    })};
+}
+const ghDB={collection:ghColl,doc:p=>{const i=p.indexOf("/");return ghDoc(p.slice(0,i),p.slice(i+1))}};
+/* Next number for T-n / ST-n: one past the highest number in the repo. */
+async function nextNum(kind){return Math.max(0,...(kind==="tasks"?S.tasks:S.subtasks).map(x=>x.num||0))+1}
+/* Uploads */
+const MIME={png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",svg:"image/svg+xml",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",txt:"text/plain",csv:"text/csv",md:"text/markdown",json:"application/json",zip:"application/zip"};
+const mimeOf=p=>MIME[(p.split(".").pop()||"").toLowerCase()]||"application/octet-stream";
+const MAX_UPLOAD=25*1024*1024;
+const ghAssets={upload:(file)=>queued(async()=>{
+  if(file.size>MAX_UPLOAD)throw{code:"too_large"};
+  const safe=(file.name||"pasted.png").replace(/[^\w.\-]+/g,"-").replace(/^-+/,"").slice(-80)||"file";
+  const path=`assets/${rid()}-${safe}`;
+  const bytes=new Uint8Array(await file.arrayBuffer());
+  const j=await gh(`${repoPath()}/contents/${encPath(path)}`,{method:"PUT",body:{message:"Upload "+safe,content:b64enc(bytes),branch:GH.branch}});
+  noteCommit(j.commit);
+  assetCache.set(path,Promise.resolve(URL.createObjectURL(new Blob([bytes],{type:file.type||mimeOf(path)}))));
+  return{path,sizeBytes:file.size,contentType:file.type||mimeOf(path)};
+})};
+const assetCache=new Map();
+function assetURL(path){
+  if(assetCache.has(path))return assetCache.get(path);
+  const p=gh(`${repoPath()}/contents/${encPath(path)}?ref=${encodeURIComponent(GH.branch)}`,{accept:"application/vnd.github.raw+json",raw:true})
+    .then(r=>r.arrayBuffer()).then(buf=>URL.createObjectURL(new Blob([buf],{type:mimeOf(path)})));
+  assetCache.set(path,p);p.catch(()=>assetCache.delete(path));return p;
+}
+/* Images, videos and file links in docs point at repo paths (assets/…). Load them through the API so they work in private repos too. */
+function hydrateAssets(root){
+  root.querySelectorAll('img[src^="assets/"],video[src^="assets/"],a[href^="assets/"]').forEach(el=>{
+    const attr=el.tagName==="A"?"href":"src";const path=el.getAttribute(attr);
+    el.removeAttribute(attr);el.setAttribute("data-asset",path);
+    assetURL(path).then(u=>{el.setAttribute(attr,u);if(el.tagName==="A"){el.setAttribute("download",path.split("/").pop().replace(/^[a-z0-9]+-/,""));el.removeAttribute("target")}})
+      .catch(()=>{const s=document.createElement("span");s.className="note";s.textContent="Couldn't load "+path;el.replaceWith(s)});
+  });
+}
+/* Connect / sign out / poll */
+async function connect(cfg){
+  Object.assign(GH,{api:(cfg.api||GH.api).replace(/\/$/,""),owner:cfg.owner.trim(),repo:cfg.repo.trim(),branch:(cfg.branch||"main").trim(),token:cfg.token.trim(),head:null,files:{}});
+  COLLS.forEach(c=>GH.files[c]=new Map());
+  S.connecting=true;S.signinError="";render();
+  try{
+    const repo=await gh(repoPath());
+    GH.canPush=!!(repo.permissions&&repo.permissions.push);
+    await ghLoadAll();
+  }catch(e){
+    S.connecting=false;S.db=null;GH.token="";
+    S.signinError=e.status===401?"GitHub didn't accept that token. Check it's copied in full and hasn't expired."
+      :e.status===404?`Couldn't open ${cfg.owner}/${cfg.repo} with this token. Check the owner and name, and that the token was given access to this repository.`
+      :e.message;
+    render();return false;
+  }
+  LS.set(CFG_KEY,{api:GH.api,owner:GH.owner,repo:GH.repo,branch:GH.branch,token:GH.token});
+  S.connecting=false;S.db=ghDB;S.readOnly=!GH.canPush;S.assets=GH.canPush?ghAssets:null;S.offline=false;
+  route();return true;
+}
+function signOut(){
+  const saved=LS.get(CFG_KEY)||{};delete saved.token;LS.set(CFG_KEY,saved);
+  GH.token="";S.db=null;S.assets=null;S.readOnly=false;
+  COLLS.forEach(c=>{S[c]=[];S.loaded[c]=false});
+  assetCache.forEach(p=>p.then(u=>URL.revokeObjectURL(u)).catch(()=>{}));assetCache.clear();
+  render();
+}
+async function poll(){
+  if(!S.db||document.hidden||GH.pending)return;
+  try{
+    const j=await gh(`${repoPath()}/git/ref/heads/${encPath(GH.branch)}`);
+    if(j.object.sha!==GH.head&&!GH.pending){await ghLoadAll();render();refreshTaskExtras()}
+    if(S.offline){S.offline=false;render()}
+  }catch(e){
+    if(e.status===401){toast("Your GitHub token stopped working. Sign in again.");signOut();return}
+    if(!S.offline){S.offline=true;render()}
+  }
+}
+function signInHtml(){
+  const saved=Object.assign(ghDefaults(),LS.get(CFG_KEY)||{});
+  if(S.connecting)return`<div class="signin box"><h2>Connecting to ${esc(GH.owner)}/${esc(GH.repo)}…</h2><p class="note">Loading members, tasks, sprints, meetings and docs from the repository.</p></div>`;
+  return`<div class="signin box">
+    <h2>Connect your GitHub repository</h2>
+    <p>Everything your team adds is saved as files in this repository: records in <code>data/</code>, uploaded images and videos in <code>assets/</code>. Each change is a commit.</p>
+    <form id="gh-form" class="db" autocomplete="off">
+      <label>Owner<input id="gh-owner" required value="${esc(saved.owner||"")}" placeholder="your-org"></label>
+      <label>Repository<input id="gh-repo" required value="${esc(saved.repo||"")}" placeholder="team-sprint-board"></label>
+      <label>Branch<input id="gh-branch" required value="${esc(saved.branch||"main")}"></label>
+      <label class="full">Personal access token<input id="gh-token" type="password" required placeholder="github_pat_…"></label>
+      <p class="note full">Use a fine-grained token limited to this repository with <b>Contents: Read and write</b>. Read-only teammates can use <b>Contents: Read-only</b>. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create a token on GitHub</a>. It is stored only in this browser.</p>
+      ${S.signinError?`<p class="full err" role="alert">${esc(S.signinError)}</p>`:""}
+      <button class="btn primary full" type="submit">Connect</button>
+    </form></div>`;
+}
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="gh-form")return;e.preventDefault();
+  const v=id=>document.getElementById(id).value;
+  const saved=Object.assign(ghDefaults(),LS.get(CFG_KEY)||{});
+  connect({api:saved.api,owner:v("gh-owner"),repo:v("gh-repo"),branch:v("gh-branch"),token:v("gh-token")});
+});
+setInterval(poll,30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()});
+
+/* ---------- header ---------- */
+function renderClock(){
+  const s=currentSprint();let h="";
+  if(s){const len=sprintLen(s);const day=Math.min(len,Math.max(0,Math.round((utc(today())-utc(s.startDate))/864e5)+1));
+    h=`<b>${esc(s.name)}</b> ${fmt(s.startDate)} – ${fmt(s.endDate)} `+(day>0?`<span class="bar" title="Day ${day} of ${len}"><i style="width:${day/len*100}%"></i></span> day ${day}/${len}`:`<span>starts ${fmt(s.startDate)}</span>`)+(s.status!=="active"?` <span>(${SPLABEL[s.status]||"planned"})</span>`:"");}
+  else h=`<span>No sprint yet</span> <a href="#sprints">Plan one</a>`;
+  $("#clock").innerHTML=h+` · <b>${qLabel(curQuarter())}</b>`;
+  document.querySelectorAll("#tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.v===S.view?"page":"false"));
+  const active=S.tasks.filter(t=>t.status!=="done"&&t.sprintId).length;
+  $("#n-tasks").textContent=active||"";$("#n-sprints").textContent=openSprints().length||"";
+  $("#n-team").textContent=activeMembers().length||"";$("#n-meetings").textContent=S.meetings.length||"";$("#n-docs").textContent=S.docs.length||"";
+  const arch=S.tasks.filter(t=>t.status==="done").length+doneSprints().length+inactiveMembers().length;
+  $("#n-archive").textContent=arch||"";
+  $("#tabs").hidden=!S.db;$("#btnOut").hidden=!S.db;$("#clock").hidden=!S.db;
+  $("#repo").innerHTML=S.db?`<a href="https://github.com/${encodeURIComponent(GH.owner)}/${encodeURIComponent(GH.repo)}/commits/${encodeURIComponent(GH.branch)}" target="_blank" rel="noopener">${esc(GH.owner)}/${esc(GH.repo)}</a>${S.readOnly?" · read-only":""}`:"";
+}
+
+/* ---------- option builders ---------- */
+const sprintOpt=(s,sel)=>`<option value="${esc(s.id)}"${sel===s.id?" selected":""}>${esc(s.name)} · ${fmt(s.startDate)} – ${fmt(s.endDate)}${s.status==="active"?" (active)":s.status==="completed"?" (completed)":""}</option>`;
+function quarterOptions(sel,includeAll){
+  const set=new Set([curQuarter()]);const y=+today().slice(0,4);
+  for(let yy=y-1;yy<=y+1;yy++)for(let q=1;q<=4;q++)set.add(yy+"-Q"+q);
+  S.tasks.forEach(t=>set.add(taskQuarter(t)));
+  const list=[...set].sort().reverse();
+  return(includeAll?`<option value="all"${sel==="all"?" selected":""}>All quarters</option>`:"")+
+    list.map(q=>`<option value="${q}"${sel===q?" selected":""}>${qLabel(q)}${q===curQuarter()?" (current)":""}</option>`).join("");
+}
+const mOpts=(list,sel)=>list.map(m=>`<option value="${esc(m.id)}"${sel===m.id?" selected":""}>${esc(m.name)}${isActive(m)?"":" (inactive)"}</option>`).join("");
+const prioOptions=(sel,all)=>(all?`<option value="all"${sel==="all"?" selected":""}>All priorities</option>`:"")+PRIOS.map(([v,l])=>`<option value="${v}"${sel===v?" selected":""}>${l}</option>`).join("");
+
+/* ---------- banners ---------- */
+function banners(){
+  let h="";
+  if(S.offline)h+=`<div class="banner">Can't reach GitHub right now. Your team's latest changes will load when the connection is back.</div>`;
+  if(S.readOnly)h+=`<div class="banner">Your token can read this repository but not write to it, so changes won't be saved. Use a token with Contents: Read and write.</div>`;
+  return h;
+}
+const loading=()=>!!S.db&&!Object.values(S.loaded).every(Boolean);
+
+/* ---------- TASKS view ---------- */
+function filteredActive(){
+  const f=S.f.tasks;
+  return S.tasks.filter(t=>{
+    if(f.member!=="all"&&(f.member==="none"?t.assigneeId:t.assigneeId!==f.member))return false;
+    if(f.prio!=="all"&&(t.priority||"medium")!==f.prio)return false;
+    if(!matchRL(memberById(t.assigneeId),f.role,f.level))return false;
+    if(f.timing!=="all"&&taskTiming(t).state!==f.timing)return false;
+    if(f.q&&!(taskKey(t)+" "+t.title+" "+(t.description||"")+" "+tagsOf(t).join(" ")).toLowerCase().includes(f.q.toLowerCase()))return false;
+    if(f.mode==="sprint")return!!f.sprint&&t.sprintId===f.sprint;
+    if(!t.sprintId)return false; // backlog items live on the Sprints & backlog tab
+    if(f.mode==="quarter")return taskQuarter(t)===f.quarter;
+    if(f.mode==="week"){const ds=[isoDay(t.createdAt),isoDay(t.updatedAt),t.dueDate,isoDay(t.completedAt)].filter(Boolean);return ds.some(d=>d>=f.from&&d<=f.to)}
+    return true});
+}
+function renderTasks(){
+  const f=S.f.tasks;const open=openSprints();
+  if(!f.sprint||!open.some(s=>s.id===f.sprint)){const c=currentSprint();f.sprint=c?c.id:null}
+  if(!f.quarter)f.quarter=curQuarter();
+  if(!f.to){f.to=today();f.from=addDays(f.to,-7)}
+  const list=filteredActive();
+  const scope=f.mode==="sprint"?(f.sprint?sprintLabel(f.sprint):"No sprint selected"):f.mode==="quarter"?qLabel(f.quarter):fmtY(f.from)+" – "+fmtY(f.to);
+  const curS=f.mode==="sprint"&&sprintById(f.sprint);
+  let h=`<div class="viewhead"><div><h2>Tasks</h2><p>${esc(scope)}${curS&&curS.goal?" · Goal: "+esc(curS.goal):""}${(()=>{const o=list.filter(isOverdue).length,n=list.filter(t=>taskTiming(t).state==="near").length;return(o?` · <span class="due-over">${o} overdue</span>`:"")+(n?` · <span class="due-near">${n} due soon</span>`:"")})()}</p></div><div class="spacer"></div>
+    <div class="acts">${curS?`<button class="btn" type="button" data-act="complete-sprint" data-id="${esc(curS.id)}"${ro()}>Complete ${esc(curS.name)}</button>`:""}<button class="btn primary" type="button" data-act="new-task"${ro()}>New task</button></div></div>${banners()}
+  <div class="filters">
+    <div class="fld"><span>View by</span><div class="seg" role="group">
+      ${[["sprint","Sprint"],["quarter","Quarter"],["week","Last 7 days"]].map(([v,l])=>`<button type="button" data-mode="${v}" aria-pressed="${f.mode===v}">${l}</button>`).join("")}</div></div>
+    ${f.mode==="sprint"?(open.length?`<label class="fld"><span>Sprint</span><select id="f-sprint">${open.slice().reverse().map(s=>sprintOpt(s,f.sprint)).join("")}</select></label>`:`<div class="fld"><span>Sprint</span><div class="hint">No sprints yet. <a href="#sprints">Create one</a></div></div>`):""}
+    ${f.mode==="quarter"?`<label class="fld"><span>Quarter</span><select id="f-quarter">${quarterOptions(f.quarter)}</select></label>`:""}
+    ${f.mode==="week"?`<label class="fld"><span>From</span><input type="date" id="f-from" value="${f.from}"></label><label class="fld"><span>To</span><input type="date" id="f-to" value="${f.to}"></label>`:""}
+    <label class="fld"><span>Member</span><select id="f-member"><option value="all">Everyone</option><option value="none"${f.member==="none"?" selected":""}>Unassigned</option>${mOpts(activeMembers(),f.member)}</select></label>
+    ${rlFields("f",f)}
+    <label class="fld"><span>Priority</span><select id="f-prio">${prioOptions(f.prio,true)}</select></label>
+    <label class="fld"><span>Deadline</span><select id="f-timing">${[["all","Any"],["overdue","Overdue"],["near","Due soon (90%+ time used)"],["ok","On track"]].map(([v,l])=>`<option value="${v}"${f.timing===v?" selected":""}>${l}</option>`).join("")}</select></label>
+    <label class="fld" style="flex:1;min-width:140px"><span>Search</span><input type="search" id="f-q" placeholder="Key (T-12), title, tag" value="${esc(f.q)}"></label>
+  </div>`;
+  if(f.mode==="week")h+=`<p class="note" style="margin:-8px 0 12px">Shows sprint tasks created, updated, due or completed in this date range. Backlog items are on the Sprints &amp; backlog tab.</p>`;
+  if(!loading()&&f.mode==="sprint"&&!open.length){
+    return h+`<div class="emptystate"><h3>Create a sprint to start the board</h3><p>Tasks are planned into sprints. Create your first sprint, then add tasks to it or pull them in from the backlog.</p>
+      <div class="acts"><a class="btn primary" href="#sprints">Go to Sprints &amp; backlog</a></div></div>`;
+  }
+  const doneCount=list.filter(t=>t.status==="done").length;
+  const byP=(a,b)=>(PRANK[a.priority||"medium"]-PRANK[b.priority||"medium"])||((a.dueDate||"9")>(b.dueDate||"9")?1:-1);
+  const overdue=list.filter(isOverdue).sort((a,b)=>(a.dueDate||"").localeCompare(b.dueDate||""));
+  h+=`<div class="board">`+STATUSES.slice(0,3).map(([s,l,c])=>{
+    const items=list.filter(t=>(t.status||"todo")===s&&!isOverdue(t)).sort((a,b)=>(PRANK[a.priority||"medium"]-PRANK[b.priority||"medium"])||((a.dueDate||"9")>(b.dueDate||"9")?1:-1));
+    return`<section class="col" data-drop="${s}" aria-label="${l}"><div class="colhead"><span class="dot" style="background:${c}"></span>${l}<span class="cnt">${items.length}</span></div>
+      ${loading()?`<div class="empty-col">Loading…</div>`:items.length?items.map(card).join(""):`<div class="empty-col">Nothing here. Drag a card in or change its status.</div>`}</section>`}).join("")+
+    `<section class="col overcol" aria-label="Overdue"><div class="colhead"><span class="dot" style="background:var(--s-over)"></span>Overdue<span class="cnt">${overdue.length}</span></div>
+      ${loading()?"":overdue.length?overdue.map(card).join(""):`<div class="empty-col">Nothing past its due date. Tasks move here automatically when their deadline passes.</div>`}</section>`+
+    `<section class="col donezone" data-drop="done" aria-label="Done"><div class="colhead"><span class="dot" style="background:var(--s-done)"></span>Done</div>
+      <div class="big">${doneCount}</div><div>finished in this view</div><div class="note">Drop a card here to finish it.<br>Done tasks move to the Archive.</div>
+      <a class="btn sm" href="#archive">Open archive</a></section></div>`;
+  return h;
+}
+function card(t){
+  const tm=taskTiming(t);const overdue=tm.state==="overdue";
+  const timing=overdue?`<div class="timing due-over">Overdue by ${tm.days} day${tm.days===1?"":"s"} · was ${esc(SLABEL[t.status||"todo"])}</div>`
+    :tm.state==="near"?`<div class="timing due-near"><span>Due soon</span><span class="tbar"><i style="width:${Math.min(100,tm.frac*100).toFixed(0)}%;background:var(--s-near)"></i></span><span>${Math.min(100,Math.round(tm.frac*100))}% of time used</span></div>`:"";
+  return`<article class="card${overdue?" is-over":tm.state==="near"?" is-near":""}" draggable="true" data-id="${esc(t.id)}">
+    <h4 data-act="edit-task" data-id="${esc(t.id)}" tabindex="0">${esc(t.title)}</h4>${timing}
+    <div class="meta"><span class="key">${esc(taskKey(t))}</span>${subBadge(t)}${prio(t.priority)}${t.dueDate?`<span class="mono${overdue?" due-over":tm.state==="near"?" due-near":""}">due ${fmt(t.dueDate)}</span>`:""}${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}${S.f.tasks.mode!=="sprint"?`<span class="mono">${esc(sprintName(t.sprintId))}</span>`:""}</div>
+    <div class="foot">${who(t.assigneeId)}<select data-status="${esc(t.id)}" aria-label="Status"${S.readOnly?" disabled":""}>${STATUSES.map(([v,l])=>`<option value="${v}"${(t.status||"todo")===v?" selected":""}>${l}</option>`).join("")}</select></div>
+  </article>`;
+}
+async function setStatus(id,status){
+  const t=S.tasks.find(x=>x.id===id);if(!t||t.status===status)return;
+  const now=new Date().toISOString();
+  await write(db=>db.doc("tasks/"+id).update({status,updatedAt:now,completedAt:status==="done"?now:null}),status==="done"?"Moved to Archive":"Status: "+SLABEL[status]);
+}
+
+/* ---------- SPRINTS & BACKLOG view ---------- */
+function renderSprints(){
+  const open=openSprints();const backlog=S.tasks.filter(t=>!t.sprintId&&t.status!=="done").sort((a,b)=>PRANK[a.priority||"medium"]-PRANK[b.priority||"medium"]||(a.createdAt||"").localeCompare(b.createdAt||""));
+  const nDone=doneSprints().length;
+  let h=`<div class="viewhead"><div><h2>Sprints &amp; backlog</h2><p>Plan sprints, start and complete them, and keep unscheduled work in the backlog</p></div><div class="spacer"></div>
+    <div class="acts"><button class="btn" type="button" data-act="new-backlog"${ro()}>Add backlog item</button><button class="btn primary" type="button" data-act="new-sprint"${ro()}>New sprint</button></div></div>${banners()}
+    <div class="subhead"><h3>Sprints</h3><p>${open.length} open${nDone?` · ${nDone} completed in the <a href="#archive" data-act="arch-sprints">Archive</a>`:""}</p></div>`;
+  if(loading())h+=`<div class="emptystate"><p>Loading sprints…</p></div>`;
+  else if(!open.length)h+=`<div class="emptystate"><h3>No open sprints</h3><p>Create a sprint with a name, goal and dates. The Tasks board and its sprint filter list only the sprints you create here.</p><div class="acts"><button class="btn primary" type="button" data-act="new-sprint"${ro()}>New sprint</button></div></div>`;
+  else h+=`<div class="grid">`+open.map(s=>{
+    const list=tasksIn(s.id);const{c,html}=stackBar(list);
+    return`<article class="box${s.status==="active"?" is-active":""}"><div class="toprow"><h3>${esc(s.name)}</h3>${pill(s.status,"sp-"+(s.status||"planned"),SPLABEL[s.status]||"Planned")}</div>
+      <div class="note">${fmtY(s.startDate)} – ${fmtY(s.endDate)} · ${sprintLen(s)} days · ${qLabel(quarterOf(s.startDate))}</div>
+      <p class="goal${s.goal?"":" none"}">${s.goal?esc(s.goal):"No sprint goal set"}</p>
+      ${html}<div class="counts">${STATUSES.map(([st,l])=>`<div><b>${c[st]}</b><span>${l}</span></div>`).join("")}</div>
+      <div class="acts"><button class="btn sm" type="button" data-act="open-board" data-id="${esc(s.id)}">Open board</button>
+        ${s.status!=="active"?`<button class="btn sm" type="button" data-act="start-sprint" data-id="${esc(s.id)}"${ro()}>Start sprint</button>`:""}
+        <button class="btn sm" type="button" data-act="complete-sprint" data-id="${esc(s.id)}"${ro()}>Complete sprint</button>
+        <button class="btn sm ghost" type="button" data-act="edit-sprint" data-id="${esc(s.id)}"${ro()}>Edit</button></div></article>`}).join("")+`</div>`;
+  h+=`<div class="subhead"><h3>Backlog</h3><p>${backlog.length} item${backlog.length===1?"":"s"} not in any sprint</p></div>`;
+  if(loading())return h;
+  if(!backlog.length)return h+`<div class="emptystate"><h3>Backlog is empty</h3><p>Capture work that isn't scheduled yet. Move items into a sprint when you plan it.</p><div class="acts"><button class="btn" type="button" data-act="new-backlog"${ro()}>Add backlog item</button></div></div>`;
+  h+=`<div class="tablewrap"><table><thead><tr><th>Item</th><th>Assignee</th><th>Priority</th><th>Due</th><th>Move to sprint</th></tr></thead><tbody>`+
+    backlog.map(t=>`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div>${tagsOf(t).length?`<div class="meta">${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div>`:""}</td>
+      <td>${who(t.assigneeId)}</td><td>${prio(t.priority)||'<span class="note">medium</span>'}</td><td class="mono">${dueText(t)}</td>
+      <td>${open.length?`<select class="rowsel" data-move="${esc(t.id)}" aria-label="Move to sprint"${S.readOnly?" disabled":""}><option value="">Keep in backlog</option>${open.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("")}</select>`:`<span class="note">Create a sprint first</span>`}</td></tr>`).join("")+`</tbody></table></div>`;
+  return h;
+}
+
+/* ---------- TEAM view ---------- */
+function renderTeam(){
+  const f=S.f.team;const all=activeMembers(),ina=inactiveMembers().length,cs=currentSprint();
+  const act=all.filter(m=>matchRL(m,f.role,f.level)&&(!f.q||(m.name+" "+(m.email||"")).toLowerCase().includes(f.q.toLowerCase())));
+  let h=`<div class="viewhead"><div><h2>Team</h2><p>${all.length} active member${all.length===1?"":"s"}${cs?" · work counts for "+esc(cs.name):""}${ina?` · ${ina} inactive in the <a href="#archive" data-act="arch-members">Archive</a>`:""}</p></div><div class="spacer"></div>
+    <div class="acts">${f.tab==="members"?`<button class="btn primary" type="button" data-act="new-member"${ro()}>Add member</button>`:""}</div></div>${banners()}
+    <div class="seg" role="tablist" style="margin-bottom:14px">${[["members","Team",all.length],["roles","Roles & levels",S.roles.length]].map(([v,l,n])=>`<button type="button" role="tab" data-ttab="${v}" aria-pressed="${f.tab===v}" aria-selected="${f.tab===v}">${esc(l)}<span class="n">${n}</span></button>`).join("")}</div>`;
+  if(loading())return h+`<div class="emptystate"><p>Loading your team…</p></div>`;
+  if(f.tab==="roles")return h+renderRoles();
+  if(!all.length)h+=`<div class="emptystate"><h3>${ina?"No active members":"Add your first team member"}</h3><p>${S.roles.length?"Each member gets a role and level from the list below, plus a card showing their tasks by status.":`Set up roles and levels on the <a href="#team" data-ttab="roles">Roles &amp; levels</a> tab first, then add members and pick their role and level.`}</p><div class="acts"><button class="btn primary" type="button" data-act="new-member"${ro()}>Add member</button></div></div>`;
+  else{
+    h+=`<div class="filters">${rlFields("tm",f)}<label class="fld" style="flex:1;min-width:140px"><span>Search</span><input type="search" id="tm-q" value="${esc(f.q)}" placeholder="Name or email"></label>
+      <p class="note" style="margin:0 0 6px">${act.length} of ${all.length} shown</p></div>`;
+    if(!act.length)h+=`<div class="emptystate"><p>No active members match this role and level.</p></div>`;
+    else h+=`<div class="grid">`+act.map(m=>{
+      const mine=S.tasks.filter(t=>t.assigneeId===m.id);const inSprint=cs?mine.filter(t=>t.sprintId===cs.id):[];
+      const{c,html}=stackBar(inSprint);
+      return`<article class="box"><div class="id">${av(m,"lg")}<div><h3>${esc(m.name)}</h3><div class="role">${esc(roleText(m))}</div>${m.email?`<div class="note">${esc(m.email)}</div>`:""}</div></div>
+        ${html}<div class="counts">${STATUSES.map(([s,l])=>`<div><b>${c[s]}</b><span>${l}</span></div>`).join("")}</div>
+        <div class="note">${mine.filter(t=>t.status!=="done").length} open overall${(()=>{const o=mine.filter(isOverdue).length;return o?` · <span class="due-over">${o} overdue</span>`:""})()} · ${mine.filter(t=>t.status==="done").length} done all-time</div>
+        <div class="acts"><button class="btn sm" type="button" data-act="member-tasks" data-id="${esc(m.id)}">View tasks</button>
+        <button class="btn sm" type="button" data-act="member-archive" data-id="${esc(m.id)}">Done work</button>
+        <button class="btn sm" type="button" data-act="assign" data-id="${esc(m.id)}"${ro()}>Assign task</button>
+        <button class="btn sm ghost" type="button" data-act="edit-member" data-id="${esc(m.id)}"${ro()}>Edit</button></div></article>`}).join("")+`</div>`;
+  }
+  return h;
+}
+function renderRoles(){
+  let h=`<p class="note" style="margin:0 0 12px">Members can only be given a role and level from this list. Removing one clears it from the members who had it.</p>
+    <div class="filters"><label class="fld" style="flex:1;min-width:180px"><span>New role</span><input id="new-role" maxlength="60" placeholder="e.g. Backend engineer"></label>
+    <label class="fld" style="flex:1;min-width:180px"><span>Levels (comma separated)</span><input id="new-role-levels" maxlength="200" placeholder="Junior, Mid, Senior, Lead"></label>
+    <button class="btn primary" type="button" data-act="add-role"${ro()}>Add role</button></div>`;
+  if(!S.roles.length)return h+`<div class="emptystate"><h3>No roles yet</h3><p>Add the roles on your team, such as Backend engineer, QA or Designer, each with its own levels.</p></div>`;
+  h+=`<div class="grid">`+sortedRoles().map(r=>{
+    const n=S.members.filter(m=>m.roleId===r.id).length;
+    return`<article class="box"><div class="toprow"><h3>${esc(r.name)}</h3><span class="note">${n} member${n===1?"":"s"}</span></div>
+      <div class="levels">${(r.levels||[]).length?(r.levels||[]).map(l=>{const k=S.members.filter(m=>m.roleId===r.id&&m.level===l).length;
+        return`<span class="chip">${esc(l)}<span class="note">${k}</span><button type="button" class="x" data-act="rm-level" data-id="${esc(r.id)}" data-level="${esc(l)}" aria-label="Remove level ${esc(l)}" title="Remove level"${ro()}>×</button></span>`}).join(""):`<span class="note">No levels yet</span>`}</div>
+      <div class="addlevel"><input id="lvl-${esc(r.id)}" maxlength="40" placeholder="Add a level" aria-label="New level for ${esc(r.name)}"><button class="btn sm" type="button" data-act="add-level" data-id="${esc(r.id)}"${ro()}>Add</button></div>
+      <div class="acts"><button class="btn sm ghost" type="button" data-act="rename-role" data-id="${esc(r.id)}"${ro()}>Rename</button><button class="btn sm ghost danger" type="button" data-act="rm-role" data-id="${esc(r.id)}"${ro()}>Delete role</button></div></article>`}).join("")+`</div>`;
+  return h;
+}
+
+/* ---------- MEETINGS view ---------- */
+function renderMeetings(){
+  const f=S.f.mtg;
+  let list=S.meetings.filter(m=>(f.type==="all"||m.type===f.type)&&(!f.from||m.date>=f.from)&&(!f.to||m.date<=f.to)&&(f.member==="all"||(m.attendees||[]).includes(f.member))&&(!f.q||[m.title,m.notes,m.decisions,m.actionItems].join(" ").toLowerCase().includes(f.q.toLowerCase())));
+  list.sort((a,b)=>(b.date||"").localeCompare(a.date||"")||(b.createdAt||"").localeCompare(a.createdAt||""));
+  let h=`<div class="viewhead"><div><h2>Meetings</h2><p>Daily standups, weekly product calls and sprint or quarter planning</p></div><div class="spacer"></div>
+    <div class="acts"><button class="btn primary" type="button" data-act="new-meeting"${ro()}>Log meeting</button></div></div>${banners()}
+  <div class="filters"><div class="fld"><span>Type</span><div class="seg" role="group">${[["all","All"],...MTYPES].map(([v,l])=>`<button type="button" data-mtype="${v}" aria-pressed="${f.type===v}">${l}</button>`).join("")}</div></div>
+    <label class="fld"><span>From</span><input type="date" id="m-from" value="${f.from}"></label>
+    <label class="fld"><span>To</span><input type="date" id="m-to" value="${f.to}"></label>
+    <label class="fld"><span>Attendee</span><select id="m-member"><option value="all">Anyone</option>${mOpts([...activeMembers(),...inactiveMembers()],f.member)}</select></label>
+    <label class="fld" style="flex:1;min-width:140px"><span>Search notes</span><input type="search" id="m-q" value="${esc(f.q)}" placeholder="Words in notes or decisions"></label></div>`;
+  if(loading())return h+`<div class="emptystate"><p>Loading meetings…</p></div>`;
+  if(!S.meetings.length)return h+`<div class="emptystate"><h3>No meetings logged yet</h3><p>Log today's standup, a weekly product call, or your next sprint or quarter plan. Each type opens with a notes template.</p><div class="acts"><button class="btn primary" type="button" data-act="new-meeting"${ro()}>Log meeting</button></div></div>`;
+  if(!list.length)return h+`<div class="emptystate"><p>No meetings match these filters.</p></div>`;
+  h+=`<div class="meetings">`+list.map(m=>{
+    const[y,mo,d]=(m.date||today()).split("-");
+    const forWhat=m.type==="sprint-plan"&&m.forSprint?sprintName(m.forSprint):m.type==="quarter-plan"&&m.forQuarter?qLabel(m.forQuarter):"";
+    return`<article class="mtg"><div class="date"><span>${MON[+mo-1]}</span><b>${+d}</b><span>${y}</span></div>
+      <div class="body"><div class="row1"><span class="typ">${esc(MLABEL[m.type]||m.type)}</span>${forWhat?`<span class="note">for ${esc(forWhat)}</span>`:""}<div class="spacer"></div>
+        <div class="avs">${(m.attendees||[]).map(id=>av(memberById(id))).join("")}</div></div>
+        <h3 data-act="edit-meeting" data-id="${esc(m.id)}" tabindex="0">${esc(m.title||MLABEL[m.type])}</h3>
+        ${m.notes?`<pre>${esc(m.notes)}</pre>`:""}
+        ${m.decisions?`<div class="sec">Decisions</div><pre>${esc(m.decisions)}</pre>`:""}
+        ${m.actionItems?`<div class="sec">Action items</div><pre>${esc(m.actionItems)}</pre>`:""}
+        <div><button class="btn sm ghost" type="button" data-act="toggle-mtg">Expand</button><button class="btn sm ghost" type="button" data-act="edit-meeting" data-id="${esc(m.id)}">Open</button></div></div></article>`}).join("")+`</div>`;
+  return h;
+}
+
+/* ---------- ARCHIVE view ---------- */
+function renderArchive(){
+  const f=S.f.arch;
+  const done=S.tasks.filter(t=>t.status==="done"),ds=doneSprints(),ina=inactiveMembers();
+  let h=`<div class="viewhead"><div><h2>Archive</h2><p>Completed tasks, completed sprints and inactive team members</p></div></div>${banners()}
+    <div class="seg" role="group" style="margin-bottom:14px">${[["tasks","Done tasks",done.length],["sprints","Completed sprints",ds.length],["members","Inactive members",ina.length]].map(([v,l,n])=>`<button type="button" data-atab="${v}" aria-pressed="${f.tab===v}">${l}<span class="n">${n}</span></button>`).join("")}</div>`;
+  if(loading())return h+`<div class="emptystate"><p>Loading archive…</p></div>`;
+  if(f.tab==="sprints"){
+    if(!ds.length)return h+`<div class="emptystate"><h3>No completed sprints yet</h3><p>When you complete a sprint on the Sprints &amp; backlog tab it's stored here with its goal, dates, review notes and the work finished in it.</p></div>`;
+    return h+`<div class="tablewrap"><table><thead><tr><th>Sprint</th><th>Dates</th><th>Quarter</th><th>Done</th><th>Carried over</th><th>Completed</th><th></th></tr></thead><tbody>`+
+      ds.map(s=>{const doneIn=tasksIn(s.id).filter(t=>t.status==="done").length;
+        return`<tr><td><div class="t" data-act="edit-sprint" data-id="${esc(s.id)}" tabindex="0">${esc(s.name)}</div>${s.goal?`<div class="sub">${esc(s.goal)}</div>`:""}${s.review?`<div class="sub">Review: ${esc(s.review)}</div>`:""}</td>
+        <td class="mono">${fmt(s.startDate)} – ${fmtY(s.endDate)}</td><td class="mono">${qLabel(quarterOf(s.startDate))}</td>
+        <td class="mono">${doneIn}</td><td class="mono">${s.carriedOver??0}</td><td class="mono">${fmtY(isoDay(s.completedAt))}</td>
+        <td><div class="rowacts"><button class="btn sm" type="button" data-act="sprint-done-tasks" data-id="${esc(s.id)}">View done tasks</button><button class="btn sm ghost" type="button" data-act="reopen-sprint" data-id="${esc(s.id)}"${ro()}>Reopen</button></div></td></tr>`}).join("")+`</tbody></table></div>`;
+  }
+  if(f.tab==="members"){
+    if(!ina.length)return h+`<div class="emptystate"><h3>No inactive members</h3><p>Set a member's status to Inactive from the Team tab and they move here. Their past tasks and meeting attendance stay linked.</p></div>`;
+    return h+`<div class="grid">`+ina.map(m=>{const mine=S.tasks.filter(t=>t.assigneeId===m.id);
+      return`<article class="box"><div class="id">${av(m,"lg")}<div><h3>${esc(m.name)}</h3><div class="role">${esc(roleText(m))}</div></div></div>
+        <div class="toprow">${pill("inactive","ms-inactive","Inactive")}${m.inactiveSince?`<span class="note">since ${fmtY(isoDay(m.inactiveSince))}</span>`:""}</div>
+        <div class="note">${mine.filter(t=>t.status==="done").length} done all-time · ${mine.filter(t=>t.status!=="done").length} still open</div>
+        <div class="acts"><button class="btn sm" type="button" data-act="member-archive" data-id="${esc(m.id)}">Done work</button>
+        <button class="btn sm" type="button" data-act="reactivate" data-id="${esc(m.id)}"${ro()}>Reactivate</button>
+        <button class="btn sm ghost" type="button" data-act="edit-member" data-id="${esc(m.id)}"${ro()}>Edit</button></div></article>`}).join("")+`</div>`;
+  }
+  const allTags=[...new Set(done.flatMap(tagsOf))].sort();
+  const list=done.filter(t=>{
+    if(f.member!=="all"&&(f.member==="none"?t.assigneeId:t.assigneeId!==f.member))return false;
+    if(f.sprint!=="all"&&(f.sprint===""?!!t.sprintId:t.sprintId!==f.sprint))return false;
+    if(f.quarter!=="all"&&taskQuarter(t)!==f.quarter)return false;
+    if(f.prio!=="all"&&(t.priority||"medium")!==f.prio)return false;
+    if(!matchRL(memberById(t.assigneeId),f.role,f.level))return false;
+    if(f.tag!=="all"&&!tagsOf(t).includes(f.tag))return false;
+    const cd=isoDay(t.completedAt);if(f.from&&cd<f.from)return false;if(f.to&&cd>f.to)return false;
+    if(f.q&&!(taskKey(t)+" "+t.title+" "+(t.description||"")).toLowerCase().includes(f.q.toLowerCase()))return false;
+    return true}).sort((a,b)=>(b.completedAt||"").localeCompare(a.completedAt||""));
+  h+=`<div class="filters">
+    <label class="fld" style="flex:1;min-width:140px"><span>Search</span><input type="search" id="a-q" value="${esc(f.q)}" placeholder="Title or description"></label>
+    <label class="fld"><span>Member</span><select id="a-member"><option value="all">Everyone</option><option value="none"${f.member==="none"?" selected":""}>Unassigned</option>${mOpts([...activeMembers(),...inactiveMembers()],f.member)}</select></label>
+    ${rlFields("a",f)}
+    <label class="fld"><span>Sprint</span><select id="a-sprint"><option value="all">All sprints</option><option value=""${f.sprint===""?" selected":""}>Backlog (no sprint)</option>${S.sprints.slice().sort(byStart).reverse().map(s=>sprintOpt(s,f.sprint)).join("")}</select></label>
+    <label class="fld"><span>Quarter</span><select id="a-quarter">${quarterOptions(f.quarter,true)}</select></label>
+    <label class="fld"><span>Priority</span><select id="a-prio">${prioOptions(f.prio,true)}</select></label>
+    <label class="fld"><span>Tag</span><select id="a-tag"><option value="all">All tags</option>${allTags.map(g=>`<option${f.tag===g?" selected":""}>${esc(g)}</option>`).join("")}</select></label>
+    <label class="fld"><span>Done from</span><input type="date" id="a-from" value="${f.from}"></label>
+    <label class="fld"><span>Done to</span><input type="date" id="a-to" value="${f.to}"></label>
+    <button class="btn ghost sm" type="button" data-act="clear-arch">Clear filters</button></div>
+    <p class="note" style="margin:-6px 0 10px">${list.length} of ${done.length} completed task${done.length===1?"":"s"}</p>`;
+  if(!done.length)return h+`<div class="emptystate"><h3>Nothing archived yet</h3><p>When a task is marked Done it lands here, with its sprint, quarter, assignee and completion date kept for filtering.</p></div>`;
+  if(!list.length)return h+`<div class="emptystate"><p>No completed tasks match these filters.</p></div>`;
+  h+=`<div class="tablewrap"><table><thead><tr><th>Task</th><th>Assignee</th><th>Sprint</th><th>Quarter</th><th>Priority</th><th>Completed</th><th></th></tr></thead><tbody>`+
+    list.map(t=>`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div>${tagsOf(t).length?`<div class="meta">${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div>`:""}</td>
+      <td>${who(t.assigneeId)}</td><td class="mono">${esc(sprintName(t.sprintId))}</td><td class="mono">${qLabel(taskQuarter(t))}</td>
+      <td>${prio(t.priority)||'<span class="note">medium</span>'}</td><td class="mono">${fmtY(isoDay(t.completedAt))}</td>
+      <td><button class="btn sm" type="button" data-act="reopen" data-id="${esc(t.id)}"${ro()}>Reopen</button></td></tr>`).join("")+`</tbody></table></div>`;
+  return h;
+}
+
+/* ---------- DOCS ---------- */
+const DOC_CATS=["Spec","Architecture","Design","How-to","Runbook","Reference","Release notes","Notes","Other"];
+const MD_HELP=`# Title
+
+Write in **Markdown**. Use the toolbar to add images, videos, diagrams and code.
+
+## Diagram
+\`\`\`mermaid
+flowchart LR
+  A[Request] --> B{Auth ok?}
+  B -- yes --> C[Handle]
+  B -- no --> D[401]
+\`\`\`
+
+## Code
+\`\`\`js
+export function add(a, b) {
+  return a + b;
+}
+\`\`\`
+
+| Field | Type | Notes |
+|---|---|---|
+| id | string | unique |
+`;
+const isDark=()=>{const t=document.documentElement.getAttribute("data-theme");return t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches};
+function docKinds(b){b=b||"";const k=[];
+  if(/!\[[^\]]*\]\(/.test(b.replace(/!\[video:[^\]]*\]\([^)]*\)/gi,"")))k.push("image");
+  if(/!\[video:/i.test(b)||/\.(mp4|webm)(\?|\))/i.test(b))k.push("video");
+  if(/```mermaid/.test(b))k.push("diagram");
+  if(/```(?!mermaid)/.test(b))k.push("code");
+  if(/\]\(assets\/[^)]+\)/.test(b.replace(/!\[[^\]]*\]\([^)]*\)/g,"")))k.push("file");
+  if(/\n\|.*\|\s*\n\|[\s:|-]+\|/.test("\n"+b))k.push("table");
+  return k}
+let mdReady=false,mdRenderer=null;
+function setupMarked(){
+  if(mdReady||!window.marked)return!!window.marked;mdReady=true;
+  const r=new marked.Renderer();
+  r.code=(code,info)=>{const lang=String(info||"").trim().split(/\s+/)[0].toLowerCase();
+    if(lang==="mermaid")return`<div class="diagram"><pre class="mm-src">${esc(code)}</pre></div>`;
+    let html=esc(code);
+    if(window.hljs){try{html=lang&&hljs.getLanguage(lang)?hljs.highlight(code,{language:lang,ignoreIllegals:true}).value:hljs.highlightAuto(code).value}catch(e){}}
+    return`<div class="codeblk"><div class="ch"><span>${esc(lang||"text")}</span><button type="button" class="btn sm ghost" data-act="copy-code">Copy</button></div><pre><code class="hljs">${html}</code></pre></div>`};
+  r.image=(href,title,text)=>{href=String(href||"");text=String(text||"");
+    if(/^video:/i.test(text)||/\.(mp4|webm)(\?|$)/i.test(href))return`<video controls preload="metadata" src="${esc(href)}"${title?` title="${esc(title)}"`:""}></video>`;
+    if(/youtube\.com|youtu\.be|vimeo\.com|loom\.com/i.test(href))return`<a class="filecard" href="${esc(href)}" target="_blank" rel="noopener">Watch video: ${esc(text.replace(/^video:\s*/i,"")||href)}</a>`;
+    return`<img src="${esc(href)}" alt="${esc(text)}" loading="lazy"${title?` title="${esc(title)}"`:""}>`};
+  r.table=(header,body)=>`<div class="tbl"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+  mdRenderer=r;
+  if(window.DOMPurify)DOMPurify.addHook("afterSanitizeAttributes",n=>{if(n.tagName==="A"&&/^https?:/i.test(n.getAttribute("href")||"")){n.setAttribute("target","_blank");n.setAttribute("rel","noopener")}});
+  return true}
+function mdToHtml(src){
+  if(!setupMarked())return`<pre style="white-space:pre-wrap">${esc(src)}</pre>`;
+  const raw=marked.parse(src||"",{renderer:mdRenderer,gfm:true,breaks:false});
+  return window.DOMPurify?DOMPurify.sanitize(raw,{ADD_TAGS:["video"],ADD_ATTR:["controls","preload","target","loading"],FORBID_TAGS:["style","form","iframe","object","embed"]}):esc(src);
+}
+let mermaidP=null;
+function loadMermaid(){if(window.mermaid)return Promise.resolve(window.mermaid);
+  return mermaidP=mermaidP||new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js";s.onload=()=>res(window.mermaid);s.onerror=()=>{mermaidP=null;rej(new Error("load"))};document.head.appendChild(s)})}
+let mmSeq=0;
+async function runMermaid(root){
+  const nodes=[...root.querySelectorAll("pre.mm-src:not([data-done])")];if(!nodes.length)return;
+  nodes.forEach(n=>n.setAttribute("data-done","1"));
+  let m;try{m=await loadMermaid();m.initialize({startOnLoad:false,securityLevel:"strict",theme:isDark()?"dark":"neutral",fontFamily:"IBM Plex Sans, sans-serif"})}
+  catch(e){nodes.forEach(n=>n.insertAdjacentHTML("afterend",`<div class="err">Diagram renderer couldn't load. Showing the diagram source.</div>`));return}
+  for(const n of nodes){if(!n.isConnected)continue;const src=n.textContent;
+    try{const{svg}=await m.render("mmd"+(++mmSeq),src);const d=document.createElement("div");d.innerHTML=svg;n.replaceWith(d)}
+    catch(e){n.insertAdjacentHTML("afterend",`<div class="err">Diagram error: ${esc(String(e&&e.message||e).split("\n")[0])}</div>`);document.querySelectorAll('[id^="dmmd"]').forEach(x=>x.remove())}}
+}
+function docFiltered(){const f=S.f.docs;return S.docs.filter(d=>(f.cat==="all"||d.category===f.cat)&&(f.kind==="all"||docKinds(d.body).includes(f.kind))&&
+  (!f.q||(d.title+" "+(d.body||"")+" "+(d.tags||[]).join(" ")+" "+(d.taskIds||[]).map(id=>taskKey(S.tasks.find(t=>t.id===id))).join(" ")).toLowerCase().includes(f.q.toLowerCase()))).sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""))}
+function renderDocs(){
+  const f=S.f.docs;const list=docFiltered();
+  if(f.sel&&f.sel!=="new"&&!S.docs.some(d=>d.id===f.sel)&&S.loaded.docs)f.sel=null;
+  let h=`<div class="viewhead"><div><h2>Docs</h2><p>Specs, guides and references with images, videos, diagrams and code</p></div><div class="spacer"></div>
+    <div class="acts"><button class="btn primary" type="button" data-act="new-doc"${ro()}>New doc</button></div></div>${banners()}`;
+  if(loading())return h+`<div class="emptystate"><p>Loading docs…</p></div>`;
+  if(!S.docs.length&&!f.editing)return h+`<div class="emptystate"><h3>No docs yet</h3><p>Write specs, how-tos and runbooks in Markdown. Add screenshots and screen recordings, draw flowcharts and sequence diagrams with Mermaid, and paste code with syntax highlighting.</p><div class="acts"><button class="btn primary" type="button" data-act="new-doc"${ro()}>Write the first doc</button></div></div>`;
+  const kinds=[["image","Images"],["video","Videos"],["diagram","Diagrams"],["code","Code"],["table","Tables"],["file","Files"]];
+  h+=`<div class="docs${f.sel||f.editing?" has-sel":""}"><aside class="doclist"><div class="dl-f">
+      <input type="search" id="d-q" placeholder="Search docs" value="${esc(f.q)}" aria-label="Search docs">
+      <div class="row"><select id="d-cat" aria-label="Category"><option value="all">All categories</option>${DOC_CATS.map(c=>`<option${f.cat===c?" selected":""}>${c}</option>`).join("")}</select>
+      <select id="d-kind" aria-label="Contains"><option value="all">Any content</option>${kinds.map(([v,l])=>`<option value="${v}"${f.kind===v?" selected":""}>${l}</option>`).join("")}</select></div>
+      <span class="note">${list.length} of ${S.docs.length} doc${S.docs.length===1?"":"s"}</span></div>
+    <div class="dl-items">${list.length?list.map(d=>`<button type="button" class="dl-item" data-act="open-doc" data-id="${esc(d.id)}" aria-current="${f.sel===d.id}"><b>${esc(d.title||"Untitled")}</b>
+      <span class="meta"><span class="cat">${esc(d.category||"Other")}</span><span class="mono">${fmtY(isoDay(d.updatedAt))}</span></span>
+      <span class="meta">${docKinds(d.body).map(k=>`<span class="kind">${k}</span>`).join("")}</span></button>`).join(""):`<p class="note" style="padding:10px">No docs match.</p>`}</div></aside>
+    <section class="docpane">${f.editing?editorShell():readerHtml()}</section></div>`;
+  return h;
+}
+function readerHtml(){
+  const d=S.docs.find(x=>x.id===S.f.docs.sel)||docFiltered()[0];
+  if(!d)return`<p class="note">Pick a doc from the list.</p>`;
+  S.f.docs.sel=d.id;
+  const sp=d.sprintId?sprintById(d.sprintId):null;
+  return`<button type="button" class="btn sm ghost backlink" data-act="close-doc">← All docs</button>
+    <div class="dp-head"><div style="flex:1;min-width:0"><h2>${esc(d.title||"Untitled")}</h2>
+      <div class="meta"><span class="cat">${esc(d.category||"Other")}</span><span class="mono">Updated ${fmtY(isoDay(d.updatedAt))}</span>${sp?`<span class="mono">· ${esc(sp.name)}</span>`:""}${(d.tags||[]).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div></div>
+      <div class="acts" style="display:flex;gap:6px"><button class="btn sm" type="button" data-act="edit-doc" data-id="${esc(d.id)}"${ro()}>Edit</button><button class="btn sm ghost danger" type="button" data-act="del-doc" data-id="${esc(d.id)}"${ro()}>Delete</button></div></div>
+    ${linkedTasksHtml(d)}
+    <div data-keep="read-${esc(d.id)}-${esc(d.updatedAt||"")}-${isDark()?"d":"l"}"></div>`;
+}
+function linkedTasksHtml(d){const ts=(d.taskIds||[]).map(id=>S.tasks.find(t=>t.id===id)).filter(Boolean);
+  if(!ts.length)return"";
+  return`<div class="linked"><span class="lbl">Linked tasks</span>${ts.map(t=>`<button type="button" class="linkbtn" data-act="edit-task" data-id="${esc(t.id)}"><span class="key">${esc(taskKey(t))}</span><span class="tt">${esc(t.title)}</span>${statusPill(t)}</button>`).join("")}</div>`}
+function fillKeep(el){const k=el.getAttribute("data-keep");
+  if(k.startsWith("read-")){const d=S.docs.find(x=>x.id===S.f.docs.sel);if(!d)return;el.className="md";el.innerHTML=mdToHtml(d.body||"");hydrateAssets(el);runMermaid(el)}
+  else if(k.startsWith("edit-")){el.innerHTML=editorBody();bindEditor(el)}}
+function editorShell(){return`<div data-keep="edit-${esc(S.f.docs.editing)}"></div>`}
+function editorBody(){
+  const id=S.f.docs.editing;const d=id==="new"?{title:"",category:"Spec",tags:[],body:MD_HELP,sprintId:null}:S.docs.find(x=>x.id===id)||{};
+  const canUp=!!S.assets;
+  return`<div class="ed-meta">
+      <label class="full">Title<input id="de-title" maxlength="160" value="${esc(d.title||"")}" placeholder="Document title"></label>
+      <label>Tags<input id="de-tags" value="${esc((d.tags||[]).join(", "))}" placeholder="api, onboarding"></label>
+      <label>Category<select id="de-cat">${DOC_CATS.map(c=>`<option${(d.category||"Other")===c?" selected":""}>${c}</option>`).join("")}</select></label>
+      <div class="full linker"><label for="de-tsearch" style="font-size:12px">Linked tasks (optional)</label><div class="chips" id="de-tchips"></div>
+        <input id="de-tsearch" autocomplete="off" placeholder="Search tasks by key or title to link them"><div class="tres" id="de-tres" role="listbox" aria-label="Matching tasks"></div></div>
+      <label class="full">Linked sprint (optional)<select id="de-sprint"><option value="">None</option>${S.sprints.slice().sort(byStart).reverse().map(s=>sprintOpt(s,d.sprintId)).join("")}</select></label></div>
+    <div class="toolbar" role="toolbar" aria-label="Formatting">
+      <button type="button" data-ins="h2" title="Heading">H2</button><button type="button" data-ins="bold" title="Bold"><b>B</b></button><button type="button" data-ins="italic" title="Italic"><i>I</i></button>
+      <button type="button" data-ins="link">Link</button><button type="button" data-ins="ul">List</button><button type="button" data-ins="task">Checklist</button><button type="button" data-ins="quote">Quote</button><button type="button" data-ins="table">Table</button>
+      <span class="sep"></span><button type="button" data-ins="code">Code</button><button type="button" data-ins="mermaid">Diagram</button>
+      <span class="sep"></span>${canUp?`<button type="button" data-up="image/*">Image</button><button type="button" data-up="video/mp4,video/webm">Video</button><button type="button" data-up="application/pdf,text/plain,text/csv,text/markdown,application/json">File</button>`:`<button type="button" data-ins="imgurl">Image link</button><button type="button" data-ins="vidurl">Video link</button>`}
+      <span class="up" id="de-up">${canUp?"Paste or drop files into the editor":"Uploads need write access to the repo. Link to images and videos by URL."}</span>
+      <button type="button" class="btn sm prevtoggle" data-act="toggle-prev">Preview</button></div>
+    <div class="ed-split" id="de-split"><textarea id="de-body" spellcheck="true" aria-label="Document body (Markdown)">${esc(d.body||"")}</textarea><div class="ed-prev md" id="de-prev"></div></div>
+    <input type="file" id="de-file" hidden>
+    <div class="ed-foot"><button class="btn primary" type="button" data-act="save-doc"${ro()}>${id==="new"?"Publish doc":"Save changes"}</button><button class="btn" type="button" data-act="cancel-doc">Cancel</button><span class="note" id="de-state"></span></div>`;
+}
+let prevT;
+let edLinked=new Set();
+function drawLinker(root){
+  const chips=root.querySelector("#de-tchips"),res=root.querySelector("#de-tres"),q=(root.querySelector("#de-tsearch").value||"").trim().toLowerCase();
+  chips.innerHTML=[...edLinked].map(id=>{const t=S.tasks.find(x=>x.id===id);return`<span class="chip"><span class="key">${esc(t?taskKey(t):"Deleted")}</span>${esc(t?t.title:"task")}<button type="button" class="x" data-unlink="${esc(id)}" aria-label="Unlink">×</button></span>`}).join("")||`<span class="note">No tasks linked.</span>`;
+  if(!q){res.innerHTML="";return}
+  const hits=S.tasks.filter(t=>!edLinked.has(t.id)&&(taskKey(t)+" "+t.title).toLowerCase().includes(q)).sort((a,b)=>(b.num||0)-(a.num||0)).slice(0,8);
+  res.innerHTML=hits.length?hits.map(t=>`<button type="button" data-link="${esc(t.id)}"><span class="key">${esc(taskKey(t))}</span>${esc(t.title)}${statusPill(t,' style="margin-left:auto"')}</button>`).join(""):`<span class="note" style="padding:6px">No matching tasks.</span>`;
+}
+function bindEditor(root){
+  {const id=S.f.docs.editing;const d=id==="new"?null:S.docs.find(x=>x.id===id);edLinked=new Set(d&&d.taskIds||[]);
+   const si=root.querySelector("#de-tsearch");si.addEventListener("input",()=>drawLinker(root));drawLinker(root);
+   root.addEventListener("click",e=>{const l=e.target.closest("[data-link]"),u=e.target.closest("[data-unlink]");
+     if(l){edLinked.add(l.dataset.link);si.value="";root.dataset.dirty="1";drawLinker(root);si.focus()}
+     if(u){edLinked.delete(u.dataset.unlink);root.dataset.dirty="1";drawLinker(root)}})}
+  const ta=root.querySelector("#de-body"),prev=root.querySelector("#de-prev");
+  const upd=()=>{prev.innerHTML=mdToHtml(ta.value);hydrateAssets(prev);runMermaid(prev)};upd();
+  ta.addEventListener("input",()=>{root.dataset.dirty="1";clearTimeout(prevT);prevT=setTimeout(upd,450)});
+  root.querySelectorAll("#de-title,#de-tags,#de-cat,#de-sprint").forEach(i=>i.addEventListener("input",()=>root.dataset.dirty="1"));
+  ta.addEventListener("paste",e=>{const fs=[...(e.clipboardData&&e.clipboardData.files||[])];if(fs.length&&S.assets){e.preventDefault();fs.forEach(uploadInto)}});
+  ta.addEventListener("dragover",e=>{if(S.assets&&e.dataTransfer&&[...e.dataTransfer.types].includes("Files")){e.preventDefault();ta.classList.add("drop")}});
+  ta.addEventListener("dragleave",()=>ta.classList.remove("drop"));
+  ta.addEventListener("drop",e=>{ta.classList.remove("drop");const fs=[...(e.dataTransfer&&e.dataTransfer.files||[])];if(fs.length&&S.assets){e.preventDefault();fs.forEach(uploadInto)}});
+  root.querySelector("#de-file").addEventListener("change",e=>{[...e.target.files].forEach(uploadInto);e.target.value=""});
+  root.addEventListener("click",e=>{const b=e.target.closest("[data-ins],[data-up]");if(!b)return;
+    if(b.dataset.up){const fi=root.querySelector("#de-file");fi.accept=b.dataset.up;fi.click();return}
+    insertMd(b.dataset.ins)});
+}
+function insertAt(text,selStart,selEnd){const ta=$("#de-body");if(!ta)return;const s=ta.selectionStart,e=ta.selectionEnd;
+  ta.setRangeText(text,s,e,"end");if(selStart!=null){ta.setSelectionRange(s+selStart,s+(selEnd??selStart))}ta.focus();ta.dispatchEvent(new Event("input"))}
+function insertMd(k){const ta=$("#de-body");const sel=ta.value.slice(ta.selectionStart,ta.selectionEnd);const nl=ta.selectionStart>0&&ta.value[ta.selectionStart-1]!=="\n"?"\n":"";
+  const W=(a,b,ph)=>{const t=sel||ph;insertAt(a+t+b,a.length,a.length+t.length)};
+  const B=(block,ph)=>{const t=nl+"\n"+block.replace("§",sel||ph)+"\n";const i=t.indexOf(sel||ph);insertAt(t,i,i+(sel||ph).length)};
+  ({h2:()=>B("## §","Heading"),bold:()=>W("**","**","bold text"),italic:()=>W("_","_","italic text"),link:()=>W("[","](https://)","link text"),
+    ul:()=>B("- §\n- ","Item"),task:()=>B("- [ ] §\n- [ ] ","To do"),quote:()=>B("> §","Quote"),
+    table:()=>B("| Column | Column |\n|---|---|\n| § | |","Value"),code:()=>B("```js\n§\n```","// code"),
+    mermaid:()=>B("```mermaid\n§\n```","sequenceDiagram\n  participant App\n  participant API\n  App->>API: GET /tasks\n  API-->>App: 200 OK"),
+    imgurl:()=>B("![§](https://example.com/image.png)","description"),vidurl:()=>B("![video: §](https://example.com/clip.mp4)","description")})[k]()}
+async function uploadInto(file){
+  const st=$("#de-up");const name=file.name||"pasted file";
+  const ext=(name.split(".").pop()||"").toLowerCase();
+  const TEXT={csv:"text/csv",md:"text/markdown",json:"application/json",txt:"text/plain"};
+  const opts=!file.type||/charset|ms-excel/.test(file.type)?(TEXT[ext]?{type:TEXT[ext]}:{}):{};
+  if(st)st.textContent="Uploading "+name+"…";
+  try{const r=await S.assets.upload(file,opts);const url=r.path;const t=r.contentType||"";const label=name.replace(/[\[\]]/g,"");
+    const snippet=t.startsWith("image/")?`![${label}](${url})`:t.startsWith("video/")?`![video: ${label}](${url})`:`[${label} (${(r.sizeBytes/1024).toFixed(0)} KB)](${url})`;
+    const ta=$("#de-body");if(ta){const nl=ta.selectionStart>0&&ta.value[ta.selectionStart-1]!=="\n"?"\n":"";insertAt(nl+snippet+"\n")}
+    if(st)st.textContent="Uploaded "+name;
+  }catch(e){const c=e&&e.code;const msg=c==="too_large"?"is too large (25 MB max). Link to long videos on YouTube or Loom instead":c==="unsupported_type"?"isn't a supported type (images, MP4/WebM, PDF, text)":c==="quota_or_state"?"couldn't be stored: file storage is full":c==="not_granted"?"needs Editor access to upload":"couldn't be uploaded. Try again.";
+    if(st)st.textContent=name+" "+msg;toast(name+" "+msg)}
+}
+async function saveDoc(){
+  const id=S.f.docs.editing;const title=$("#de-title").value.trim();if(!title){toast("Give the doc a title");$("#de-title").focus();return}
+  const body=$("#de-body").value;if(body.length>240000){toast("This doc is too long to save. Split it into two docs.");return}
+  const now=new Date().toISOString();
+  const data={title,category:$("#de-cat").value,tags:$("#de-tags").value.split(",").map(s=>s.trim()).filter(Boolean),sprintId:$("#de-sprint").value||null,taskIds:[...edLinked],body,updatedAt:now,
+    assets:[...new Set(body.match(/assets\/[^)\s"']+/g)||[])]};
+  const st=$("#de-state");if(st)st.textContent="Saving…";
+  if(id==="new"){data.createdAt=now;let ref;const ok=await write(async db=>{ref=await db.collection("docs").add(data)},"Doc published");
+    if(ok){S.f.docs.editing=null;S.f.docs.sel=ref.id;render()}else if(st)st.textContent=""}
+  else{const ok=await write(db=>db.doc("docs/"+id).update(data),"Doc saved");if(ok){S.f.docs.editing=null;S.f.docs.sel=id;render()}else if(st)st.textContent=""}
+}
+
+/* ---------- render ---------- */
+const VIEWS={tasks:renderTasks,sprints:renderSprints,team:renderTeam,meetings:renderMeetings,docs:renderDocs,archive:renderArchive};
+function render(){
+  renderClock();
+  const main=$("#main");
+  const act=document.activeElement;const aid=act&&act.id;let pos=null;try{pos=act&&act.selectionStart}catch(e){}
+  const keep={};main.querySelectorAll("input[id^='new-role'],input[id^='lvl-']").forEach(i=>{if(i.value)keep[i.id]=i.value});
+  const kept={};main.querySelectorAll("[data-keep]").forEach(n=>{kept[n.getAttribute("data-keep")]=n;n.remove()});
+  if(!S.db){main.innerHTML=signInHtml();return}
+  main.innerHTML=VIEWS[S.view]();
+  main.querySelectorAll("[data-keep]").forEach(n=>{const k=n.getAttribute("data-keep");if(kept[k])n.replaceWith(kept[k]);else fillKeep(n)});
+  for(const k in keep){const el=document.getElementById(k);if(el)el.value=keep[k]}
+  if(aid){const el=document.getElementById(aid);if(el&&main.contains(el)){el.focus();try{if(pos!=null)el.setSelectionRange(pos,pos)}catch(e){}}}
+}
+function route(){const h=location.hash.slice(1);S.view=VIEWS[h]?h:"tasks";render();window.scrollTo(0,0)}
+
+/* ---------- dialogs ---------- */
+const dlg=$("#dlg"),form=$("#dlgForm");
+let onSubmit=null;
+function openDialog(title,body,{submitLabel="Save",del=null,wide=false,delLabel=""}={}){
+  dlg.classList.toggle("wide",wide);
+  form.innerHTML=`<h2 class="dh">${esc(title)}</h2><div class="db">${body}</div><div class="df">
+    ${del?`<button class="btn danger" type="button" id="dlgDel">Delete</button>`:""}<div class="spacer"></div>
+    <button class="btn" type="button" id="dlgCancel">Cancel</button><button class="btn primary" type="submit" id="dlgOk"${ro()}>${esc(submitLabel)}</button></div>`;
+  $("#dlgCancel").onclick=()=>dlg.close();
+  if(del){const b=$("#dlgDel");b.onclick=async()=>{if(!await confirmDelete(delLabel||"this item"))return;b.disabled=true;if(await del())dlg.close();else b.disabled=false}}
+  dlg.showModal();const first=form.querySelector("input:not([type=radio]):not([type=checkbox]),select,textarea");if(first)first.focus();
+}
+form.addEventListener("submit",async e=>{e.preventDefault();if(!onSubmit)return;const ok=$("#dlgOk");ok.disabled=true;const r=await onSubmit(new FormData(form));ok.disabled=false;if(r!==false)dlg.close()});
+
+function taskDialog(t,preset={}){
+  const isNew=!t;
+  if(isNew){const f=S.f.tasks;const cs=currentSprint();t={status:"todo",priority:"medium",sprintId:f.mode==="sprint"&&f.sprint?f.sprint:cs?cs.id:null,...preset}}
+  const sprints=openSprints();const cur=sprintById(t.sprintId);if(cur&&cur.status==="completed")sprints.push(cur);
+  const assignees=activeMembers();const curM=memberById(t.assigneeId);if(curM&&!isActive(curM))assignees.push(curM);
+  openTaskId=isNew?null:t.id;
+  openDialog(isNew?(t.sprintId?"New task":"New backlog item"):taskKey(t)+" · "+(t.title||"Task"),`
+    <label class="full">Title<input name="title" id="t-title" required maxlength="200" value="${esc(t.title||"")}"></label>
+    <label class="full">Description<textarea name="description" id="t-desc" placeholder="Acceptance criteria, links, context">${esc(t.description||"")}</textarea></label>
+    <label>Assignee<select name="assigneeId" id="t-assignee"><option value="">Unassigned</option>${mOpts(assignees,t.assigneeId||"")}</select></label>
+    <label>Status<select name="status" id="t-status">${STATUSES.map(([v,l])=>`<option value="${v}"${t.status===v?" selected":""}>${l}</option>`).join("")}</select></label>
+    <label>Sprint<select name="sprintId" id="t-sprint"><option value="">Backlog (no sprint)</option>${sprints.map(s=>sprintOpt(s,t.sprintId)).join("")}</select></label>
+    <label>Priority<select name="priority" id="t-prio">${prioOptions(t.priority||"medium")}</select></label>
+    <label>Start date<input type="date" name="startDate" id="t-start" value="${esc(t.startDate||(isNew?today():isoDay(t.createdAt)))}"></label>
+    <label>Due date<input type="date" name="dueDate" id="t-due" value="${esc(t.dueDate||"")}"></label>
+    ${!isNew&&t.dueDate&&t.status!=="done"?(()=>{const tm=taskTiming(t);return`<p class="full timing ${tm.state==="overdue"?"due-over":tm.state==="near"?"due-near":""}">${tm.state==="overdue"?`Overdue by ${tm.days} day${tm.days===1?"":"s"}. Move the due date or finish the task to clear it.`:tm.state==="near"?`Due soon: ${Math.round(tm.frac*100)}% of the time from start to due date has passed.`:`On track: ${Math.round(tm.frac*100)}% of the time used, ${tm.left} day${tm.left===1?"":"s"} left.`}</p>`})():""}
+    <label>Tags<input name="tags" id="t-tags" placeholder="api, mobile" value="${esc(tagsOf(t).join(", "))}"></label>
+    ${!isNew?`<p class="note full">Created ${fmtY(isoDay(t.createdAt))}${t.completedAt?" · completed "+fmtY(isoDay(t.completedAt)):""} · ${qLabel(taskQuarter(t))}</p>
+    <div class="full sub-sec"><div class="sec-h"><b>Subtasks</b><span class="note" id="st-count"></span></div><div id="st-list"></div>
+      <div class="st-add"><input id="st-new" maxlength="200" placeholder="Add a subtask and press Enter" aria-label="New subtask"${ro()}><button type="button" class="btn sm" data-act="add-subtask" data-id="${esc(t.id)}"${ro()}>Add subtask</button></div></div>
+    <div class="full sub-sec"><div class="sec-h"><b>Linked docs</b></div><div id="t-docs" class="ldocs"></div></div>`:`<p class="note full">Each task gets its own key (T-1, T-2…). Subtasks (ST-1, ST-2…) can be added once the task is created.</p>`}`,
+    {wide:!isNew,delLabel:isNew?"":taskKey(t)+" and its subtasks",submitLabel:isNew?"Create":"Save",del:isNew?null:()=>write(async db=>{for(const x of subsOf(t.id))await db.doc("subtasks/"+x.id).delete();await db.doc("tasks/"+t.id).delete()},"Task and its subtasks deleted")});
+  refreshTaskExtras();
+  onSubmit=fd=>{
+    const now=new Date().toISOString();const status=fd.get("status");
+    const data={title:String(fd.get("title")).trim(),description:String(fd.get("description")||""),assigneeId:fd.get("assigneeId")||null,status,
+      sprintId:fd.get("sprintId")||null,priority:fd.get("priority"),dueDate:fd.get("dueDate")||null,startDate:fd.get("startDate")||null,
+      tags:String(fd.get("tags")||"").split(",").map(s=>s.trim()).filter(Boolean),updatedAt:now};
+    if(!data.title)return false;
+    if(data.startDate&&data.dueDate&&data.startDate>data.dueDate){toast("The due date must be on or after the start date");return false}
+    if(isNew){data.createdAt=now;data.completedAt=status==="done"?now:null;
+      return write(async db=>{data.num=await nextNum("tasks");await db.collection("tasks").add(data)}).then(ok=>{if(ok)toast("T-"+data.num+(data.sprintId?" created":" added to backlog"));return ok})}
+    data.completedAt=status==="done"?(t.completedAt||now):null;
+    return write(db=>db.doc("tasks/"+t.id).update(data),status==="done"&&t.status!=="done"?"Moved to Archive":"Task saved");
+  };
+}
+let openTaskId=null;
+dlg.addEventListener("close",()=>{openTaskId=null});
+function refreshTaskExtras(){
+  if(!dlg.open||!openTaskId)return;const el=$("#st-list");if(!el)return;
+  const act=document.activeElement;const sid=act&&act.dataset&&act.dataset.sid;let pos=null;try{pos=act.selectionStart}catch(e){}
+  const subs=subsOf(openTaskId);const people=activeMembers();
+  subs.forEach(x=>{const m=memberById(x.assigneeId);if(m&&!isActive(m)&&!people.includes(m))people.push(m)});
+  el.innerHTML=subs.length?subs.map(x=>`<div class="st-row${x.status==="done"?" is-done":""}"><span class="key">${esc(subKey(x))}</span>
+    <input class="st-title" data-sid="${esc(x.id)}" value="${esc(x.title)}" aria-label="Subtask ${esc(subKey(x))} title" maxlength="200"${ro()}>
+    <select data-sstatus="${esc(x.id)}" aria-label="Status"${ro()}>${STATUSES.map(([v,l])=>`<option value="${v}"${(x.status||"todo")===v?" selected":""}>${l}</option>`).join("")}</select>
+    <select data-sassign="${esc(x.id)}" aria-label="Assignee"${ro()}><option value="">Unassigned</option>${mOpts(people,x.assigneeId||"")}</select>
+    <button type="button" class="x" data-act="del-subtask" data-id="${esc(x.id)}" aria-label="Delete ${esc(subKey(x))}" title="Delete subtask"${ro()}>×</button></div>`).join(""):`<span class="note">No subtasks yet.</span>`;
+  const c=$("#st-count");if(c)c.textContent=subs.length?`${subs.filter(x=>x.status==="done").length} of ${subs.length} done`:"";
+  if(sid){const n=el.querySelector(`[data-sid="${CSS.escape(sid)}"]`);if(n){n.focus();try{if(pos!=null)n.setSelectionRange(pos,pos)}catch(e){}}}
+  const dl=$("#t-docs");if(dl){const ds=S.docs.filter(d=>(d.taskIds||[]).includes(openTaskId));
+    dl.innerHTML=ds.length?ds.map(d=>`<button type="button" class="linkbtn" data-act="goto-doc" data-id="${esc(d.id)}"><span class="cat">${esc(d.category||"Doc")}</span><span class="tt">${esc(d.title)}</span></button>`).join(""):`<span class="note">No docs link to this task. Link one from the doc's editor.</span>`}
+}
+async function addSubtask(taskId){
+  const inp=$("#st-new");const title=(inp&&inp.value||"").trim();if(!title){inp&&inp.focus();return}
+  const now=new Date().toISOString();const data={taskId,title,status:"todo",assigneeId:null,createdAt:now,updatedAt:now};
+  inp.disabled=true;
+  const ok=await write(async db=>{data.num=await nextNum("subtasks");await db.collection("subtasks").add(data)});
+  inp.disabled=false;if(ok){inp.value="";toast("ST-"+data.num+" added")}inp.focus();
+}
+function memberDialog(m){
+  const isNew=!m;m=m||{color:COLORS[S.members.length%COLORS.length],status:"active"};
+  const open=isNew?0:S.tasks.filter(t=>t.assigneeId===m.id&&t.status!=="done").length;
+  openDialog(isNew?"Add team member":"Edit member",`
+    <label class="full">Name<input name="name" id="mm-name" required maxlength="80" value="${esc(m.name||"")}"></label>
+    <label>Role<select name="roleId" id="mm-role"${S.roles.length?"":" disabled"}>${S.roles.length?`<option value="">Choose a role</option>`+sortedRoles().map(r=>`<option value="${esc(r.id)}"${m.roleId===r.id?" selected":""}>${esc(r.name)}</option>`).join(""):`<option value="">Add roles on the Team tab first</option>`}</select></label>
+    <label>Level<select name="level" id="mm-level"></select></label>
+    <label>Email (optional)<input type="email" name="email" id="mm-email" value="${esc(m.email||"")}"></label>
+    <label>Status<select name="status" id="mm-status"><option value="active"${isActive(m)?" selected":""}>Active</option><option value="inactive"${isActive(m)?"":" selected"}>Inactive</option></select></label>
+    <div class="full"><label>Color</label><div class="swatches">${COLORS.map((c,i)=>`<label><input type="radio" name="color" id="mm-c${i}" value="${c}"${m.color===c?" checked":""}><span style="background:${c}"></span></label>`).join("")}</div></div>
+    <p class="note full">Inactive members move to the Archive and drop out of assignment lists. ${open?`${open} open task${open===1?"":"s"} stay assigned to them until you reassign.`:"Their history stays linked."}</p>`,
+    {submitLabel:isNew?"Add member":"Save",delLabel:"member "+(m.name||""),del:isNew?null:()=>write(db=>db.doc("members/"+m.id).delete(),"Member removed. Their tasks show as unassigned.")});
+  const rs=$("#mm-role"),ls=$("#mm-level");
+  const fillLevels=keep=>{const lv=levelChoices(rs.value||"none");ls.innerHTML=lv.length?`<option value="">No level</option>`+lv.map(l=>`<option${keep===l?" selected":""}>${esc(l)}</option>`).join(""):`<option value="">${rs.value?"This role has no levels":"Choose a role first"}</option>`;ls.disabled=!lv.length};
+  fillLevels(m.level);rs.onchange=()=>fillLevels("");
+  onSubmit=fd=>{const status=fd.get("status");
+    const data={name:String(fd.get("name")).trim(),roleId:fd.get("roleId")||null,level:fd.get("level")||null,email:String(fd.get("email")||"").trim(),color:fd.get("color")||COLORS[0],status,
+      inactiveSince:status==="inactive"?(m.status==="inactive"&&m.inactiveSince?m.inactiveSince:new Date().toISOString()):null};
+    if(!data.name)return false;
+    if(isNew){data.createdAt=new Date().toISOString();return write(db=>db.collection("members").add(data),"Member added")}
+    return write(db=>db.doc("members/"+m.id).update(data),status!==(m.status||"active")?(status==="inactive"?"Moved to Archive":"Member reactivated"):"Member saved")};
+}
+function sprintDialog(s){
+  const isNew=!s;
+  if(isNew){const last=S.sprints.slice().sort(byStart).pop();const len=last?sprintLen(last):14;const start=last?addDays(last.endDate,1):today();
+    s={name:"Sprint "+(S.sprints.length+1),startDate:start,endDate:addDays(start,len-1),goal:"",status:"planned"}}
+  openDialog(isNew?"New sprint":"Edit sprint",`
+    <label class="full">Name<input name="name" id="sp-name" required maxlength="80" value="${esc(s.name)}"></label>
+    <label>Start date<input type="date" name="startDate" id="sp-start" required value="${esc(s.startDate)}"></label>
+    <label>End date<input type="date" name="endDate" id="sp-end" required value="${esc(s.endDate)}"></label>
+    <label class="full">Sprint goal<textarea name="goal" id="sp-goal" placeholder="What this sprint should achieve">${esc(s.goal||"")}</textarea></label>
+    ${s.status!=="completed"?`<label>Status<select name="status" id="sp-status"><option value="planned"${s.status!=="active"?" selected":""}>Planned</option><option value="active"${s.status==="active"?" selected":""}>Active</option>${isNew?"":`<option value="completed">Completed (end now)</option>`}</select></label>`:`<label class="full">Review notes<textarea name="review" id="sp-review">${esc(s.review||"")}</textarea></label>`}
+    ${!isNew?`<p class="note full">${tasksIn(s.id).length} task${tasksIn(s.id).length===1?"":"s"} in this sprint. Deleting the sprint moves unfinished ones to the backlog.</p>`:`<p class="note full">Dates are prefilled to follow your latest sprint.</p>`}`,
+    {submitLabel:isNew?"Create sprint":"Save",delLabel:s.name||"this sprint",del:isNew?null:()=>write(async db=>{await moveTasks(tasksIn(s.id).filter(t=>t.status!=="done"),{sprintId:null});await db.doc("sprints/"+s.id).delete()},"Sprint deleted")});
+  onSubmit=fd=>{const data={name:String(fd.get("name")).trim(),startDate:fd.get("startDate"),endDate:fd.get("endDate"),goal:String(fd.get("goal")||"").trim()};
+    if(!data.name||!data.startDate||!data.endDate)return false;
+    if(data.endDate<data.startDate){toast("End date must be on or after the start date");return false}
+    let finish=false;
+    if(s.status==="completed")data.review=String(fd.get("review")||"");else if(fd.get("status")==="completed")finish=true;else data.status=fd.get("status");
+    data.updatedAt=new Date().toISOString();
+    if(finish)return write(db=>db.doc("sprints/"+s.id).update(data)).then(ok=>{if(ok)setTimeout(()=>completeDialog({...sprintById(s.id),...data}),50);return ok});
+    if(isNew){data.createdAt=data.updatedAt;return write(db=>db.collection("sprints").add(data),"Sprint created")}
+    return write(db=>db.doc("sprints/"+s.id).update(data),"Sprint saved")};
+}
+function completeDialog(s){
+  const list=tasksIn(s.id);const unfinished=list.filter(t=>t.status!=="done");const next=openSprints().filter(x=>x.id!==s.id);
+  openDialog("Complete "+s.name,`
+    <p class="full">${list.length-unfinished.length} of ${list.length} task${list.length===1?"":"s"} done. The sprint and its finished work move to the Archive.${s.endDate>today()?` This ends the sprint now, before its planned end date of ${fmtY(s.endDate)}.`:""}</p>
+    ${unfinished.length?`<div class="full"><label>Move ${unfinished.length} unfinished task${unfinished.length===1?"":"s"} to</label><div class="radios">
+      ${next.map((x,i)=>`<label><input type="radio" name="dest" id="cd-${i}" value="${esc(x.id)}"${i===0?" checked":""}>${esc(x.name)} · ${fmt(x.startDate)} – ${fmt(x.endDate)}</label>`).join("")}
+      <label><input type="radio" name="dest" id="cd-b" value=""${next.length?"":" checked"}>Backlog</label></div></div>`:""}
+    <label class="full">Review notes (optional)<textarea name="review" id="cd-review" placeholder="What went well, what to change">${esc(s.review||"")}</textarea></label>`,{submitLabel:"Complete sprint"});
+  onSubmit=fd=>{const dest=fd.get("dest")||null;
+    return write(async db=>{
+      if(unfinished.length)await moveTasks(unfinished,{sprintId:dest});
+      await db.doc("sprints/"+s.id).update({status:"completed",completedAt:new Date().toISOString(),review:String(fd.get("review")||""),carriedOver:unfinished.length,doneCount:list.length-unfinished.length});
+      if(dest){const d=sprintById(dest);if(d&&d.status!=="active"&&!S.sprints.some(x=>x.status==="active"&&x.id!==s.id))await db.doc("sprints/"+dest).update({status:"active"})}
+    },s.name+" completed and archived")};
+}
+function meetingDialog(m,type){
+  const isNew=!m;const cs=currentSprint();const nextS=openSprints().find(x=>x.status==="planned"&&(!cs||x.startDate>cs.startDate))||cs;
+  m=m||{type:type||"daily",date:today(),attendees:activeMembers().map(x=>x.id),notes:TEMPLATES[type||"daily"],forSprint:nextS?nextS.id:null,forQuarter:null};
+  const people=activeMembers();(m.attendees||[]).forEach(id=>{const x=memberById(id);if(x&&!isActive(x))people.push(x)});
+  const spOpts=S.sprints.slice().sort(byStart).reverse();
+  openDialog(isNew?"Log meeting":"Meeting record",`
+    <label>Type<select name="type" id="mt-type">${MTYPES.map(([v,l])=>`<option value="${v}"${m.type===v?" selected":""}>${l}</option>`).join("")}</select></label>
+    <label>Date<input type="date" name="date" id="mt-date" required value="${esc(m.date)}"></label>
+    <label class="full">Title<input name="title" id="mt-title" placeholder="${esc(MLABEL[m.type])}" value="${esc(m.title||"")}"></label>
+    <label class="full" id="mt-for-s"${m.type==="sprint-plan"?"":" hidden"}>Planning for sprint<select name="forSprint" id="mt-fs">${spOpts.length?spOpts.map(s=>sprintOpt(s,m.forSprint)).join(""):`<option value="">No sprints yet</option>`}</select></label>
+    <label class="full" id="mt-for-q"${m.type==="quarter-plan"?"":" hidden"}>Planning for quarter<select name="forQuarter" id="mt-fq">${quarterOptions(m.forQuarter||nextQuarter())}</select></label>
+    <div class="full"><label>Attendees</label><div class="checks">${people.length?people.map((x,i)=>`<label><input type="checkbox" name="att" id="mt-a${i}" value="${esc(x.id)}"${(m.attendees||[]).includes(x.id)?" checked":""}>${av(x)}${esc(x.name)}</label>`).join(""):`<span class="note">Add team members to record attendance.</span>`}</div></div>
+    <label class="full">Notes<textarea name="notes" id="mt-notes" style="min-height:160px">${esc(m.notes||"")}</textarea></label>
+    <label class="full">Decisions<textarea name="decisions" id="mt-dec">${esc(m.decisions||"")}</textarea></label>
+    <label class="full">Action items<textarea name="actionItems" id="mt-ai" placeholder="Who does what by when">${esc(m.actionItems||"")}</textarea></label>`,
+    {submitLabel:isNew?"Save meeting":"Save",delLabel:"this meeting record",del:isNew?null:()=>write(db=>db.doc("meetings/"+m.id).delete(),"Meeting deleted")});
+  const sel=$("#mt-type"),notes=$("#mt-notes");
+  sel.onchange=()=>{const v=sel.value;$("#mt-for-s").hidden=v!=="sprint-plan";$("#mt-for-q").hidden=v!=="quarter-plan";
+    if(!notes.value.trim()||Object.values(TEMPLATES).includes(notes.value))notes.value=TEMPLATES[v];$("#mt-title").placeholder=MLABEL[v]};
+  onSubmit=fd=>{const t=fd.get("type");const data={type:t,date:fd.get("date"),title:String(fd.get("title")||"").trim(),attendees:fd.getAll("att"),
+    notes:String(fd.get("notes")||""),decisions:String(fd.get("decisions")||""),actionItems:String(fd.get("actionItems")||""),
+    forSprint:t==="sprint-plan"?(fd.get("forSprint")||null):null,forQuarter:t==="quarter-plan"?fd.get("forQuarter"):null,updatedAt:new Date().toISOString()};
+    if(isNew){data.createdAt=data.updatedAt;return write(db=>db.collection("meetings").add(data),"Meeting saved")}
+    return write(db=>db.doc("meetings/"+m.id).update(data),"Meeting saved")};
+}
+
+/* ---------- delete confirmation challenge ---------- */
+const cdlg=$("#cdlg");
+const SHAPES={circle:"circle",triangle:"triangle",square:"square"};
+function confirmDelete(what){
+  return new Promise(resolve=>{
+    let solved=false,mode=Math.random()<.5?"puzzle":"draw",fails=0;
+    const finish=v=>{cdlg.onclose=null;if(cdlg.open)cdlg.close();resolve(v)};
+    cdlg.onclose=()=>resolve(false);
+    const shell=()=>{
+      cdlg.innerHTML=`<div class="cf"><h2 class="dh">Delete ${esc(what)}?</h2>
+        <p class="cf-sub">This can't be undone. ${mode==="puzzle"?"Put the scrambled picture back together to confirm.":"Draw the shape below to confirm."}</p>
+        <div class="cf-body" id="cf-body"></div>
+        <p class="cf-msg" id="cf-msg" role="status"></p>
+        <div class="df"><button type="button" class="btn ghost sm" id="cf-switch">${mode==="puzzle"?"Draw a shape instead":"Solve a picture puzzle instead"}</button><div class="spacer"></div>
+          <button type="button" class="btn" id="cf-cancel">Cancel</button><button type="button" class="btn danger armed" id="cf-ok" disabled>Delete</button></div></div>`;
+      $("#cf-cancel").onclick=()=>finish(false);
+      $("#cf-ok").onclick=()=>{if(solved)finish(true)};
+      $("#cf-switch").onclick=()=>{mode=mode==="puzzle"?"draw":"puzzle";solved=false;fails=0;shell()};
+      const ok=v=>{solved=v;$("#cf-ok").disabled=!v};
+      if(mode==="puzzle")puzzle($("#cf-body"),ok);else drawShape($("#cf-body"),ok,()=>{fails++;if(fails>=3)$("#cf-msg").textContent+=" You can switch to the picture puzzle below."});
+    };
+    shell();cdlg.showModal();
+  });
+}
+/* --- picture puzzle: a generated picture cut into 3x3 tiles, shuffled; swap tiles until it's whole --- */
+function puzzle(host,ok){
+  const N=3,SZ=240,cv=document.createElement("canvas");cv.width=cv.height=SZ;const g=cv.getContext("2d");
+  const hue=Math.floor(Math.random()*360);
+  const grd=g.createLinearGradient(0,0,SZ,SZ);grd.addColorStop(0,`hsl(${hue} 70% 55%)`);grd.addColorStop(1,`hsl(${(hue+140)%360} 65% 40%)`);
+  g.fillStyle=grd;g.fillRect(0,0,SZ,SZ);
+  g.fillStyle=`hsl(${(hue+60)%360} 90% 70%)`;g.beginPath();g.arc(SZ*.25,SZ*.27,38,0,7);g.fill();
+  g.fillStyle="rgba(255,255,255,.85)";g.beginPath();g.moveTo(SZ*.62,SZ*.12);g.lineTo(SZ*.92,SZ*.52);g.lineTo(SZ*.5,SZ*.48);g.closePath();g.fill();
+  g.strokeStyle="rgba(0,0,0,.35)";g.lineWidth=6;g.beginPath();for(let x=0;x<=SZ;x+=8)g.lineTo(x,SZ*.78+Math.sin(x/16)*14);g.stroke();
+  const word=["SPRINT","DEPLOY","BACKLOG","REVIEW","RELEASE","SHIP IT"][Math.floor(Math.random()*6)];
+  g.font="700 34px 'Bricolage Grotesque', system-ui, sans-serif";g.textAlign="center";g.fillStyle="#fff";g.strokeStyle="rgba(0,0,0,.5)";g.lineWidth=4;
+  g.strokeText(word,SZ/2,SZ*.68);g.fillText(word,SZ/2,SZ*.68);
+  const url=cv.toDataURL();
+  let order=[...Array(N*N).keys()];
+  do{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}}while(order.filter((v,i)=>v===i).length>2);
+  let pick=null;
+  host.innerHTML=`<div class="pz-wrap"><div class="pz" id="pz" role="grid" aria-label="Scrambled picture"></div>
+    <figure class="pz-ref"><img src="${url}" alt="The picture to rebuild"><figcaption>Target</figcaption></figure></div>`;
+  const grid=host.querySelector("#pz");const step=100/(N-1);
+  const draw=()=>{grid.innerHTML=order.map((piece,slot)=>`<button type="button" class="pz-t${pick===slot?" sel":""}${piece===slot?" ok":""}" data-slot="${slot}" aria-label="Tile ${slot+1}${pick===slot?", selected":""}" style="background-image:url(${url});background-position:${(piece%N)*step}% ${Math.floor(piece/N)*step}%"></button>`).join("");
+    const solved=order.every((v,i)=>v===i);ok(solved);
+    $("#cf-msg").textContent=solved?"Picture restored. You can delete now.":pick==null?"Click a tile, then click where it belongs to swap them.":"Now click the tile to swap with."};
+  grid.onclick=e=>{const t=e.target.closest(".pz-t");if(!t)return;const s=+t.dataset.slot;
+    if(pick==null)pick=s;else{if(pick!==s)[order[pick],order[s]]=[order[s],order[pick]];pick=null}
+    draw();const f=grid.querySelector(`[data-slot="${s}"]`);f&&f.focus()};
+  draw();
+}
+/* --- draw a shape: recognise circle / triangle / square from the stroke --- */
+function drawShape(host,ok,onFail){
+  const target=Object.keys(SHAPES)[Math.floor(Math.random()*3)];
+  host.innerHTML=`<div class="dr-wrap"><div class="dr-target"><svg viewBox="0 0 60 60" width="56" height="56" aria-hidden="true">${target==="circle"?'<circle cx="30" cy="30" r="22"/>':target==="triangle"?'<path d="M30 7 L54 51 L6 51 Z"/>':'<rect x="9" y="9" width="42" height="42"/>'}</svg>
+    <span>Draw a <b>${target}</b> in one stroke</span></div>
+    <canvas id="dr" width="320" height="220" aria-label="Drawing area"></canvas>
+    <button type="button" class="btn sm ghost" id="dr-clear">Clear</button></div>`;
+  const cv=host.querySelector("#dr"),g=cv.getContext("2d");let pts=[],down=false;
+  const css=getComputedStyle(document.documentElement);
+  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+  const clear=()=>{g.clearRect(0,0,cv.width,cv.height);pts=[];ok(false)};
+  host.querySelector("#dr-clear").onclick=()=>{clear();$("#cf-msg").textContent=""};
+  cv.addEventListener("pointerdown",e=>{e.preventDefault();cv.setPointerCapture(e.pointerId);clear();down=true;pts.push(pos(e));
+    g.strokeStyle=css.getPropertyValue("--accent").trim()||"#1d6b58";g.lineWidth=4;g.lineCap=g.lineJoin="round";g.beginPath();g.moveTo(...pts[0])});
+  cv.addEventListener("pointermove",e=>{if(!down)return;const p=pos(e);pts.push(p);g.lineTo(...p);g.stroke()});
+  const up=()=>{if(!down)return;down=false;const got=classify(pts);const msg=$("#cf-msg");
+    if(got===target){ok(true);msg.textContent=`That's a ${target}. You can delete now.`}
+    else{ok(false);msg.textContent=got?`That looks like a ${got}. Try drawing a ${target}.`:`Couldn't recognise that. Draw a bigger, closed ${target}.`;onFail()}};
+  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+}
+function classify(p){
+  if(p.length<12)return null;
+  const xs=p.map(q=>q[0]),ys=p.map(q=>q[1]);const w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys),d=Math.hypot(w,h);
+  if(Math.max(w,h)<50)return null;
+  const gap=Math.hypot(p[0][0]-p[p.length-1][0],p[0][1]-p[p.length-1][1]);if(gap>d*.3)return null;
+  const cx=xs.reduce((a,b)=>a+b)/p.length,cy=ys.reduce((a,b)=>a+b)/p.length;
+  const rs=p.map(q=>Math.hypot(q[0]-cx,q[1]-cy));const mr=rs.reduce((a,b)=>a+b)/rs.length;
+  const cvr=Math.sqrt(rs.reduce((a,r)=>a+(r-mr)**2,0)/rs.length)/mr;
+  /* corners: simplify the closed path, then count sharp turns */
+  const rdp=(pts,eps)=>{if(pts.length<3)return pts;let i0=0,dm=0;const[a,b]=[pts[0],pts[pts.length-1]];const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
+    for(let i=1;i<pts.length-1;i++){const q=pts[i];const dd=Math.abs((b[0]-a[0])*(a[1]-q[1])-(a[0]-q[0])*(b[1]-a[1]))/L;if(dd>dm){dm=dd;i0=i}}
+    return dm>eps?[...rdp(pts.slice(0,i0+1),eps).slice(0,-1),...rdp(pts.slice(i0),eps)]:[a,b]};
+  /* split at the point farthest from the start so the closed loop simplifies cleanly */
+  let far=0,fd=0;p.forEach((q,i)=>{const dd=Math.hypot(q[0]-p[0][0],q[1]-p[0][1]);if(dd>fd){fd=dd;far=i}});
+  const eps=Math.max(w,h)*.09;
+  let poly=[...rdp(p.slice(0,far+1),eps).slice(0,-1),...rdp(p.slice(far),eps)];
+  if(Math.hypot(poly[0][0]-poly[poly.length-1][0],poly[0][1]-poly[poly.length-1][1])<d*.3)poly.pop();
+  const n=poly.length;let corners=0;
+  for(let i=0;i<n;i++){const a=poly[(i-1+n)%n],b=poly[i],c=poly[(i+1)%n];
+    const v1=[a[0]-b[0],a[1]-b[1]],v2=[c[0]-b[0],c[1]-b[1]];const ang=Math.acos(Math.max(-1,Math.min(1,(v1[0]*v2[0]+v1[1]*v2[1])/((Math.hypot(...v1)*Math.hypot(...v2))||1))))*180/Math.PI;
+    if(ang<140)corners++}
+  if(cvr<.16&&corners!==3&&corners!==4)return"circle";
+  if(corners===3)return"triangle";
+  if(corners===4)return"square";
+  if(cvr<.2)return"circle";
+  return null;
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act],[data-mode],[data-mtype],[data-atab],[data-ttab]");if(!b)return;
+  if(b.dataset.mode){S.f.tasks.mode=b.dataset.mode;LS.set("tsb-mode",S.f.tasks.mode);return render()}
+  if(b.dataset.mtype){S.f.mtg.type=b.dataset.mtype;return render()}
+  if(b.dataset.atab){S.f.arch.tab=b.dataset.atab;return render()}
+  if(b.dataset.ttab){e.preventDefault();S.f.team.tab=b.dataset.ttab;return render()}
+  const id=b.dataset.id,a=b.dataset.act;
+  if(a==="new-task")taskDialog(null,S.f.tasks.member!=="all"&&S.f.tasks.member!=="none"?{assigneeId:S.f.tasks.member}:{});
+  else if(a==="new-backlog")taskDialog(null,{sprintId:null});
+  else if(a==="edit-task")taskDialog(S.tasks.find(t=>t.id===id));
+  else if(a==="new-member")memberDialog();
+  else if(a==="edit-member")memberDialog(memberById(id));
+  else if(a==="assign")taskDialog(null,{assigneeId:id});
+  else if(a==="reactivate")write(db=>db.doc("members/"+id).update({status:"active",inactiveSince:null}),"Member reactivated");
+  else if(a==="member-tasks"){S.f.tasks.member=id;location.hash="tasks"}
+  else if(a==="member-archive"){S.f.arch={...ARCH0,member:id};location.hash="archive";render()}
+  else if(a==="arch-sprints"){S.f.arch.tab="sprints"}
+  else if(a==="arch-members"){S.f.arch.tab="members"}
+  else if(a==="add-role"){const n=$("#new-role").value.trim();if(!n)return toast("Type a role name first");
+    if(S.roles.some(r=>r.name.toLowerCase()===n.toLowerCase()))return toast("That role already exists");
+    const levels=[...new Set($("#new-role-levels").value.split(",").map(x=>x.trim()).filter(Boolean))];
+    write(db=>db.collection("roles").add({name:n,levels,createdAt:new Date().toISOString()}),"Role added").then(ok=>{if(ok){const a=$("#new-role"),b2=$("#new-role-levels");if(a)a.value="";if(b2)b2.value=""}})}
+  else if(a==="add-level"){const r=roleById(id);const inp=document.getElementById("lvl-"+id);const n=inp.value.trim();if(!n)return;
+    if((r.levels||[]).some(l=>l.toLowerCase()===n.toLowerCase()))return toast("That level already exists");
+    write(db=>db.doc("roles/"+id).update({levels:[...(r.levels||[]),n]}),"Level added").then(ok=>{const i=document.getElementById("lvl-"+id);if(ok&&i)i.value=""})}
+  else if(a==="rm-level"){const r=roleById(id),lv=b.dataset.level;
+    confirmDelete(`level "${lv}" from ${r.name}`).then(ok=>ok&&write(async db=>{await db.doc("roles/"+id).update({levels:(r.levels||[]).filter(l=>l!==lv)});
+      for(const m of S.members.filter(m=>m.roleId===id&&m.level===lv))await db.doc("members/"+m.id).update({level:null})},"Level removed"))}
+  else if(a==="rm-role"){const r=roleById(id);confirmDelete(`role "${r?r.name:""}"`).then(ok=>ok&&
+    write(async db=>{for(const m of S.members.filter(m=>m.roleId===id))await db.doc("members/"+m.id).update({roleId:null,level:null});await db.doc("roles/"+id).delete()},"Role deleted"))}
+  else if(a==="rename-role"){const r=roleById(id);openDialog("Rename role",`<label class="full">Role name<input name="name" id="rr-name" required maxlength="60" value="${esc(r.name)}"></label>`);
+    onSubmit=fd=>{const n=String(fd.get("name")).trim();if(!n)return false;return write(db=>db.doc("roles/"+id).update({name:n}),"Role renamed")}}
+  else if(a==="add-subtask")addSubtask(id);
+  else if(a==="del-subtask"){const x=S.subtasks.find(y=>y.id===id);confirmDelete("subtask "+subKey(x)).then(ok=>ok&&write(db=>db.doc("subtasks/"+id).delete(),"Subtask deleted"))}
+  else if(a==="goto-doc"){dlg.close();S.f.docs.sel=id;S.f.docs.editing=null;if(S.view!=="docs")location.hash="docs";else render()}
+  else if(a==="new-doc"){S.f.docs.editing="new";if(S.view!=="docs")location.hash="docs";render()}
+  else if(a==="open-doc"){const ed=document.querySelector('[data-keep^="edit-"]');if(ed&&ed.dataset.dirty&&!b.classList.contains("armed")){document.querySelectorAll(".dl-item.armed").forEach(x=>x.classList.remove("armed"));b.classList.add("armed");toast("You have unsaved changes. Click again to discard them.");return}
+    S.f.docs.sel=id;S.f.docs.editing=null;render();window.scrollTo(0,0)}
+  else if(a==="close-doc"){S.f.docs.sel=null;render()}
+  else if(a==="edit-doc"){S.f.docs.editing=id;render()}
+  else if(a==="cancel-doc"){const ed=document.querySelector('[data-keep^="edit-"]');if(ed&&ed.dataset.dirty&&!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Discard changes?";return}
+    if(S.f.docs.editing==="new")S.f.docs.sel=null;S.f.docs.editing=null;render()}
+  else if(a==="save-doc")saveDoc();
+  else if(a==="del-doc"){const d=S.docs.find(x=>x.id===id);confirmDelete(`doc "${d?d.title:""}"`).then(ok=>ok&&
+    write(db=>db.doc("docs/"+id).delete(),"Doc deleted").then(ok=>{if(ok){S.f.docs.sel=null;render()}}))}
+  else if(a==="copy-code"){const code=b.closest(".codeblk").querySelector("code");const txt=code.textContent;
+    const done=()=>{b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1500)};
+    try{navigator.clipboard.writeText(txt).then(done,()=>{const r=document.createRange();r.selectNodeContents(code);const sl=getSelection();sl.removeAllRanges();sl.addRange(r);b.textContent="Press Ctrl+C"})}
+    catch(e){const r=document.createRange();r.selectNodeContents(code);const sl=getSelection();sl.removeAllRanges();sl.addRange(r)}}
+  else if(a==="toggle-prev"){const sp=$("#de-split");sp.classList.toggle("show-prev");b.textContent=sp.classList.contains("show-prev")?"Write":"Preview"}
+  else if(a==="new-sprint")sprintDialog();
+  else if(a==="edit-sprint")sprintDialog(sprintById(id));
+  else if(a==="start-sprint"){const others=S.sprints.filter(x=>x.status==="active"&&x.id!==id);
+    write(async db=>{await db.doc("sprints/"+id).update({status:"active"});for(const o of others)await db.doc("sprints/"+o.id).update({status:"planned"})},others.length?"Sprint started. "+others.map(o=>o.name).join(", ")+" set back to planned.":"Sprint started")}
+  else if(a==="complete-sprint")completeDialog(sprintById(id));
+  else if(a==="reopen-sprint")write(db=>db.doc("sprints/"+id).update({status:"planned",completedAt:null}),"Sprint reopened");
+  else if(a==="open-board"){S.f.tasks.mode="sprint";S.f.tasks.sprint=id;location.hash="tasks"}
+  else if(a==="sprint-done-tasks"){S.f.arch={...ARCH0,sprint:id};render()}
+  else if(a==="new-meeting")meetingDialog(null,S.f.mtg.type!=="all"?S.f.mtg.type:"daily");
+  else if(a==="edit-meeting")meetingDialog(S.meetings.find(m=>m.id===id));
+  else if(a==="toggle-mtg"){const art=b.closest(".mtg");art.classList.toggle("open");b.textContent=art.classList.contains("open")?"Collapse":"Expand"}
+  else if(a==="reopen")setStatus(id,"on-test");
+  else if(a==="clear-arch"){S.f.arch={...ARCH0};render()}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.id==="st-new"){e.preventDefault();const b=document.querySelector('[data-act="add-subtask"]');b&&b.click();return}
+  if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("st-title")){e.preventDefault();e.target.blur();return}
+  if(e.key==="Enter"&&e.target.id==="de-tsearch"){e.preventDefault();const f=document.querySelector("#de-tres button");f&&f.click();return}
+  if(e.key==="Enter"&&e.target.id&&(e.target.id.startsWith("lvl-")||e.target.id==="new-role"||e.target.id==="new-role-levels")){e.preventDefault();const btn=e.target.id.startsWith("lvl-")?e.target.nextElementSibling:$('[data-act="add-role"]');btn&&btn.click();return}if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-act][tabindex]")){e.preventDefault();e.target.click()}});
+const FMAP={"f-sprint":["tasks","sprint"],"f-quarter":["tasks","quarter"],"f-from":["tasks","from"],"f-to":["tasks","to"],"f-member":["tasks","member"],"f-prio":["tasks","prio"],"f-timing":["tasks","timing"],"f-q":["tasks","q"],
+  "f-role":["tasks","role"],"f-level":["tasks","level"],"a-role":["arch","role"],"a-level":["arch","level"],"tm-role":["team","role"],"tm-level":["team","level"],"tm-q":["team","q"],
+  "d-q":["docs","q"],"d-cat":["docs","cat"],"d-kind":["docs","kind"],
+  "a-q":["arch","q"],"a-member":["arch","member"],"a-sprint":["arch","sprint"],"a-quarter":["arch","quarter"],"a-prio":["arch","prio"],"a-tag":["arch","tag"],"a-from":["arch","from"],"a-to":["arch","to"],
+  "m-from":["mtg","from"],"m-to":["mtg","to"],"m-member":["mtg","member"],"m-q":["mtg","q"]};
+let qt;
+document.addEventListener("input",e=>{const m=FMAP[e.target.id];if(!m)return;S.f[m[0]][m[1]]=e.target.value;
+  if(m[1]==="role"){const f=S.f[m[0]];if(f.level!=="all"&&!levelChoices(f.role).includes(f.level))f.level="all"}
+  if(e.target.type==="search"){clearTimeout(qt);qt=setTimeout(render,180)}else render()});
+document.addEventListener("change",e=>{
+  if(e.target.dataset.status)setStatus(e.target.dataset.status,e.target.value);
+  else if(e.target.dataset.sstatus){const v=e.target.value,now=new Date().toISOString();write(db=>db.doc("subtasks/"+e.target.dataset.sstatus).update({status:v,updatedAt:now,completedAt:v==="done"?now:null}))}
+  else if(e.target.dataset.sassign!==undefined&&e.target.dataset.sassign)write(db=>db.doc("subtasks/"+e.target.dataset.sassign).update({assigneeId:e.target.value||null,updatedAt:new Date().toISOString()}));
+  else if(e.target.dataset.sid){const v=e.target.value.trim();const x=S.subtasks.find(y=>y.id===e.target.dataset.sid);if(v&&x&&v!==x.title)write(db=>db.doc("subtasks/"+x.id).update({title:v,updatedAt:new Date().toISOString()}),"Subtask renamed")}
+  else if(e.target.dataset.move!==undefined&&e.target.value){const v=e.target.value;write(db=>db.doc("tasks/"+e.target.dataset.move).update({sprintId:v,updatedAt:new Date().toISOString()}),"Moved to "+sprintName(v))}
+});
+/* drag & drop */
+let dragId=null;
+document.addEventListener("dragstart",e=>{const c=e.target.closest&&e.target.closest(".card");if(!c)return;dragId=c.dataset.id;c.classList.add("dragging");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",dragId)}catch(_){}});
+document.addEventListener("dragend",()=>{document.querySelectorAll(".dragging,.over").forEach(x=>x.classList.remove("dragging","over"));dragId=null});
+document.addEventListener("dragover",e=>{const col=e.target.closest&&e.target.closest("[data-drop]");if(!col||!dragId)return;e.preventDefault();document.querySelectorAll(".over").forEach(x=>x!==col&&x.classList.remove("over"));col.classList.add("over")});
+document.addEventListener("drop",e=>{const col=e.target.closest&&e.target.closest("[data-drop]");if(!col||!dragId)return;e.preventDefault();col.classList.remove("over");if(!S.readOnly)setStatus(dragId,col.dataset.drop)});
+
+window.addEventListener("hashchange",route);
+setInterval(()=>{if(!dlg.open&&!cdlg.open&&S.view!=="docs")render()},5*60*1000);
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{if(S.view==="docs")render()})}catch(e){}
+new MutationObserver(()=>{if(S.view==="docs")render()}).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+/* ---------- boot ---------- */
+$("#btnOut").onclick=signOut;
+const lm=LS.get("tsb-mode");if(["sprint","quarter","week"].includes(lm))S.f.tasks.mode=lm;
+{const saved=LS.get(CFG_KEY);if(saved&&saved.token&&saved.owner&&saved.repo)connect(saved);else route();}
+})();
+</script>
+</body>
+</html>
