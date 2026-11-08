@@ -132,7 +132,7 @@ main{padding-block:20px 60px}
 .donezone .big{font-family:var(--f-display);font-size:34px;font-weight:700;color:var(--s-done);line-height:1}
 .empty-col{color:var(--muted);font-size:13px;padding:10px 4px}
 
-.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:600;color:#fff;flex:none;letter-spacing:.02em}
+.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:600;color:#fff;flex:none;letter-spacing:.02em;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .av.lg{width:42px;height:42px;font-size:15px}
 .av.off{filter:grayscale(1);opacity:.6}
 .who{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:12px}
@@ -281,8 +281,8 @@ td .rowacts{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 dialog.wide{width:min(780px,calc(100vw - 32px))}
 .sub-sec{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--line);padding-top:10px}
 .sec-h{display:flex;align-items:baseline;gap:8px;color:var(--ink);font-size:13px}
-.st-row{display:grid;grid-template-columns:56px minmax(0,1fr) 112px 130px 26px;gap:6px;align-items:center}
-@media (max-width:600px){.st-row{grid-template-columns:52px minmax(0,1fr) 26px}.st-row select{grid-column:2/3}}
+.st-row{display:grid;grid-template-columns:56px minmax(0,1fr) 64px 112px 130px 26px;gap:6px;align-items:center}
+@media (max-width:600px){.st-row{grid-template-columns:52px minmax(0,1fr) 26px}.st-row select,.st-row .st-est{grid-column:2/3}}
 .db .st-row input,.db .st-row select{padding:5px 7px;font-size:13px}
 .st-row.is-done .st-title{text-decoration:line-through;color:var(--muted)}
 .x{border:0;background:transparent;color:var(--muted);cursor:pointer;width:24px;height:24px;border-radius:50%;font-size:16px;line-height:1}
@@ -301,22 +301,89 @@ dialog.wide{width:min(780px,calc(100vw - 32px))}
 .tres:empty{display:none}
 .tres button{display:flex;gap:8px;align-items:center;border:0;background:transparent;padding:6px 8px;border-radius:5px;cursor:pointer;text-align:left;color:var(--ink);font-weight:400}
 .tres button:hover,.tres button:focus-visible{background:var(--sunk)}
+/* epics + swimlanes */
+.epic-chip{display:inline-block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;font-size:11px;font-weight:600;padding:1px 7px;border-radius:4px;background:var(--ec);color:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.box.epic{border-top:4px solid var(--ec)}
+.box h3.clickable{cursor:pointer}.box h3.clickable:hover{color:var(--accent)}
+.epic-prog{font-size:13px}.epic-prog b{font-family:var(--f-mono);font-size:15px;font-weight:500}
+.lanes{display:flex;flex-direction:column;gap:10px}
+.lane-cols,.lane-body{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lane-cols{padding:0 9px}
+.lc{display:flex;align-items:center;gap:8px;font-weight:600;padding:2px 4px}
+.lane{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.lane.is-over{border-color:var(--s-over)}.lane.is-near{border-color:var(--s-near)}
+.lane-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;min-width:0}
+.lane-head.epic-head{box-shadow:inset 4px 0 0 var(--ec)}
+.lane-head select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:3px 6px;font-size:12px}
+.lane-title{cursor:pointer;overflow-wrap:anywhere;min-width:0}.lane-title:hover{color:var(--accent)}
+.lane-prog{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.lane-prog .stack{width:90px}
+.lane-body{padding:8px;background:var(--sunk);border-top:1px solid var(--line)}
+.cell{min-height:64px;border-radius:8px;padding:4px;display:flex;flex-direction:column;gap:6px;border:1px dashed transparent;min-width:0}
+.cell.over{border-color:var(--accent);background:var(--accent-soft)}
+.donecell{align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.donecell .big{font-family:var(--f-display);font-size:26px;font-weight:700;color:var(--s-done);line-height:1}
+.card.sub{padding:8px;gap:6px;box-shadow:none}.card.sub h4{font-size:13px;font-weight:500}
+.card.sub.is-done h4{text-decoration:line-through;color:var(--muted)}
+.caret{font-size:13px}
+@media (max-width:820px){.lane-cols{display:none}.lane-body{grid-template-columns:repeat(2,minmax(0,1fr))}.cell::before{content:attr(data-label);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:2px 2px 0}}
+.donecell .note{font-family:var(--f-body);font-size:12px}
+@media (max-width:520px){.lane-body{grid-template-columns:minmax(0,1fr)}.cell{min-height:34px}}
+/* workload */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:6px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tile>span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.tile>b{font-family:var(--f-display);font-size:28px;line-height:1}
+.tile small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.loadcell{display:flex;align-items:center;gap:8px;min-width:120px}
+.loadcell .lbar{flex:1;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden;min-width:50px}
+.loadcell .lbar i{display:block;height:100%;background:var(--accent)}
+.loadcell b{font-family:var(--f-mono);font-size:12px;font-weight:500;white-space:nowrap}
+.loadcell.sev-high .lbar i{background:var(--s-over)}.loadcell.sev-high b{color:var(--s-over)}
+.loadcell.sev-warn .lbar i{background:var(--s-near)}.loadcell.sev-warn b{color:var(--s-near)}
+.loadcell.sev-good .lbar i{background:var(--s-done)}
+.pill.sev-high{background:var(--s-over-bg);color:var(--s-over)}.pill.sev-warn{background:var(--s-near-bg);color:var(--s-near)}
+.pill.sev-info{background:var(--s-prog-bg);color:var(--s-prog)}.pill.sev-good{background:var(--s-done-bg);color:var(--s-done)}
+.sev-text-high{color:var(--s-over)}.sev-text-good{color:var(--s-done)}
+.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.fgroup{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.fhead{display:flex;gap:8px;align-items:center}
+.finding{font-size:13px;border-top:1px solid var(--line);padding-top:8px;overflow-wrap:anywhere}
+table.wl td.stick{position:sticky;left:0;background:var(--surface);z-index:1;box-shadow:1px 0 0 var(--line)}.rvbtn{margin-top:8px;display:block}table.wl .flags{min-width:200px}table.wl{min-width:640px}table.wl td{vertical-align:top}table.wl td:first-child{min-width:190px}table.wl .rowacts{flex-wrap:nowrap}
+.flags{display:flex;flex-wrap:wrap;gap:4px}
+.leavein{width:76px;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 6px}
+code.expr,table.wl code{font-family:var(--f-mono);font-size:12px;background:var(--sunk);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+tr.off{opacity:.55}
+details.ref{margin-top:16px}details.ref summary{cursor:pointer;font-weight:600;margin-bottom:8px}
+.params{gap:16px}.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.params label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+.params input,.params select,.params textarea{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:7px 8px;font-size:14px;font-weight:400;color:var(--ink);max-width:100%}
+.params textarea{min-height:60px;resize:vertical}
+.params .note{font-weight:400}
+.params fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.params legend{font-weight:600;font-size:13px;padding:0 4px}
+.params .checks label{flex-direction:row}
+.tag.ins{border:1px solid var(--line);cursor:pointer;font-family:var(--f-mono)}.tag.ins:hover{border-color:var(--accent);color:var(--ink)}
+.est{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+/* reviews */
+.kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.kv div{background:var(--sunk);border-radius:8px;padding:6px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kv span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.kv b{font-family:var(--f-mono);font-weight:500;font-size:14px;color:var(--ink)}
+.tlist{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--ink);font-weight:400;display:flex;flex-direction:column;gap:3px;max-height:180px;overflow:auto}
+.db .sec-h{font-size:12px;color:var(--muted)}
 /* delete challenge */
-#cdlg{width:min(600px,calc(100vw - 32px))}
+#cdlg{width:min(440px,calc(100vw - 32px))}
 .cf .cf-sub{margin:0;padding:0 18px;color:var(--muted)}
-.cf-body{padding:14px 18px 4px}
-.cf-msg{margin:0;padding:4px 18px 0;min-height:1.5em;font-size:13px;color:var(--ink)}
-.pz-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
-.pz{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:min(270px,100%);aspect-ratio:1;max-width:100%}
-.pz-t{border:0;padding:0;background-size:300% 300%;cursor:pointer;border-radius:4px;outline:2px solid transparent;outline-offset:-2px;transition:transform .12s}
-.pz-t:hover{transform:scale(.97)}
-.pz-t.sel{outline:3px solid var(--ink);transform:scale(.93)}
-.pz-ref{margin:0;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.pz-ref img{width:96px;height:96px;border-radius:6px;filter:blur(1.5px) saturate(.7);opacity:.85}
-.dr-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
-.dr-target{display:flex;align-items:center;gap:10px;font-size:14px}
-.dr-target svg *{fill:none;stroke:var(--muted);stroke-width:3;stroke-dasharray:5 4}
-#dr{width:100%;max-width:420px;aspect-ratio:320/220;height:auto;border:2px dashed var(--line);border-radius:10px;background:var(--bg);touch-action:none;cursor:crosshair}
+.cf-body{padding:16px 18px 4px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.cf-msg{margin:0;padding:4px 18px 0;min-height:1.5em;font-size:13px;color:var(--muted);text-align:center}
+.ty-word{display:flex;gap:6px}
+.ty-word span{width:40px;height:48px;display:grid;place-items:center;border-radius:8px;border:2px solid var(--line);background:var(--bg);font:700 22px var(--f-mono);text-transform:uppercase;color:var(--muted);transition:background .12s,border-color .12s,color .12s,transform .12s}
+.ty-word span.hit{background:var(--danger,#c0392b);border-color:var(--danger,#c0392b);color:#fff;transform:translateY(-2px)}
+.ty-word span.cur{border-color:var(--ink)}
+.ty-word.shake{animation:tyshake .28s}
+@keyframes tyshake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#ty-in{width:min(240px,100%);text-align:center;font:600 18px var(--f-mono);letter-spacing:.2em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){.ty-word.shake{animation:none}.ty-word span{transition:none}}
 /* dialog */
 dialog{border:1px solid var(--line);border-radius:12px;padding:0;background:var(--surface);color:var(--ink);width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 40px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
 dialog::backdrop{background:rgba(10,20,15,.45)}
@@ -336,12 +403,20 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 42px)}
 .radios label{flex-direction:row;align-items:center;gap:8px;font-weight:500;color:var(--ink);font-size:14px;cursor:pointer}
 .radios input{width:auto}
 .df{display:flex;gap:8px;padding:12px 18px 16px;border-top:1px solid var(--line);margin-top:8px;flex-wrap:wrap}
-.swatches{display:flex;gap:6px;flex-wrap:wrap}
-.swatches label{flex-direction:row;padding:0}
-.swatches input{position:absolute;opacity:0;width:1px}
-.swatches span{width:26px;height:26px;border-radius:50%;display:block;border:3px solid transparent;cursor:pointer}
-.swatches input:checked+span{border-color:var(--ink)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:3px}
+.swatches label{flex-direction:row;padding:0;position:relative}
+.swatches input[type=radio]{position:absolute;opacity:0;width:1px}
+.swatches span{width:26px;height:26px;border-radius:50%;display:block;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+.swatches input:checked+span{outline:2px solid var(--ink);outline-offset:2px}
 .swatches input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.swatches .add span{display:grid;place-items:center;font-size:18px;line-height:1;color:var(--muted);background:var(--bg);box-shadow:none;border:1.5px dashed var(--muted)}
+.swatches .add input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+.swatches .add:hover span{color:var(--ink);border-color:var(--ink)}
+.swatches .add:focus-within span{outline:2px solid var(--accent);outline-offset:2px}
+.swatches .swx{position:absolute;top:-6px;right:-6px;width:16px;height:16px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:11px;line-height:1;cursor:pointer;display:none;padding:0}
+.swatches label:hover .swx,.swatches .swx:focus-visible{display:block}
+.swatches .swx:hover{color:var(--danger);border-color:var(--danger)}
+.swhint{font-size:12px;color:var(--muted);font-weight:400}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -357,7 +432,10 @@ dialog form{display:flex;flex-direction:column;max-height:calc(100vh - 42px)}
     <button class="btn ghost sm" id="btnOut" type="button" hidden>Sign out</button>
     <nav class="tabs" id="tabs">
       <a href="#tasks" data-v="tasks">Tasks<span class="n" id="n-tasks"></span></a>
+      <a href="#epics" data-v="epics">Epics<span class="n" id="n-epics"></span></a>
       <a href="#sprints" data-v="sprints">Sprints &amp; backlog<span class="n" id="n-sprints"></span></a>
+      <a href="#workload" data-v="workload">Workload</a>
+      <a href="#reviews" data-v="reviews">Reviews</a>
       <a href="#team" data-v="team">Team<span class="n" id="n-team"></span></a>
       <a href="#meetings" data-v="meetings">Meetings<span class="n" id="n-meetings"></span></a>
       <a href="#docs" data-v="docs">Docs<span class="n" id="n-docs"></span></a>
@@ -386,19 +464,28 @@ const PRANK={urgent:0,high:1,medium:2,low:3};
 const MTYPES=[["daily","Daily standup"],["product","Weekly product call"],["sprint-plan","Sprint planning"],["quarter-plan","Quarter planning"]];
 const MLABEL=Object.fromEntries(MTYPES);
 const COLORS=["#1d6b58","#2c66d1","#8a4fc4","#c2456b","#c56a1c","#5d7a14","#127a8a","#6b5b4e"];
+/* Extra preset colors shown in every color picker, alongside the defaults above. */
+const EXTRA_COLORS=["#000000","#ffffff","#6b7280","#1e3a8a","#0ea5e9","#16a34a","#eab308","#f97316","#dc2626","#db2777","#7c3aed","#92400e"];
+const normColor=c=>{c=String(c||"").trim().toLowerCase();if(/^#[0-9a-f]{3}$/.test(c))c="#"+c.slice(1).split("").map(x=>x+x).join("");return/^#[0-9a-f]{6}$/.test(c)?c:""};
+/* Dark or light text, whichever reads better on the given background. */
+function textOn(bg){const c=normColor(bg);if(!c)return"#fff";const[r,g,b]=[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);
+  const L=.2126*r+.7152*g+.0722*b;return L>.35?"#111":"#fff"}
 const TEMPLATES={
   daily:"Yesterday:\n- \n\nToday:\n- \n\nBlockers:\n- ",
   product:"Progress since last call:\n- \n\nDemos / shipped:\n- \n\nRisks & open questions:\n- \n\nDecisions:\n- ",
   "sprint-plan":"Sprint goal:\n\nCommitted work:\n- \n\nCapacity / leave:\n- \n\nCarry-over from last sprint:\n- ",
   "quarter-plan":"Quarter objectives:\n1. \n\nKey results:\n- \n\nMajor initiatives:\n- \n\nRisks & dependencies:\n- "
 };
-const ARCH0={tab:"tasks",q:"",member:"all",role:"all",level:"all",sprint:"all",quarter:"all",prio:"all",tag:"all",from:"",to:""};
+const ARCH0={tab:"tasks",q:"",epic:"all",member:"all",role:"all",level:"all",sprint:"all",quarter:"all",prio:"all",tag:"all",from:"",to:""};
 
 /* ---------- state ---------- */
-const S={db:null,members:[],tasks:[],meetings:[],sprints:[],roles:[],docs:[],subtasks:[],assets:null,
-  loaded:{members:false,tasks:false,meetings:false,sprints:false,roles:false,docs:false,subtasks:false},slow:false,offline:false,readOnly:false,
+const S={db:null,members:[],tasks:[],meetings:[],sprints:[],roles:[],docs:[],subtasks:[],epics:[],analysis:[],settings:[],reviews:[],wl:null,rv:null,assets:null,collapsed:new Set(),
+  loaded:{members:false,tasks:false,meetings:false,sprints:false,roles:false,docs:false,subtasks:false,epics:false,analysis:false,settings:false,reviews:false},slow:false,offline:false,readOnly:false,
   view:"tasks",
-  f:{tasks:{mode:"sprint",sprint:null,quarter:null,from:null,to:null,member:"all",role:"all",level:"all",prio:"all",timing:"all",q:""},
+  f:{tasks:{mode:"sprint",sprint:null,quarter:null,from:null,to:null,member:"all",role:"all",level:"all",prio:"all",timing:"all",epic:"all",group:"subtasks",q:""},
+     epics:{show:"open"},
+     wl:{tab:"results",scope:"sprint",sprint:null,quarter:null,role:"all"},
+     rv:{tab:"retro",sprint:null,period:"quarter",quarter:null,end:null,role:"all"},
      team:{tab:"members",role:"all",level:"all",q:""},
      docs:{sel:null,editing:null,q:"",cat:"all",kind:"all"},
      arch:{...ARCH0},
@@ -466,7 +553,7 @@ const roleOptions=sel=>`<option value="all">All roles</option>`+sortedRoles().ma
 const matchRL=(m,role,level)=>(role==="all"||(m&&m.roleId===role))&&(level==="all"||(m&&m.level===level));
 const rlFields=(p,f)=>`<label class="fld"><span>Role</span><select id="${p}-role">${roleOptions(f.role)}</select></label><label class="fld"><span>Level</span><select id="${p}-level">${levelOptions(f.role,f.level)}</select></label>`;
 const initials=n=>(n||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase();
-const av=(m,cls="")=>m?`<span class="av ${cls}${isActive(m)?"":" off"}" style="background:${esc(m.color||COLORS[0])}" title="${esc(m.name)}">${esc(initials(m.name))}</span>`:`<span class="av ${cls}" style="background:var(--muted)" title="Unassigned">–</span>`;
+const av=(m,cls="")=>m?`<span class="av ${cls}${isActive(m)?"":" off"}" style="background:${esc(m.color||COLORS[0])};color:${textOn(m.color||COLORS[0])}" title="${esc(m.name)}">${esc(initials(m.name))}</span>`:`<span class="av ${cls}" style="background:var(--muted)" title="Unassigned">–</span>`;
 const who=id=>{const m=memberById(id);return`<span class="who">${av(m)}${esc(m?m.name:"Unassigned")}${m&&!isActive(m)?' <span class="note">(inactive)</span>':""}</span>`};
 const pill=(s,cls,label)=>`<span class="pill ${cls}">${esc(label)}</span>`;
 const prio=p=>p&&p!=="medium"?`<span class="pr pr-${p}">${esc(p)}</span>`:"";
@@ -492,8 +579,9 @@ async function moveTasks(list,patch){for(const t of list){await S.db.doc("tasks/
 /* ---------- GitHub storage ----------
    Every record is a JSON file in the repo: data/<collection>/<id>.json
    Uploads go to assets/. Reads use one GraphQL query; writes are commits via the Contents API. */
-const COLLS=["members","tasks","meetings","sprints","roles","docs","subtasks"];
-const SINGULAR={members:"member",tasks:"task",meetings:"meeting",sprints:"sprint",roles:"role",docs:"doc",subtasks:"subtask"};
+const COLLS=["members","tasks","meetings","sprints","roles","docs","subtasks","epics","analysis","settings","reviews"];
+const SINGULAR={members:"member",tasks:"task",meetings:"meeting",sprints:"sprint",roles:"role",docs:"doc",subtasks:"subtask",epics:"epic",analysis:"workload settings",settings:"settings",reviews:"review"};
+const KEY_PREFIX={tasks:"T-",subtasks:"ST-",epics:"E-"};
 const CFG_KEY="tsb-github";
 const GH={api:"https://api.github.com",owner:"",repo:"",branch:"main",token:"",head:null,files:{},canPush:false,pending:0};
 function ghDefaults(){
@@ -543,7 +631,7 @@ async function ghLoadAll(){
 }
 let wq=Promise.resolve();
 function queued(fn){GH.pending++;const p=wq.then(()=>fn());wq=p.catch(()=>{});return p.finally(()=>{GH.pending--})}
-const recLabel=(c,d)=>((c==="tasks"&&d.num?"T-"+d.num+" ":"")+(c==="subtasks"&&d.num?"ST-"+d.num+" ":"")+(d.title||d.name||d.type||"")).trim().slice(0,72);
+const recLabel=(c,d)=>(((KEY_PREFIX[c]&&d.num)?KEY_PREFIX[c]+d.num+" ":"")+(d.title||d.name||d.periodLabel||d.type||"")).trim().slice(0,72);
 async function putRecord(c,id,data,sha,verb){
   const j=await gh(`${repoPath()}/contents/${encPath(`data/${c}/${id}.json`)}`,{method:"PUT",body:Object.assign(
     {message:`${verb} ${SINGULAR[c]||c}: ${recLabel(c,data)||id}`,content:jsonB64(data),branch:GH.branch},sha?{sha}:{})});
@@ -585,13 +673,13 @@ function ghDoc(c,id){
 }
 function ghColl(c){
   return{doc:id=>ghDoc(c,id||rid()),
-    /* Tasks and subtasks are stored as T-<n>.json / ST-<n>.json. Creating a file that already exists fails,
+    /* Tasks, subtasks and epics are stored as T-<n>.json / ST-<n>.json / E-<n>.json. Creating a file that already exists fails,
        so if a teammate took the same number a moment ago we move to the next one. */
     add:data=>queued(async()=>{
-      const numbered=c==="tasks"||c==="subtasks";
+      const numbered=!!KEY_PREFIX[c];
       for(let a=0;a<10;a++){
         if(numbered&&a>0)data.num=(data.num||0)+1;
-        const id=numbered?(c==="tasks"?"T-":"ST-")+data.num:rid();
+        const id=numbered?KEY_PREFIX[c]+data.num:rid();
         try{await putRecord(c,id,data,null,"Create");localSet(c,id,data);return{id}}
         catch(e){if(isConflict(e))continue;throw e}
       }
@@ -599,8 +687,8 @@ function ghColl(c){
     })};
 }
 const ghDB={collection:ghColl,doc:p=>{const i=p.indexOf("/");return ghDoc(p.slice(0,i),p.slice(i+1))}};
-/* Next number for T-n / ST-n: one past the highest number in the repo. */
-async function nextNum(kind){return Math.max(0,...(kind==="tasks"?S.tasks:S.subtasks).map(x=>x.num||0))+1}
+/* Next number for T-n / ST-n / E-n: one past the highest number in the repo. */
+async function nextNum(kind){return Math.max(0,...(S[kind]||[]).map(x=>x.num||0))+1}
 /* Uploads */
 const MIME={png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",svg:"image/svg+xml",mp4:"video/mp4",webm:"video/webm",mov:"video/quicktime",pdf:"application/pdf",txt:"text/plain",csv:"text/csv",md:"text/markdown",json:"application/json",zip:"application/zip"};
 const mimeOf=p=>MIME[(p.split(".").pop()||"").toLowerCase()]||"application/octet-stream";
@@ -671,7 +759,7 @@ async function poll(){
 }
 function signInHtml(){
   const saved=Object.assign(ghDefaults(),LS.get(CFG_KEY)||{});
-  if(S.connecting)return`<div class="signin box"><h2>Connecting to ${esc(GH.owner)}/${esc(GH.repo)}…</h2><p class="note">Loading members, tasks, sprints, meetings and docs from the repository.</p></div>`;
+  if(S.connecting)return`<div class="signin box"><h2>Connecting to ${esc(GH.owner)}/${esc(GH.repo)}…</h2><p class="note">Loading members, epics, tasks, sprints, meetings and docs from the repository.</p></div>`;
   return`<div class="signin box">
     <h2>Connect your GitHub repository</h2>
     <p>Everything your team adds is saved as files in this repository: records in <code>data/</code>, uploaded images and videos in <code>assets/</code>. Each change is a commit.</p>
@@ -704,7 +792,7 @@ function renderClock(){
   document.querySelectorAll("#tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.v===S.view?"page":"false"));
   const active=S.tasks.filter(t=>t.status!=="done"&&t.sprintId).length;
   $("#n-tasks").textContent=active||"";$("#n-sprints").textContent=openSprints().length||"";
-  $("#n-team").textContent=activeMembers().length||"";$("#n-meetings").textContent=S.meetings.length||"";$("#n-docs").textContent=S.docs.length||"";
+  $("#n-team").textContent=activeMembers().length||"";$("#n-meetings").textContent=S.meetings.length||"";$("#n-epics").textContent=openEpics().length||"";$("#n-docs").textContent=S.docs.length||"";
   const arch=S.tasks.filter(t=>t.status==="done").length+doneSprints().length+inactiveMembers().length;
   $("#n-archive").textContent=arch||"";
   $("#tabs").hidden=!S.db;$("#btnOut").hidden=!S.db;$("#clock").hidden=!S.db;
@@ -740,6 +828,7 @@ function filteredActive(){
     if(f.member!=="all"&&(f.member==="none"?t.assigneeId:t.assigneeId!==f.member))return false;
     if(f.prio!=="all"&&(t.priority||"medium")!==f.prio)return false;
     if(!matchRL(memberById(t.assigneeId),f.role,f.level))return false;
+    if(f.epic!=="all"&&(f.epic==="none"?!!t.epicId:t.epicId!==f.epic))return false;
     if(f.timing!=="all"&&taskTiming(t).state!==f.timing)return false;
     if(f.q&&!(taskKey(t)+" "+t.title+" "+(t.description||"")+" "+tagsOf(t).join(" ")).toLowerCase().includes(f.q.toLowerCase()))return false;
     if(f.mode==="sprint")return!!f.sprint&&t.sprintId===f.sprint;
@@ -759,11 +848,13 @@ function renderTasks(){
   let h=`<div class="viewhead"><div><h2>Tasks</h2><p>${esc(scope)}${curS&&curS.goal?" · Goal: "+esc(curS.goal):""}${(()=>{const o=list.filter(isOverdue).length,n=list.filter(t=>taskTiming(t).state==="near").length;return(o?` · <span class="due-over">${o} overdue</span>`:"")+(n?` · <span class="due-near">${n} due soon</span>`:"")})()}</p></div><div class="spacer"></div>
     <div class="acts">${curS?`<button class="btn" type="button" data-act="complete-sprint" data-id="${esc(curS.id)}"${ro()}>Complete ${esc(curS.name)}</button>`:""}<button class="btn primary" type="button" data-act="new-task"${ro()}>New task</button></div></div>${banners()}
   <div class="filters">
+    <div class="fld"><span>Swimlanes</span><div class="seg" role="group">${[["subtasks","Subtasks"],["epic","Epics"],["none","None"]].map(([v,l])=>`<button type="button" data-group="${v}" aria-pressed="${f.group===v}">${l}</button>`).join("")}</div></div>
     <div class="fld"><span>View by</span><div class="seg" role="group">
       ${[["sprint","Sprint"],["quarter","Quarter"],["week","Last 7 days"]].map(([v,l])=>`<button type="button" data-mode="${v}" aria-pressed="${f.mode===v}">${l}</button>`).join("")}</div></div>
     ${f.mode==="sprint"?(open.length?`<label class="fld"><span>Sprint</span><select id="f-sprint">${open.slice().reverse().map(s=>sprintOpt(s,f.sprint)).join("")}</select></label>`:`<div class="fld"><span>Sprint</span><div class="hint">No sprints yet. <a href="#sprints">Create one</a></div></div>`):""}
     ${f.mode==="quarter"?`<label class="fld"><span>Quarter</span><select id="f-quarter">${quarterOptions(f.quarter)}</select></label>`:""}
     ${f.mode==="week"?`<label class="fld"><span>From</span><input type="date" id="f-from" value="${f.from}"></label><label class="fld"><span>To</span><input type="date" id="f-to" value="${f.to}"></label>`:""}
+    <label class="fld"><span>Epic</span><select id="f-epic">${epicOptions(f.epic,{all:true})}</select></label>
     <label class="fld"><span>Member</span><select id="f-member"><option value="all">Everyone</option><option value="none"${f.member==="none"?" selected":""}>Unassigned</option>${mOpts(activeMembers(),f.member)}</select></label>
     ${rlFields("f",f)}
     <label class="fld"><span>Priority</span><select id="f-prio">${prioOptions(f.prio,true)}</select></label>
@@ -775,6 +866,11 @@ function renderTasks(){
     return h+`<div class="emptystate"><h3>Create a sprint to start the board</h3><p>Tasks are planned into sprints. Create your first sprint, then add tasks to it or pull them in from the backlog.</p>
       <div class="acts"><a class="btn primary" href="#sprints">Go to Sprints &amp; backlog</a></div></div>`;
   }
+  if(loading())return h+`<div class="emptystate"><p>Loading tasks…</p></div>`;
+  return h+(f.group==="epic"?boardEpicLanes(list):f.group==="none"?boardFlat(list):boardSubLanes(list));
+}
+function boardFlat(list){
+  let h="";
   const doneCount=list.filter(t=>t.status==="done").length;
   const byP=(a,b)=>(PRANK[a.priority||"medium"]-PRANK[b.priority||"medium"])||((a.dueDate||"9")>(b.dueDate||"9")?1:-1);
   const overdue=list.filter(isOverdue).sort((a,b)=>(a.dueDate||"").localeCompare(b.dueDate||""));
@@ -795,7 +891,7 @@ function card(t){
     :tm.state==="near"?`<div class="timing due-near"><span>Due soon</span><span class="tbar"><i style="width:${Math.min(100,tm.frac*100).toFixed(0)}%;background:var(--s-near)"></i></span><span>${Math.min(100,Math.round(tm.frac*100))}% of time used</span></div>`:"";
   return`<article class="card${overdue?" is-over":tm.state==="near"?" is-near":""}" draggable="true" data-id="${esc(t.id)}">
     <h4 data-act="edit-task" data-id="${esc(t.id)}" tabindex="0">${esc(t.title)}</h4>${timing}
-    <div class="meta"><span class="key">${esc(taskKey(t))}</span>${subBadge(t)}${prio(t.priority)}${t.dueDate?`<span class="mono${overdue?" due-over":tm.state==="near"?" due-near":""}">due ${fmt(t.dueDate)}</span>`:""}${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}${S.f.tasks.mode!=="sprint"?`<span class="mono">${esc(sprintName(t.sprintId))}</span>`:""}</div>
+    <div class="meta"><span class="key">${esc(taskKey(t))}</span>${S.f.tasks.group!=="epic"?epicChip(t.epicId):""}${subBadge(t)}${+t.estimate>0?`<span class="est" title="Estimate">${t.estimate} ${unitLabel(analysisConfig().params)}</span>`:""}${prio(t.priority)}${t.dueDate?`<span class="mono${overdue?" due-over":tm.state==="near"?" due-near":""}">due ${fmt(t.dueDate)}</span>`:""}${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}${S.f.tasks.mode!=="sprint"?`<span class="mono">${esc(sprintName(t.sprintId))}</span>`:""}</div>
     <div class="foot">${who(t.assigneeId)}<select data-status="${esc(t.id)}" aria-label="Status"${S.readOnly?" disabled":""}>${STATUSES.map(([v,l])=>`<option value="${v}"${(t.status||"todo")===v?" selected":""}>${l}</option>`).join("")}</select></div>
   </article>`;
 }
@@ -821,6 +917,8 @@ function renderSprints(){
       <p class="goal${s.goal?"":" none"}">${s.goal?esc(s.goal):"No sprint goal set"}</p>
       ${html}<div class="counts">${STATUSES.map(([st,l])=>`<div><b>${c[st]}</b><span>${l}</span></div>`).join("")}</div>
       <div class="acts"><button class="btn sm" type="button" data-act="open-board" data-id="${esc(s.id)}">Open board</button>
+        <button class="btn sm" type="button" data-act="sprint-workload" data-id="${esc(s.id)}">Check workload</button>
+        <button class="btn sm" type="button" data-act="sprint-retro" data-id="${esc(s.id)}">Retro</button>
         ${s.status!=="active"?`<button class="btn sm" type="button" data-act="start-sprint" data-id="${esc(s.id)}"${ro()}>Start sprint</button>`:""}
         <button class="btn sm" type="button" data-act="complete-sprint" data-id="${esc(s.id)}"${ro()}>Complete sprint</button>
         <button class="btn sm ghost" type="button" data-act="edit-sprint" data-id="${esc(s.id)}"${ro()}>Edit</button></div></article>`}).join("")+`</div>`;
@@ -828,7 +926,7 @@ function renderSprints(){
   if(loading())return h;
   if(!backlog.length)return h+`<div class="emptystate"><h3>Backlog is empty</h3><p>Capture work that isn't scheduled yet. Move items into a sprint when you plan it.</p><div class="acts"><button class="btn" type="button" data-act="new-backlog"${ro()}>Add backlog item</button></div></div>`;
   h+=`<div class="tablewrap"><table><thead><tr><th>Item</th><th>Assignee</th><th>Priority</th><th>Due</th><th>Move to sprint</th></tr></thead><tbody>`+
-    backlog.map(t=>`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div>${tagsOf(t).length?`<div class="meta">${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div>`:""}</td>
+    backlog.map(t=>`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div>${t.epicId?`<div class="meta">${epicChip(t.epicId,true)}</div>`:""}${tagsOf(t).length?`<div class="meta">${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div>`:""}</td>
       <td>${who(t.assigneeId)}</td><td>${prio(t.priority)||'<span class="note">medium</span>'}</td><td class="mono">${dueText(t)}</td>
       <td>${open.length?`<select class="rowsel" data-move="${esc(t.id)}" aria-label="Move to sprint"${S.readOnly?" disabled":""}><option value="">Keep in backlog</option>${open.map(s=>`<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("")}</select>`:`<span class="note">Create a sprint first</span>`}</td></tr>`).join("")+`</tbody></table></div>`;
   return h;
@@ -910,9 +1008,13 @@ function renderMeetings(){
 function renderArchive(){
   const f=S.f.arch;
   const done=S.tasks.filter(t=>t.status==="done"),ds=doneSprints(),ina=inactiveMembers();
-  let h=`<div class="viewhead"><div><h2>Archive</h2><p>Completed tasks, completed sprints and inactive team members</p></div></div>${banners()}
-    <div class="seg" role="group" style="margin-bottom:14px">${[["tasks","Done tasks",done.length],["sprints","Completed sprints",ds.length],["members","Inactive members",ina.length]].map(([v,l,n])=>`<button type="button" data-atab="${v}" aria-pressed="${f.tab===v}">${l}<span class="n">${n}</span></button>`).join("")}</div>`;
+  let h=`<div class="viewhead"><div><h2>Archive</h2><p>Completed tasks and epics, completed sprints and inactive team members</p></div></div>${banners()}
+    <div class="seg" role="group" style="margin-bottom:14px">${[["tasks","Done tasks",done.length],["epics","Done epics",S.epics.filter(e=>e.status==="done").length],["sprints","Completed sprints",ds.length],["members","Inactive members",ina.length]].map(([v,l,n])=>`<button type="button" data-atab="${v}" aria-pressed="${f.tab===v}">${l}<span class="n">${n}</span></button>`).join("")}</div>`;
   if(loading())return h+`<div class="emptystate"><p>Loading archive…</p></div>`;
+  if(f.tab==="epics"){const de=S.epics.filter(e=>e.status==="done").sort((a,b)=>byNum(b,a));
+    if(!de.length)return h+`<div class="emptystate"><h3>No finished epics yet</h3><p>Set an epic's status to Done and it moves here, with its tasks and progress kept.</p></div>`;
+    return h+`<div class="grid">`+de.map(epicCard).join("")+`</div>`;
+  }
   if(f.tab==="sprints"){
     if(!ds.length)return h+`<div class="emptystate"><h3>No completed sprints yet</h3><p>When you complete a sprint on the Sprints &amp; backlog tab it's stored here with its goal, dates, review notes and the work finished in it.</p></div>`;
     return h+`<div class="tablewrap"><table><thead><tr><th>Sprint</th><th>Dates</th><th>Quarter</th><th>Done</th><th>Carried over</th><th>Completed</th><th></th></tr></thead><tbody>`+
@@ -920,7 +1022,7 @@ function renderArchive(){
         return`<tr><td><div class="t" data-act="edit-sprint" data-id="${esc(s.id)}" tabindex="0">${esc(s.name)}</div>${s.goal?`<div class="sub">${esc(s.goal)}</div>`:""}${s.review?`<div class="sub">Review: ${esc(s.review)}</div>`:""}</td>
         <td class="mono">${fmt(s.startDate)} – ${fmtY(s.endDate)}</td><td class="mono">${qLabel(quarterOf(s.startDate))}</td>
         <td class="mono">${doneIn}</td><td class="mono">${s.carriedOver??0}</td><td class="mono">${fmtY(isoDay(s.completedAt))}</td>
-        <td><div class="rowacts"><button class="btn sm" type="button" data-act="sprint-done-tasks" data-id="${esc(s.id)}">View done tasks</button><button class="btn sm ghost" type="button" data-act="reopen-sprint" data-id="${esc(s.id)}"${ro()}>Reopen</button></div></td></tr>`}).join("")+`</tbody></table></div>`;
+        <td><div class="rowacts"><button class="btn sm" type="button" data-act="sprint-done-tasks" data-id="${esc(s.id)}">View done tasks</button><button class="btn sm" type="button" data-act="sprint-retro" data-id="${esc(s.id)}">Retro</button><button class="btn sm ghost" type="button" data-act="reopen-sprint" data-id="${esc(s.id)}"${ro()}>Reopen</button></div></td></tr>`}).join("")+`</tbody></table></div>`;
   }
   if(f.tab==="members"){
     if(!ina.length)return h+`<div class="emptystate"><h3>No inactive members</h3><p>Set a member's status to Inactive from the Team tab and they move here. Their past tasks and meeting attendance stay linked.</p></div>`;
@@ -936,6 +1038,7 @@ function renderArchive(){
   const list=done.filter(t=>{
     if(f.member!=="all"&&(f.member==="none"?t.assigneeId:t.assigneeId!==f.member))return false;
     if(f.sprint!=="all"&&(f.sprint===""?!!t.sprintId:t.sprintId!==f.sprint))return false;
+    if(f.epic!=="all"&&(f.epic==="none"?!!t.epicId:t.epicId!==f.epic))return false;
     if(f.quarter!=="all"&&taskQuarter(t)!==f.quarter)return false;
     if(f.prio!=="all"&&(t.priority||"medium")!==f.prio)return false;
     if(!matchRL(memberById(t.assigneeId),f.role,f.level))return false;
@@ -947,6 +1050,7 @@ function renderArchive(){
     <label class="fld" style="flex:1;min-width:140px"><span>Search</span><input type="search" id="a-q" value="${esc(f.q)}" placeholder="Title or description"></label>
     <label class="fld"><span>Member</span><select id="a-member"><option value="all">Everyone</option><option value="none"${f.member==="none"?" selected":""}>Unassigned</option>${mOpts([...activeMembers(),...inactiveMembers()],f.member)}</select></label>
     ${rlFields("a",f)}
+    <label class="fld"><span>Epic</span><select id="a-epic">${epicOptions(f.epic,{all:true})}</select></label>
     <label class="fld"><span>Sprint</span><select id="a-sprint"><option value="all">All sprints</option><option value=""${f.sprint===""?" selected":""}>Backlog (no sprint)</option>${S.sprints.slice().sort(byStart).reverse().map(s=>sprintOpt(s,f.sprint)).join("")}</select></label>
     <label class="fld"><span>Quarter</span><select id="a-quarter">${quarterOptions(f.quarter,true)}</select></label>
     <label class="fld"><span>Priority</span><select id="a-prio">${prioOptions(f.prio,true)}</select></label>
@@ -958,7 +1062,7 @@ function renderArchive(){
   if(!done.length)return h+`<div class="emptystate"><h3>Nothing archived yet</h3><p>When a task is marked Done it lands here, with its sprint, quarter, assignee and completion date kept for filtering.</p></div>`;
   if(!list.length)return h+`<div class="emptystate"><p>No completed tasks match these filters.</p></div>`;
   h+=`<div class="tablewrap"><table><thead><tr><th>Task</th><th>Assignee</th><th>Sprint</th><th>Quarter</th><th>Priority</th><th>Completed</th><th></th></tr></thead><tbody>`+
-    list.map(t=>`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div>${tagsOf(t).length?`<div class="meta">${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div>`:""}</td>
+    list.map(t=>`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div>${t.epicId?`<div class="meta">${epicChip(t.epicId,true)}</div>`:""}${tagsOf(t).length?`<div class="meta">${tagsOf(t).map(g=>`<span class="tag">${esc(g)}</span>`).join("")}</div>`:""}</td>
       <td>${who(t.assigneeId)}</td><td class="mono">${esc(sprintName(t.sprintId))}</td><td class="mono">${qLabel(taskQuarter(t))}</td>
       <td>${prio(t.priority)||'<span class="note">medium</span>'}</td><td class="mono">${fmtY(isoDay(t.completedAt))}</td>
       <td><button class="btn sm" type="button" data-act="reopen" data-id="${esc(t.id)}"${ro()}>Reopen</button></td></tr>`).join("")+`</tbody></table></div>`;
@@ -1158,8 +1262,777 @@ async function saveDoc(){
   else{const ok=await write(db=>db.doc("docs/"+id).update(data),"Doc saved");if(ok){S.f.docs.editing=null;S.f.docs.sel=id;render()}else if(st)st.textContent=""}
 }
 
+/* ---------- color picker ---------- */
+const paletteColors=()=>((S.settings.find(x=>x.id==="palette")||{}).colors||[]).map(normColor).filter(Boolean);
+const PRESET_SET=()=>new Set([...COLORS,...EPIC_COLORS,...EXTRA_COLORS].map(normColor));
+/* Presets, then the team's saved colors (removable), then a "+" swatch that opens a full color picker. */
+function colorPicker(name,idp,presets,current){
+  const cur=normColor(current);const pre=[...new Set([...presets,...EXTRA_COLORS].map(normColor))];
+  const saved=paletteColors().filter(c=>!pre.includes(c));const all=[...pre,...saved];
+  if(cur&&!all.includes(cur))saved.push(cur),all.push(cur);
+  const sw=(c,i,removable)=>`<label title="${c}"><input type="radio" name="${name}" id="${idp}${i}" value="${c}"${cur===c?" checked":""}><span style="background:${c}"></span>${removable?`<button type="button" class="swx" data-act="rm-color" data-color="${c}" aria-label="Remove ${c} from the team palette">×</button>`:""}</label>`;
+  return`<div class="swatches" data-cname="${name}">${all.map((c,i)=>sw(c,i,i>=pre.length&&paletteColors().includes(c))).join("")}
+    <label class="add" title="Add a color"><input type="color" data-cpick="${name}" id="${idp}pick" value="${cur||"#3366cc"}" aria-label="Pick a new color"><span aria-hidden="true">+</span></label></div>
+    <span class="swhint">Pick a swatch or press + to choose any color. New colors are saved to the team palette.</span>`;
+}
+/* Save a newly picked color to the shared palette (settings/palette). */
+async function ensurePalette(db,c){c=normColor(c);if(!c||PRESET_SET().has(c))return;const pal=paletteColors();if(pal.includes(c))return;
+  await db.doc("settings/palette").set({colors:[...pal,c],updatedAt:new Date().toISOString()})}
+
+/* ---------- EPICS ---------- */
+const EPIC_ST=[["todo","To do"],["in-progress","In progress"],["done","Done"]];
+const EPLABEL=Object.fromEntries(EPIC_ST);
+const EPIC_COLORS=["#7b4fc4","#1f8a8a","#c2650f","#c23f78","#2f6fd1","#3f8a35","#8a6a3a","#c2392f"];
+const epicKey=e=>e&&e.num?"E-"+e.num:"E-…";
+const epicById=id=>id?S.epics.find(e=>e.id===id):null;
+const epicChip=(id,withKey)=>{const e=epicById(id);return e?`<span class="epic-chip" style="--ec:${esc(e.color||EPIC_COLORS[0])};color:${textOn(e.color||EPIC_COLORS[0])}" title="Epic ${esc(epicKey(e))}: ${esc(e.title)}">${withKey?esc(epicKey(e))+" · ":""}${esc(e.title)}</span>`:""};
+const tasksOfEpic=id=>S.tasks.filter(t=>t.epicId===id);
+const byNum=(a,b)=>(a.num||0)-(b.num||0);
+const openEpics=()=>S.epics.filter(e=>e.status!=="done").sort(byNum);
+function epicOptions(sel,{all=false}={}){
+  const list=openEpics();const cur=epicById(sel);if(cur&&cur.status==="done")list.push(cur);
+  return(all?`<option value="all"${sel==="all"?" selected":""}>All epics</option><option value="none"${sel==="none"?" selected":""}>No epic</option>`:`<option value="">No epic</option>`)+
+    (all?S.epics.slice().sort(byNum):list).map(e=>`<option value="${esc(e.id)}"${sel===e.id?" selected":""}>${esc(epicKey(e))} · ${esc(e.title)}${e.status==="done"?" (done)":""}</option>`).join("");
+}
+function renderEpics(){
+  const f=S.f.epics;const all=S.epics.slice().sort(byNum);
+  const list=all.filter(e=>f.show==="all"||(f.show==="open"?e.status!=="done":e.status==="done"));
+  let h=`<div class="viewhead"><div><h2>Epics</h2><p>Big pieces of work that group related tasks. Progress counts the tasks linked to each epic.</p></div><div class="spacer"></div>
+    <div class="acts"><button class="btn primary" type="button" data-act="new-epic"${ro()}>New epic</button></div></div>${banners()}
+    <div class="seg" role="group" style="margin-bottom:14px">${[["open","Open",all.filter(e=>e.status!=="done").length],["done","Done",all.filter(e=>e.status==="done").length],["all","All",all.length]].map(([v,l,n])=>`<button type="button" data-eshow="${v}" aria-pressed="${f.show===v}">${l}<span class="n">${n}</span></button>`).join("")}</div>`;
+  if(loading())return h+`<div class="emptystate"><p>Loading epics…</p></div>`;
+  if(!all.length)return h+`<div class="emptystate"><h3>No epics yet</h3><p>Create an epic for a feature or initiative, such as "Checkout redesign", then link tasks to it from the task form. Each epic shows how much of its work is done.</p><div class="acts"><button class="btn primary" type="button" data-act="new-epic"${ro()}>New epic</button></div></div>`;
+  if(!list.length)return h+`<div class="emptystate"><p>No ${f.show==="done"?"finished":"open"} epics.</p></div>`;
+  return h+`<div class="grid">`+list.map(epicCard).join("")+`</div>`;
+}
+function epicCard(e){
+  const ts=tasksOfEpic(e.id);const ids=new Set(ts.map(t=>t.id));const subs=S.subtasks.filter(x=>ids.has(x.taskId));
+  const done=ts.filter(t=>t.status==="done").length;const pct=ts.length?Math.round(done/ts.length*100):0;
+  const{c,html}=stackBar(ts);const over=ts.filter(isOverdue).length;const owner=memberById(e.ownerId);const st=e.status||"todo";
+  return`<article class="box epic" style="--ec:${esc(e.color||EPIC_COLORS[0])}">
+    <div class="toprow"><span class="key">${esc(epicKey(e))}</span>${pill(st,"st-"+st,EPLABEL[st])}${over?`<span class="pill st-overdue">${over} overdue</span>`:""}</div>
+    <h3 class="clickable" data-act="edit-epic" data-id="${esc(e.id)}" tabindex="0">${esc(e.title)}</h3>
+    ${e.description?`<p class="goal">${esc(e.description.slice(0,160))}${e.description.length>160?"…":""}</p>`:""}
+    <div class="note">${e.startDate||e.targetDate?`${e.startDate?fmtY(e.startDate):"…"} → ${e.targetDate?fmtY(e.targetDate):"…"}`:"No dates set"}${owner?` · owner ${esc(owner.name)}`:""}</div>
+    ${html}
+    <div class="epic-prog"><b>${pct}%</b> done · ${done} of ${ts.length} task${ts.length===1?"":"s"}${subs.length?` · ${subs.filter(x=>x.status==="done").length}/${subs.length} subtasks`:""}</div>
+    <div class="counts">${STATUSES.map(([s,l])=>`<div><b>${c[s]}</b><span>${l}</span></div>`).join("")}</div>
+    <div class="acts"><button class="btn sm" type="button" data-act="epic-board" data-id="${esc(e.id)}">View on board</button>
+      <button class="btn sm" type="button" data-act="epic-add-task" data-id="${esc(e.id)}"${ro()}>Add task</button>
+      <button class="btn sm ghost" type="button" data-act="edit-epic" data-id="${esc(e.id)}"${ro()}>Edit</button></div></article>`;
+}
+function epicDialog(e){
+  const isNew=!e;e=e||{status:"todo",color:EPIC_COLORS[S.epics.length%EPIC_COLORS.length]};
+  const n=isNew?0:tasksOfEpic(e.id).length;
+  openDialog(isNew?"New epic":epicKey(e)+" · "+e.title,`
+    <label class="full">Title<input name="title" id="ep-title" required maxlength="160" value="${esc(e.title||"")}" placeholder="Checkout redesign"></label>
+    <label class="full">Description<textarea name="description" id="ep-desc" placeholder="Goal, scope, success criteria">${esc(e.description||"")}</textarea></label>
+    <label>Status<select name="status" id="ep-status">${EPIC_ST.map(([v,l])=>`<option value="${v}"${(e.status||"todo")===v?" selected":""}>${l}</option>`).join("")}</select></label>
+    <label>Owner<select name="ownerId" id="ep-owner"><option value="">No owner</option>${mOpts(activeMembers(),e.ownerId||"")}</select></label>
+    <label>Start date<input type="date" name="startDate" id="ep-start" value="${esc(e.startDate||"")}"></label>
+    <label>Target date<input type="date" name="targetDate" id="ep-target" value="${esc(e.targetDate||"")}"></label>
+    <div class="full"><label>Color</label>${colorPicker("color","ep-c",EPIC_COLORS,e.color)}</div>
+    ${isNew?`<p class="note full">Epics are numbered E-1, E-2… Link tasks to an epic from the task form.</p>`:`<p class="note full">${n} task${n===1?"":"s"} linked. Deleting the epic keeps the tasks and removes the link.</p>`}`,
+    {submitLabel:isNew?"Create epic":"Save",delLabel:isNew?"":"epic "+epicKey(e),
+     del:isNew?null:()=>write(async db=>{for(const t of tasksOfEpic(e.id))await db.doc("tasks/"+t.id).update({epicId:null,updatedAt:new Date().toISOString()});await db.doc("epics/"+e.id).delete()},"Epic deleted")});
+  onSubmit=fd=>{const now=new Date().toISOString();
+    const data={title:String(fd.get("title")).trim(),description:String(fd.get("description")||""),status:fd.get("status"),ownerId:fd.get("ownerId")||null,
+      startDate:fd.get("startDate")||null,targetDate:fd.get("targetDate")||null,color:fd.get("color")||EPIC_COLORS[0],updatedAt:now};
+    if(!data.title)return false;
+    if(data.startDate&&data.targetDate&&data.startDate>data.targetDate){toast("The target date must be on or after the start date");return false}
+    data.color=normColor(data.color)||EPIC_COLORS[0];
+    if(isNew){data.createdAt=now;return write(async db=>{await ensurePalette(db,data.color);data.num=await nextNum("epics");await db.collection("epics").add(data)}).then(ok=>{if(ok)toast("E-"+data.num+" created");return ok})}
+    return write(async db=>{await ensurePalette(db,data.color);await db.doc("epics/"+e.id).update(data)},"Epic saved")};
+}
+
+/* ---------- BOARD: swimlanes ---------- */
+const byPrio=(a,b)=>(PRANK[a.priority||"medium"]-PRANK[b.priority||"medium"])||((a.dueDate||"9")>(b.dueDate||"9")?1:-1);
+const statusOpts=v=>STATUSES.map(([s,l])=>`<option value="${s}"${(v||"todo")===s?" selected":""}>${l}</option>`).join("");
+function laneCols(){return`<div class="lane-cols" aria-hidden="true">${STATUSES.map(([s,l,c])=>`<div class="lc"><span class="dot" style="background:${c}"></span>${l}</div>`).join("")}</div>`}
+function laneCaret(key,label){const closed=S.collapsed.has(key);return`<button type="button" class="x caret" data-act="toggle-lane" data-id="${esc(key)}" aria-expanded="${!closed}" aria-label="${closed?"Expand":"Collapse"} ${esc(label)}">${closed?"▸":"▾"}</button>`}
+function subCard(x){
+  const st=x.status||"todo";
+  return`<article class="card sub${st==="done"?" is-done":""}" draggable="${S.readOnly?"false":"true"}" data-subid="${esc(x.id)}">
+    <div class="meta"><span class="key">${esc(subKey(x))}</span>${+x.estimate>0?`<span class="est" title="Estimate">${x.estimate} ${unitLabel(analysisConfig().params)}</span>`:""}</div>
+    <h4 data-act="edit-task" data-id="${esc(x.taskId)}" tabindex="0" title="Open the parent task">${esc(x.title)}</h4>
+    <div class="foot">${who(x.assigneeId)}<select data-sstatus="${esc(x.id)}" aria-label="${esc(subKey(x))} status"${ro()}>${statusOpts(st)}</select></div></article>`;
+}
+function doneCell(n){return`<div class="cell donecell" data-drop="done" data-label="Done"><div class="big">${n}</div><div class="note">done. Drop a task here to finish it; it moves to the Archive.</div></div>`}
+function boardSubLanes(list){
+  const parents=list.filter(t=>t.status!=="done"&&subsOf(t.id).length).sort(byPrio);
+  const others=list.filter(t=>t.status!=="done"&&!subsOf(t.id).length);
+  const doneN=list.filter(t=>t.status==="done").length;
+  if(!parents.length&&!others.length)return`<div class="emptystate"><p>No open tasks in this view.${doneN?` ${doneN} done.`:""}</p></div>`;
+  let h=`<div class="lanes">`+laneCols();
+  for(const t of parents){
+    const subs=subsOf(t.id),dn=subs.filter(x=>x.status==="done").length,tm=taskTiming(t),key=t.id,closed=S.collapsed.has(key);
+    const{html}=stackBar(subs);
+    h+=`<section class="lane${tm.state==="overdue"?" is-over":tm.state==="near"?" is-near":""}" aria-label="${esc(taskKey(t))} and its subtasks">
+      <div class="lane-head">${laneCaret(key,taskKey(t))}<span class="key">${esc(taskKey(t))}</span>
+        <b class="lane-title" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0">${esc(t.title)}</b>
+        ${epicChip(t.epicId)}${statusPill(t)}${prio(t.priority)}
+        <div class="spacer"></div>
+        <span class="lane-prog" title="Subtask progress">${html}<span>${dn}/${subs.length} subtasks</span></span>
+        ${av(memberById(t.assigneeId))}
+        <select data-status="${esc(t.id)}" aria-label="${esc(taskKey(t))} status"${ro()}>${statusOpts(t.status)}</select>
+        ${dn===subs.length?`<button class="btn sm primary" type="button" data-act="parent-done" data-id="${esc(t.id)}"${ro()}>All subtasks done · finish ${esc(taskKey(t))}</button>`:""}
+      </div>
+      ${closed?"":`<div class="lane-body">${STATUSES.map(([s,l])=>`<div class="cell" data-sdrop="${s}" data-task="${esc(t.id)}" data-label="${l}">${subs.filter(x=>(x.status||"todo")===s).map(subCard).join("")}</div>`).join("")}</div>`}
+    </section>`;
+  }
+  const ok="__other",closed=S.collapsed.has(ok);
+  h+=`<section class="lane lane-other" aria-label="Tasks without subtasks"><div class="lane-head">${laneCaret(ok,"tasks without subtasks")}<b>Tasks without subtasks</b><span class="note">${others.length} open</span></div>
+    ${closed?"":`<div class="lane-body">${STATUSES.slice(0,3).map(([s,l])=>`<div class="cell" data-drop="${s}" data-label="${l}">${others.filter(t=>(t.status||"todo")===s).sort(byPrio).map(card).join("")}</div>`).join("")}${doneCell(doneN)}</div>`}</section>`;
+  return h+`</div>`;
+}
+function boardEpicLanes(list){
+  const open=list.filter(t=>t.status!=="done");const doneN=list.filter(t=>t.status==="done").length;
+  if(!open.length)return`<div class="emptystate"><p>No open tasks in this view.${doneN?` ${doneN} done.`:""}</p></div>`;
+  const ids=[...new Set(open.map(t=>t.epicId&&epicById(t.epicId)?t.epicId:""))].sort((a,b)=>a===""?1:b===""?-1:byNum(epicById(a),epicById(b)));
+  let h=`<div class="lanes">`+laneCols();
+  for(const id of ids){
+    const e=epicById(id),key="e:"+(id||"none"),closed=S.collapsed.has(key);
+    const ts=open.filter(t=>(t.epicId&&epicById(t.epicId)?t.epicId:"")===id).sort(byPrio);
+    const inView=list.filter(t=>(t.epicId||"")===id),dn=inView.filter(t=>t.status==="done").length;
+    const all=e?tasksOfEpic(e.id):[],allDone=all.filter(t=>t.status==="done").length;
+    h+=`<section class="lane" aria-label="${e?esc(epicKey(e)):"Tasks without an epic"}"${e?` style="--ec:${esc(e.color||EPIC_COLORS[0])}"`:""}>
+      <div class="lane-head${e?" epic-head":""}">${laneCaret(key,e?epicKey(e):"no epic")}
+        ${e?`<span class="key">${esc(epicKey(e))}</span><b class="lane-title" data-act="edit-epic" data-id="${esc(e.id)}" tabindex="0">${esc(e.title)}</b>${pill(e.status||"todo","st-"+(e.status||"todo"),EPLABEL[e.status||"todo"])}`:`<b>No epic</b>`}
+        <div class="spacer"></div>
+        <span class="lane-prog">${stackBar(inView).html}<span>${dn}/${inView.length} done in this view${e?` · ${all.length?Math.round(allDone/all.length*100):0}% of epic`:""}</span></span>
+      </div>
+      ${closed?"":`<div class="lane-body">${STATUSES.slice(0,3).map(([s,l])=>`<div class="cell" data-drop="${s}" data-label="${l}">${ts.filter(t=>(t.status||"todo")===s).map(card).join("")}</div>`).join("")}${doneCell(dn)}</div>`}
+    </section>`;
+  }
+  return h+`</div>`;
+}
+async function setSubStatus(id,v){
+  const x=S.subtasks.find(y=>y.id===id);if(!x||(x.status||"todo")===v)return;const now=new Date().toISOString();
+  await write(db=>db.doc("subtasks/"+id).update({status:v,updatedAt:now,completedAt:v==="done"?now:null}),subKey(x)+": "+SLABEL[v]);
+}
+
+/* ---------- WORKLOAD analysis ----------
+   Metrics are computed per person (and per role) for a sprint or a quarter.
+   Fields (table columns) and rules (flags) are editable and stored in analysis/config.
+   Formulas use a small safe expression language: numbers, metric and field names, + - * / %, ( ),
+   comparisons (> >= < <= = == !=), and / or / not, and min() max() abs() round() if(). */
+const METRICS={
+  capacity:["Capacity","effort","Plannable effort for the period after level, leave, holidays and buffer"],
+  planned:["Planned","effort","Effort assigned in the period (task and subtask estimates)"],
+  remaining:["Remaining","effort","Planned effort that isn't done yet"],
+  free:["Free","effort","Capacity minus planned effort (negative means over)"],
+  load:["Load","percent","Planned effort as a percentage of capacity"],
+  tasks:["Tasks","count","Tasks assigned in the period"],
+  openTasks:["Open tasks","count","Assigned tasks that aren't done"],
+  doneTasks:["Done tasks","count","Assigned tasks that are done"],
+  inProgress:["In progress","count","Tasks and subtasks in progress right now"],
+  onTest:["On test","count","Tasks and subtasks on test"],
+  subtasksOpen:["Open subtasks","count","Subtasks assigned and not done"],
+  overdue:["Overdue","count","Open tasks past their due date"],
+  dueSoon:["Due soon","count","Open tasks with 90% or more of their time used"],
+  carryOver:["Carried over","count","Open tasks carried over from an earlier sprint"],
+  dueCluster:["Due-date cluster","count","Most open tasks due within any window of N days (see Assumptions)"],
+  epicCount:["Epics","count","Different epics among open tasks (context switching)"],
+  epicsOwned:["Epics owned","count","Open epics this person owns"],
+  highPriority:["High priority","count","Open urgent or high-priority tasks"],
+  unestimated:["Unestimated","count","Assigned items with no estimate (the default size was used)"],
+  levelFactor:["Level factor","number","Capacity factor for the person's level (role rows: average)"],
+  leaveDays:["Leave days","days","Leave in the period"],
+  workDays:["Working days","days","Working days available after holidays and leave"],
+  members:["People","count","Number of people (1 for a person, the head count for a role)"],
+};
+const SEVERITY=[["high","High"],["warn","Warning"],["info","Info"],["good","Good"]];
+const SEVLABEL=Object.fromEntries(SEVERITY);
+const FORMATS=[["effort","Effort (points or hours)"],["percent","Percent"],["count","Whole number"],["number","Number"],["days","Days"]];
+const DEFAULT_PARAMS={unit:"points",defaultEstimate:3,baseCapacity:20,refDays:10,sprintBuffer:20,quarterBuffer:25,weekend:[0,6],holidays:"",dueWindow:3,overloadAt:100,targetLoad:90,roomBelow:70,levelFactors:{}};
+const mField=(key,showRole=true)=>({key,label:METRICS[key][0],format:METRICS[key][1],showMember:true,showRole});
+const DEFAULT_FIELDS=[mField("load"),mField("capacity"),mField("planned"),mField("free"),mField("openTasks"),mField("inProgress"),mField("overdue"),
+  mField("dueCluster",false),mField("carryOver"),mField("leaveDays",false),
+  {key:"stress",label:"Stress score",expr:"load/25 + inProgress + overdue*2 + carryOver + max(dueCluster-2, 0)",format:"number",showMember:true,showRole:false}];
+const DEFAULT_RULES=[
+  {id:"r-over",name:"Over capacity",target:"member",scope:"both",when:"load > 100",severity:"high",message:"Planned {planned} against a capacity of {capacity} ({load}). Move work or cut scope.",enabled:true},
+  {id:"r-full",name:"No slack",target:"member",scope:"both",when:"load >= 90 and load <= 100",severity:"warn",message:"At {load} of capacity, with no buffer for surprises.",enabled:true},
+  {id:"r-room",name:"Has room",target:"member",scope:"both",when:"capacity > 0 and load < 70",severity:"good",message:"{free} free. Can take more work.",enabled:true},
+  {id:"r-idle",name:"Nothing assigned",target:"member",scope:"both",when:"capacity > 0 and tasks = 0",severity:"info",message:"No work assigned in this period.",enabled:true},
+  {id:"r-wip",name:"Too much in progress",target:"member",scope:"sprint",when:"inProgress >= 3",severity:"warn",message:"{inProgress} items in progress at once. Likely juggling or blocked.",enabled:true},
+  {id:"r-overdue",name:"Overdue pile-up",target:"member",scope:"both",when:"overdue >= 2",severity:"high",message:"{overdue} overdue tasks.",enabled:true},
+  {id:"r-cluster",name:"Deadlines bunched up",target:"member",scope:"sprint",when:"dueCluster >= 3",severity:"warn",message:"{dueCluster} tasks due within a few days of each other.",enabled:true},
+  {id:"r-carry",name:"Repeated carry-over",target:"member",scope:"both",when:"carryOver >= 2",severity:"warn",message:"{carryOver} tasks carried over from earlier sprints, a sign earlier plans were too full.",enabled:true},
+  {id:"r-junior",name:"Heavy load for a junior",target:"member",scope:"both",when:"levelFactor < 0.75 and highPriority >= 3",severity:"warn",message:"{highPriority} urgent or high-priority tasks for a junior. Pair with a senior or rebalance.",enabled:true},
+  {id:"r-switch",name:"Spread across epics",target:"member",scope:"quarter",when:"epicCount >= 3",severity:"warn",message:"Working across {epicCount} epics. Expect context-switching cost.",enabled:true},
+  {id:"r-owner",name:"Owns many epics",target:"member",scope:"quarter",when:"epicsOwned >= 3",severity:"warn",message:"Owns {epicsOwned} open epics. Spread ownership.",enabled:true},
+  {id:"r-stress",name:"High stress score",target:"member",scope:"both",when:"stress >= 8",severity:"high",message:"Stress score {stress}. Worth a one-to-one check-in.",enabled:true},
+  {id:"r-unest",name:"Missing estimates",target:"member",scope:"both",when:"unestimated >= 1",severity:"info",message:"{unestimated} items have no estimate, so the default size was used.",enabled:true},
+  {id:"r-role-over",name:"Role over capacity",target:"role",scope:"both",when:"load > 100",severity:"high",message:"This role needs {planned} but has {capacity} ({load}).",enabled:true},
+  {id:"r-role-room",name:"Role has room",target:"role",scope:"both",when:"capacity > 0 and load < 70",severity:"good",message:"{free} free across the role.",enabled:true},
+];
+
+/* --- expression language --- */
+function compileExpr(src){
+  const s=String(src||"").trim();if(!s)throw new Error("Write a formula");
+  const toks=[];const re=/\s*(?:(\d+(?:\.\d+)?)|([A-Za-z_]\w*)|(>=|<=|==|!=|&&|\|\||[-+*/%()<>,!=]))/y;
+  while(re.lastIndex<s.length){const at=re.lastIndex;const m=re.exec(s);
+    if(!m){if(/^\s*$/.test(s.slice(at)))break;throw new Error(`Can't read "${s.slice(at).trim().slice(0,15)}"`)}
+    if(m[1])toks.push({t:"num",v:+m[1]});
+    else if(m[2]){const w=m[2].toLowerCase();
+      if(w==="and")toks.push({t:"op",v:"&&"});else if(w==="or")toks.push({t:"op",v:"||"});else if(w==="not")toks.push({t:"op",v:"!"});
+      else if(w==="true"||w==="false")toks.push({t:"num",v:w==="true"?1:0});else toks.push({t:"id",v:m[2]})}
+    else toks.push({t:"op",v:m[3]==="="?"==":m[3]})}
+  let i=0;const ids=new Set();
+  const eat=v=>{if(toks[i]&&toks[i].t==="op"&&toks[i].v===v){i++;return true}return false};
+  const need=v=>{if(!eat(v))throw new Error(toks[i]?`Expected "${v}" before "${toks[i].v}"`:`Expected "${v}" at the end`)};
+  const T=x=>x!==0&&!Number.isNaN(x);
+  const FN={min:(...a)=>Math.min(...a),max:(...a)=>Math.max(...a),abs:Math.abs,round:(x,d=0)=>{const p=10**d;return Math.round(x*p)/p}};
+  const orE=()=>{let a=andE();while(eat("||")){const l=a,r=andE();a=c=>T(l(c))||T(r(c))?1:0}return a};
+  const andE=()=>{let a=notE();while(eat("&&")){const l=a,r=notE();a=c=>T(l(c))&&T(r(c))?1:0}return a};
+  const notE=()=>{if(eat("!")){const x=notE();return c=>T(x(c))?0:1}return cmpE()};
+  const cmpE=()=>{const l=addE();for(const op of[">=","<=","==","!=",">","<"])if(eat(op)){const r=addE();
+      return{">=":c=>l(c)>=r(c)?1:0,"<=":c=>l(c)<=r(c)?1:0,"==":c=>Math.abs(l(c)-r(c))<1e-9?1:0,"!=":c=>Math.abs(l(c)-r(c))<1e-9?0:1,">":c=>l(c)>r(c)?1:0,"<":c=>l(c)<r(c)?1:0}[op]}
+    return l};
+  const addE=()=>{let a=mulE();for(;;){if(eat("+")){const l=a,r=mulE();a=c=>l(c)+r(c)}else if(eat("-")){const l=a,r=mulE();a=c=>l(c)-r(c)}else return a}};
+  const mulE=()=>{let a=unE();for(;;){if(eat("*")){const l=a,r=unE();a=c=>l(c)*r(c)}else if(eat("/")){const l=a,r=unE();a=c=>{const d=r(c);return d?l(c)/d:0}}else if(eat("%")){const l=a,r=unE();a=c=>{const d=r(c);return d?l(c)%d:0}}else return a}};
+  const unE=()=>{if(eat("-")){const x=unE();return c=>-x(c)}if(eat("+"))return unE();return prim()};
+  const prim=()=>{const t=toks[i];if(!t)throw new Error("The formula ends too early");
+    if(t.t==="num"){i++;return()=>t.v}
+    if(t.t==="id"){i++;const name=t.v,fn=name.toLowerCase();
+      if(eat("(")){const args=[];if(!eat(")")){do args.push(orE());while(eat(","));need(")")}
+        if(fn==="if"){if(args.length!==3)throw new Error("if() needs 3 parts: if(condition, then, otherwise)");const[a,b,c3]=args;return c=>T(a(c))?b(c):c3(c)}
+        if(!FN[fn])throw new Error(`Unknown function "${name}". Use min, max, abs, round or if.`);
+        if(!args.length)throw new Error(`${fn}() needs at least one value`);return c=>FN[fn](...args.map(f=>f(c)))}
+      ids.add(name);return c=>c(name)}
+    if(eat("(")){const x=orE();need(")");return x}
+    throw new Error(`Unexpected "${t.v}"`)};
+  const fn=orE();if(i<toks.length)throw new Error(`Unexpected "${toks[i].v}"`);
+  return{fn,ids:[...ids]};
+}
+const exprCache=new Map();
+function compiled(src){if(!exprCache.has(src)){let r;try{r=compileExpr(src)}catch(e){r={error:e.message}}exprCache.set(src,r)}return exprCache.get(src)}
+/* Check a formula against the names it may use. Returns an error message or "". */
+function checkExpr(src,known){const c=compiled(src);if(c.error)return c.error;const bad=c.ids.filter(x=>!known.has(x));return bad.length?`Unknown name${bad.length>1?"s":""}: ${bad.join(", ")}`:""}
+
+/* --- config profiles: "wl" = Workload, "rv" = Reviews. Each has its own metrics, default fields, rules and assumptions,
+   saved as one document in analysis/<doc>. --- */
+const PROFILES={};
+function profConfig(pk){const pr=PROFILES[pk];const d=S.analysis.find(x=>x.id===pr.doc);const p=(d&&d.params)||{};
+  const params=Object.assign({},pr.params,p);
+  if(pk==="wl"){params.levelFactors=Object.assign({},p.levelFactors||{});params.weekend=Array.isArray(p.weekend)?p.weekend:pr.params.weekend}
+  return{params,fields:d&&Array.isArray(d.fields)?d.fields:pr.fields,rules:d&&Array.isArray(d.rules)?d.rules:pr.rules,saved:!!d}}
+function saveProf(pk,patch,msg){const c=profConfig(pk);
+  return write(db=>db.doc("analysis/"+PROFILES[pk].doc).set({params:c.params,fields:c.fields,rules:c.rules,...patch,updatedAt:new Date().toISOString()}),msg)}
+const analysisConfig=()=>profConfig("wl");
+const saveAnalysisConfig=(patch,msg)=>saveProf("wl",patch,msg);
+const knownNames=(pk,fields,exceptKey)=>new Set([...Object.keys(PROFILES[pk].metrics),...fields.filter(f=>f.key!==exceptKey).map(f=>f.key)]);
+/* Evaluate fields for every row, then the rules. groups: [{target:"member"|"role",rows}] */
+function evalFieldsAndRules(pk,cfg,groups,ruleOn,P){
+  const M=PROFILES[pk].metrics;const errors=[];const findings=[];
+  const evalRow=r=>{const memo={},busy=new Set();
+    const get=name=>{if(name in memo)return memo[name];
+      const f=cfg.fields.find(x=>x.key===name&&x.expr);
+      if(f){if(busy.has(name))throw new Error(`"${name}" refers to itself`);busy.add(name);const c=compiled(f.expr);if(c.error)throw new Error(`Field "${f.label}": ${c.error}`);
+        let v;try{v=c.fn(get)}finally{busy.delete(name)}return memo[name]=v}
+      if(name in M)return r[name];
+      throw new Error(`Unknown name "${name}"`)};
+    r.values={};r.flags=[];for(const f of cfg.fields){try{r.values[f.key]=f.expr?get(f.key):r[f.key]}catch(e){r.values[f.key]=NaN;if(!errors.includes(e.message))errors.push(e.message)}}
+    r.get=get;return r};
+  groups.forEach(g=>g.rows.forEach(evalRow));
+  const fmtFor=name=>{const f=cfg.fields.find(x=>x.key===name);return f?f.format:M[name]?M[name][1]:"number"};
+  for(const rule of cfg.rules){if(rule.enabled===false||!ruleOn(rule))continue;
+    const c=compiled(rule.when);if(c.error){errors.push(`Rule "${rule.name}": ${c.error}`);continue}
+    const g=groups.find(x=>x.target===(rule.target||"member"));if(!g)continue;
+    for(const r of g.rows){let hit=false;try{hit=c.fn(r.get)!==0}catch(e){errors.push(`Rule "${rule.name}": ${e.message}`);break}
+      if(hit){const msg=String(rule.message||"").replace(/\{(\w+)\}/g,(m0,n)=>{if(n==="name")return r.name;try{return fmtVal(r.get(n),fmtFor(n),P)}catch(e){return m0}});
+        r.flags.push({rule,msg});findings.push({target:g.target,rowId:r.id,name:r.name,rule,msg})}}}
+  const sevRank={high:0,warn:1,info:2,good:3};findings.sort((a,b)=>sevRank[a.rule.severity]-sevRank[b.rule.severity]||a.name.localeCompare(b.name));
+  return{errors:[...new Set(errors)],findings};
+}
+const unitLabel=P=>P.unit==="hours"?"h":"pts";
+function fmtVal(v,fmt,P){
+  if(v==null||Number.isNaN(v))return"–";if(!Number.isFinite(v))return"∞";
+  const r1=Math.round(v*10)/10;
+  return fmt==="percent"?Math.round(v)+"%":fmt==="effort"?r1+" "+unitLabel(P):fmt==="count"?String(Math.round(v)):fmt==="days"?r1+" d":String(r1);
+}
+function defaultLevelFactor(level){
+  const l=String(level||"").toLowerCase();
+  if(/intern|trainee|junior|\bjr\b|associate|entry|graduate/.test(l))return 0.65;
+  if(/lead|principal|staff|architect|manager|head/.test(l))return 0.7;
+  if(/senior|\bsr\b/.test(l))return 0.85;
+  return 0.85;
+}
+const levelFactorOf=(m,P)=>{const k=String(m&&m.level||"").toLowerCase();const v=P.levelFactors[k];return v!=null&&v!==""&&!Number.isNaN(+v)?+v:defaultLevelFactor(m&&m.level)};
+function quarterRange(q){const[y,n]=q.split("-Q").map(Number);const a=`${y}-${pad(3*(n-1)+1)}-01`;const b=addDays(n===4?`${y+1}-01-01`:`${y}-${pad(3*n+1)}-01`,-1);return[a,b]}
+function workDaysBetween(a,b,P){if(!a||!b||b<a)return 0;const hol=new Set(String(P.holidays||"").split(/[\s,;]+/).filter(Boolean));let n=0;
+  for(let d=a;d<=b;d=addDays(d,1)){const wd=new Date(utc(d)).getUTCDay();if(!P.weekend.includes(wd)&&!hol.has(d))n++}return n}
+
+/* --- engine --- */
+function runAnalysis(){
+  const W=S.f.wl;const cfg=analysisConfig();const P=cfg.params;const sprintScope=W.scope==="sprint";
+  let scopeTasks,range,label,sprintsIn;
+  if(sprintScope){const sp=sprintById(W.sprint);if(!sp){toast("Pick a sprint first");return}
+    scopeTasks=S.tasks.filter(t=>t.sprintId===sp.id);range=[sp.startDate,sp.endDate];label=sp.name+" · "+fmt(sp.startDate)+" – "+fmt(sp.endDate);sprintsIn=[sp]}
+  else{const q=W.quarter;scopeTasks=S.tasks.filter(t=>taskQuarter(t)===q);range=quarterRange(q);label=qLabel(q);sprintsIn=S.sprints.filter(s=>s.startDate&&quarterOf(s.startDate)===q)}
+  const buffer=(sprintScope?P.sprintBuffer:P.quarterBuffer)/100;const baseDays=workDaysBetween(range[0],range[1],P);
+  const eff=x=>+x.estimate>0?+x.estimate:+P.defaultEstimate||0;
+  const people=new Map();
+  const blank=m=>({id:m?m.id:"__none",m,planned:0,remaining:0,tasks:0,openTasks:0,doneTasks:0,inProgress:0,onTest:0,subtasksOpen:0,overdue:0,dueSoon:0,carryOver:0,
+    dues:[],epics:new Set(),highPriority:0,unestimated:0});
+  const row=id=>{const key=id&&memberById(id)?id:"__none";if(!people.has(key))people.set(key,blank(memberById(id)));return people.get(key)};
+  activeMembers().forEach(m=>row(m.id));
+  for(const t of scopeTasks){
+    const subs=subsOf(t.id);const open=t.status!=="done";const r=row(t.assigneeId);
+    r.tasks++;open?r.openTasks++:r.doneTasks++;
+    if(open){if(t.status==="in-progress")r.inProgress++;if(t.status==="on-test")r.onTest++;
+      const tm=taskTiming(t);if(tm.state==="overdue")r.overdue++;if(tm.state==="near")r.dueSoon++;
+      if((t.carryCount||0)>0)r.carryOver++;if(t.dueDate)r.dues.push(t.dueDate);if(t.epicId)r.epics.add(t.epicId);
+      if(t.priority==="urgent"||t.priority==="high")r.highPriority++}
+    const subEst=subs.some(x=>+x.estimate>0);
+    if(subs.length){
+      for(const x of subs){const o=row(x.assigneeId||t.assigneeId);const e=subEst?eff(x):eff(t)/subs.length;
+        o.planned+=e;if(x.status!=="done"&&open)o.remaining+=e;
+        if(x.status!=="done"){o.subtasksOpen+=x.assigneeId?1:0;if(x.assigneeId&&x.assigneeId!==t.assigneeId){if(x.status==="in-progress")o.inProgress++;if(x.status==="on-test")o.onTest++}}
+        if(subEst&&!(+x.estimate>0))o.unestimated++}
+      if(!subEst&&!(+t.estimate>0))r.unestimated++;
+    }else{const e=eff(t);r.planned+=e;if(open)r.remaining+=e;if(!(+t.estimate>0))r.unestimated++}
+  }
+  const finish=r=>{const m=r.m;
+    const leave=m?sprintsIn.reduce((a,s)=>a+(+((s.leave||{})[m.id])||0),0):0;
+    const lf=m?levelFactorOf(m,P):0;const base=m?(+m.capacity>0?+m.capacity:P.baseCapacity*lf):0;
+    const work=Math.max(0,baseDays-leave);const capacity=m?base*work/(+P.refDays||10)*(1-buffer):0;
+    const d=r.dues.sort();let cl=0;for(let a=0;a<d.length;a++){let n=0;for(let b=a;b<d.length&&d[b]<=addDays(d[a],(+P.dueWindow||3)-1);b++)n++;cl=Math.max(cl,n)}
+    return{id:r.id,name:m?m.name:"Unassigned",member:m,roleId:m?m.roleId||"":"",capacity,planned:r.planned,remaining:r.remaining,free:capacity-r.planned,
+      load:capacity>0?r.planned/capacity*100:(r.planned>0?999:0),tasks:r.tasks,openTasks:r.openTasks,doneTasks:r.doneTasks,inProgress:r.inProgress,onTest:r.onTest,
+      subtasksOpen:r.subtasksOpen,overdue:r.overdue,dueSoon:r.dueSoon,carryOver:r.carryOver,dueCluster:cl,epicCount:r.epics.size,epicSet:r.epics,
+      epicsOwned:m?S.epics.filter(e=>e.status!=="done"&&e.ownerId===m.id).length:0,highPriority:r.highPriority,unestimated:r.unestimated,
+      levelFactor:lf,leaveDays:leave,workDays:work,members:1}};
+  const all=[...people.values()].map(finish);
+  const unassigned=all.find(r=>r.id==="__none")||{planned:0,openTasks:0};
+  const rows=all.filter(r=>r.member&&(isActive(r.member)||r.tasks));
+  /* roles */
+  const roleRows=[];const byRole=new Map();rows.forEach(r=>{const k=r.roleId||"";if(!byRole.has(k))byRole.set(k,[]);byRole.get(k).push(r)});
+  for(const[k,list]of byRole){const sum=f=>list.reduce((a,r)=>a+r[f],0);const ep=new Set();list.forEach(r=>r.epicSet.forEach(x=>ep.add(x)));
+    const cap=sum("capacity"),pl=sum("planned");const rr={id:"role:"+k,name:k?(roleById(k)||{}).name||"Removed role":"No role"};
+    ["capacity","planned","remaining","tasks","openTasks","doneTasks","inProgress","onTest","subtasksOpen","overdue","dueSoon","carryOver","epicsOwned","highPriority","unestimated","leaveDays","workDays","members"].forEach(f=>rr[f]=sum(f));
+    Object.assign(rr,{free:cap-pl,load:cap>0?pl/cap*100:(pl>0?999:0),dueCluster:Math.max(0,...list.map(r=>r.dueCluster)),epicCount:ep.size,levelFactor:list.length?sum("levelFactor")/list.length:0});
+    roleRows.push(rr)}
+  roleRows.sort((a,b)=>a.name.localeCompare(b.name));
+  /* fields + rules */
+  const{errors,findings}=evalFieldsAndRules("wl",cfg,[{target:"member",rows},{target:"role",rows:roleRows}],rule=>rule.scope==="both"||rule.scope===W.scope,P);
+  /* rebalancing suggestions */
+  const effTask=t=>{const subs=subsOf(t.id);return subs.some(x=>+x.estimate>0)?subs.reduce((a,x)=>a+eff(x),0):eff(t)};
+  const suggestions=suggestMoves(rows,scopeTasks,P,effTask);
+  const cap=rows.reduce((a,r)=>a+r.capacity,0),pl=rows.reduce((a,r)=>a+r.planned,0);
+  S.wl={scope:W.scope,sprintId:sprintScope?W.sprint:null,label,at:new Date(),rows,roleRows,findings,errors,suggestions,P,fields:cfg.fields,
+    unassigned:{effort:unassigned.planned||0,count:scopeTasks.filter(t=>!t.assigneeId&&t.status!=="done").length},
+    team:{capacity:cap,planned:pl,load:cap>0?pl/cap*100:0,days:baseDays}};
+  render();
+}
+function suggestMoves(rows,scopeTasks,P,eff){
+  const target=(+P.targetLoad||90)/100;const room={};rows.forEach(r=>room[r.id]=r.capacity*target-r.planned);
+  const moves=[];const used=new Set();
+  const pick=(t,fromId,roleId)=>{const e=eff(t);const heavy=t.priority==="urgent"||t.priority==="high";
+    let pool=rows.filter(r=>r.id!==fromId&&r.member&&isActive(r.member)&&room[r.id]>=e&&(!roleId||r.roleId===roleId));
+    if(heavy&&pool.some(r=>r.levelFactor>=0.75))pool=pool.filter(r=>r.levelFactor>=0.75);
+    pool.sort((a,b)=>room[b.id]-room[a.id]);return pool[0]};
+  const movable=t=>t.status==="todo"&&subsOf(t.id).every(x=>!x.assigneeId||x.assigneeId===t.assigneeId);
+  for(const o of rows.filter(r=>r.load>(+P.overloadAt||100)).sort((a,b)=>b.load-a.load)){
+    let excess=-room[o.id];
+    const cands=scopeTasks.filter(t=>t.assigneeId===o.id&&movable(t)).sort((a,b)=>PRANK[b.priority||"medium"]-PRANK[a.priority||"medium"]||eff(a)-eff(b));
+    for(const t of cands){if(excess<=0)break;const roleId=t.roleId||o.roleId||"";const to=pick(t,o.id,roleId);if(!to)continue;
+      const e=eff(t);moves.push({taskId:t.id,from:o.id,to:to.id,effort:e,why:`${o.name} is at ${Math.round(o.load)}%`});
+      room[to.id]-=e;room[o.id]+=e;excess-=e;used.add(t.id)}}
+  for(const t of scopeTasks.filter(t=>!t.assigneeId&&t.status!=="done"&&!used.has(t.id)).sort((a,b)=>PRANK[a.priority||"medium"]-PRANK[b.priority||"medium"])){
+    const to=pick(t,null,t.roleId||"");if(!to)continue;room[to.id]-=eff(t);moves.push({taskId:t.id,from:null,to:to.id,effort:eff(t),why:"Unassigned"})}
+  return moves;
+}
+
+/* --- page --- */
+function loadCell(v,P){const cls=v>(+P.overloadAt||100)?"sev-high":v>=(+P.targetLoad||90)?"sev-warn":v<(+P.roomBelow||70)?"sev-good":"sev-ok";
+  return`<div class="loadcell ${cls}"><span class="lbar"><i style="width:${Math.min(100,Math.max(0,v||0))}%"></i></span><b>${v>=999?"no capacity":fmtVal(v,"percent",P)}</b></div>`}
+const sevPill=(sev,txt)=>`<span class="pill sev-${sev}">${esc(txt)}</span>`;
+const sevLabel=(pk,sev)=>(PROFILES[pk].sev||SEVLABEL)[sev]||sev;
+function renderWorkload(){
+  const W=S.f.wl;const cfg=analysisConfig();const open=openSprints();
+  if(!W.sprint||!S.sprints.some(s=>s.id===W.sprint)){const c=currentSprint();W.sprint=c?c.id:(S.sprints[0]||{}).id||null}
+  if(!W.quarter)W.quarter=curQuarter();
+  let h=`<div class="viewhead"><div><h2>Workload</h2><p>See who is overloaded and who has room before you plan a sprint or a quarter.</p></div></div>${banners()}
+    <div class="seg" role="group" style="margin-bottom:14px">${[["results","Results"],["fields","Fields",cfg.fields.length],["rules","Rules",cfg.rules.filter(r=>r.enabled!==false).length],["params","Assumptions"]].map(([v,l,n])=>`<button type="button" data-wtab="${v}" aria-pressed="${W.tab===v}">${l}${n!=null?`<span class="n">${n}</span>`:""}</button>`).join("")}</div>`;
+  if(loading())return h+`<div class="emptystate"><p>Loading…</p></div>`;
+  if(W.tab==="fields")return h+renderCfgFields("wl",cfg);
+  if(W.tab==="rules")return h+renderCfgRules("wl",cfg);
+  if(W.tab==="params")return h+renderWlParams(cfg);
+  const sprints=S.sprints.slice().sort(byStart).reverse();
+  h+=`<div class="filters">
+    <div class="fld"><span>Plan for</span><div class="seg" role="group">${[["sprint","Sprint"],["quarter","Quarter"]].map(([v,l])=>`<button type="button" data-wscope="${v}" aria-pressed="${W.scope===v}">${l}</button>`).join("")}</div></div>
+    ${W.scope==="sprint"?(sprints.length?`<label class="fld"><span>Sprint</span><select id="w-sprint">${sprints.map(s=>sprintOpt(s,W.sprint)).join("")}</select></label>`:`<div class="fld"><span>Sprint</span><div class="hint">No sprints yet. <a href="#sprints">Create one</a></div></div>`)
+      :`<label class="fld"><span>Quarter</span><select id="w-quarter">${quarterOptions(W.quarter)}</select></label>`}
+    <label class="fld"><span>Role</span><select id="w-role">${roleOptions(W.role)}</select></label>
+    <div class="spacer"></div>
+    <button class="btn primary" type="button" data-act="run-analysis">Run analysis</button></div>`;
+  const R=S.wl;
+  if(!R)return h+`<div class="emptystate"><h3>Run the analysis</h3><p>Pick a sprint or a quarter and press Run analysis. It checks ${cfg.rules.filter(r=>r.enabled!==false).length} rules across ${cfg.fields.length} fields for every active team member and role. ${cfg.saved?"":"These are the built-in defaults; change them on the Fields, Rules and Assumptions tabs."}</p>
+    <div class="acts"><button class="btn primary" type="button" data-act="run-analysis">Run analysis</button></div></div>`;
+  const P=R.P;const rows=R.rows.filter(r=>W.role==="all"||r.roleId===W.role);
+  const over=R.rows.filter(r=>r.load>(+P.overloadAt||100)),roomy=R.rows.filter(r=>r.capacity>0&&r.load<(+P.roomBelow||70));
+  h+=`<p class="note" style="margin:-4px 0 12px">Results for <b>${esc(R.label)}</b> · ${R.team.days} working days · analyzed ${R.at.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}. Run again after changing tasks, estimates or rules.</p>
+    ${R.errors.length?`<div class="banner">Some formulas couldn't run: ${R.errors.map(esc).join(" · ")}</div>`:""}
+    <div class="tiles">
+      <div class="tile"><span>Team load</span>${loadCell(R.team.load,P)}<small>${fmtVal(R.team.planned,"effort",P)} of ${fmtVal(R.team.capacity,"effort",P)}</small></div>
+      <div class="tile"><span>Over capacity</span><b class="${over.length?"sev-text-high":""}">${over.length}</b><small>${over.length?over.map(r=>esc(r.name)).join(", "):"Nobody"}</small></div>
+      <div class="tile"><span>Has room</span><b class="${roomy.length?"sev-text-good":""}">${roomy.length}</b><small>${roomy.length?fmtVal(roomy.reduce((a,r)=>a+r.free,0),"effort",P)+" free":"Nobody under "+P.roomBelow+"%"}</small></div>
+      <div class="tile"><span>Unassigned work</span><b>${R.unassigned.count}</b><small>${fmtVal(R.unassigned.effort,"effort",P)} in open tasks</small></div></div>`;
+  /* findings */
+  const fs=R.findings.filter(f=>f.target==="role"||W.role==="all"||(R.rows.find(r=>r.id===f.rowId)||{}).roleId===W.role);
+  h+=`<div class="subhead"><h3>Findings</h3><p>${fs.length} from ${R.findings.length?"your rules":"no matching rules"}</p></div>`;
+  h+=fs.length?`<div class="findings">${SEVERITY.map(([sev,l])=>{const g=fs.filter(f=>f.rule.severity===sev);return g.length?`<div class="fgroup"><div class="fhead">${sevPill(sev,l)}<span class="note">${g.length}</span></div>${g.map(f=>`<div class="finding"><b>${esc(f.name)}</b>${f.target==="role"?' <span class="note">role</span>':""} · ${esc(f.rule.name)}<div class="note">${esc(f.msg)}</div></div>`).join("")}</div>`:""}).join("")}</div>`
+    :`<div class="emptystate"><p>No rule matched. Everyone looks balanced for this period.</p></div>`;
+  /* people table */
+  const mf=R.fields.filter(f=>f.showMember!==false);const sp=R.sprintId?sprintById(R.sprintId):null;const leaveEditable=!!sp&&!S.readOnly&&!!S.db;
+  h+=`<div class="subhead"><h3>People</h3><p>${rows.length} ${W.role==="all"?"active members":"in this role"}</p></div>
+    <div class="tablewrap"><table class="wl"><thead><tr><th>Person</th>${mf.map(f=>`<th title="${esc(f.expr||(METRICS[f.key]||[,,""])[2])}">${esc(f.label)}</th>`).join("")}<th>Flags</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr><td><span class="who">${av(r.member)}<span><b>${esc(r.name)}</b><br><span class="note">${esc(roleText(r.member))}</span></span></span></td>
+      ${mf.map(f=>{const v=r.values[f.key];
+        if(f.key==="load"&&!f.expr)return`<td>${loadCell(v,P)}</td>`;
+        if(f.key==="leaveDays"&&!f.expr&&leaveEditable)return`<td><input class="leavein" type="number" min="0" step="0.5" data-leave="${esc(r.id)}" value="${(sp.leave||{})[r.id]||""}" placeholder="0" aria-label="Leave days for ${esc(r.name)}"></td>`;
+        return`<td class="mono">${fmtVal(v,f.format,P)}</td>`}).join("")}
+      <td><div class="flags">${(r.flags||[]).map(x=>`<span class="pill sev-${x.rule.severity}" title="${esc(x.msg)}">${esc(x.rule.name)}</span>`).join("")||'<span class="note">–</span>'}</div></td></tr>`).join("")+`</tbody></table></div>`;
+  if(leaveEditable)h+=`<p class="note">Type leave days in the table to update the sprint, then run the analysis again. Per-person capacity and level factors are on the Assumptions tab.</p>`;
+  /* roles table */
+  const rf=R.fields.filter(f=>f.showRole!==false);
+  h+=`<div class="subhead"><h3>Roles</h3><p>Capacity and demand added up by role, for quarter planning</p></div>
+    <div class="tablewrap"><table class="wl"><thead><tr><th>Role</th>${rf.map(f=>`<th>${esc(f.label)}</th>`).join("")}<th>Flags</th></tr></thead><tbody>`+
+    R.roleRows.map(r=>`<tr><td><b>${esc(r.name)}</b><br><span class="note">${r.members} ${r.members===1?"person":"people"}</span></td>${rf.map(f=>{const v=r.values[f.key];
+      return f.key==="load"&&!f.expr?`<td>${loadCell(v,P)}</td>`:`<td class="mono">${fmtVal(v,f.format,P)}</td>`}).join("")}
+      <td><div class="flags">${(r.flags||[]).map(x=>`<span class="pill sev-${x.rule.severity}" title="${esc(x.msg)}">${esc(x.rule.name)}</span>`).join("")||'<span class="note">–</span>'}</div></td></tr>`).join("")+`</tbody></table></div>`;
+  /* suggestions */
+  const sg=R.suggestions.filter(m=>{const t=S.tasks.find(x=>x.id===m.taskId);return t&&(t.assigneeId||null)===m.from});
+  h+=`<div class="subhead"><h3>Suggested changes</h3><p>Moves "To do" work from people over ${P.overloadAt}% to people with room in the same role (or the task's "Role needed"), keeping urgent and high-priority work with non-juniors. Nobody is pushed past ${P.targetLoad}%.</p></div>`;
+  h+=sg.length?`<div class="tablewrap"><table class="wl"><thead><tr><th>Task</th><th>Effort</th><th>From</th><th>To</th><th>Why</th><th></th></tr></thead><tbody>`+sg.map(m=>{const t=S.tasks.find(x=>x.id===m.taskId);const to=memberById(m.to);
+      return`<tr><td><div class="t" data-act="edit-task" data-id="${esc(t.id)}" tabindex="0"><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}</div></td><td class="mono">${fmtVal(m.effort,"effort",P)}</td>
+        <td>${m.from?who(m.from):'<span class="note">Unassigned</span>'}</td><td>${who(m.to)}</td><td class="note">${esc(m.why)}</td>
+        <td><button class="btn sm" type="button" data-act="apply-move" data-id="${esc(t.id)}" data-to="${esc(m.to)}"${ro()}>Assign to ${esc(to?to.name.split(" ")[0]:"")}</button></td></tr>`}).join("")+`</tbody></table></div>`
+    :`<div class="emptystate"><p>${over.length||R.unassigned.count?"No safe moves found. Nobody in the matching roles has enough room, or the extra work has already started.":"Nothing to rebalance."}</p></div>`;
+  return h;
+}
+function renderCfgFields(pk,cfg){
+  const pr=PROFILES[pk],M=pr.metrics,P=profConfig("wl").params;
+  let h=`<div class="viewhead" style="margin-top:-4px"><p class="note" style="margin:0;max-width:70ch">Fields are the columns of the ${pr.noun}. Show a built-in metric, or write a formula that combines metrics and other fields. Any field can be used in rules by its key.</p><div class="spacer"></div>
+    <div class="acts"><button class="btn ghost sm" type="button" data-act="reset-fields" data-prof="${pk}"${ro()}>Reset to defaults</button><button class="btn primary" type="button" data-act="new-field" data-prof="${pk}"${ro()}>Add field</button></div></div>
+    <div class="tablewrap"><table class="wl"><thead><tr><th>Order</th><th>Field</th><th>Key</th><th>Source</th><th>Format</th><th>People</th>${pr.roles?"<th>Roles</th>":""}<th></th></tr></thead><tbody>`+
+    cfg.fields.map((f,i)=>`<tr><td><div class="rowacts" style="justify-content:flex-start"><button class="btn sm ghost" type="button" data-act="field-move" data-prof="${pk}" data-id="${esc(f.key)}" data-dir="-1"${i===0||S.readOnly?" disabled":""} aria-label="Move up">↑</button><button class="btn sm ghost" type="button" data-act="field-move" data-prof="${pk}" data-id="${esc(f.key)}" data-dir="1"${i===cfg.fields.length-1||S.readOnly?" disabled":""} aria-label="Move down">↓</button></div></td>
+      <td><b>${esc(f.label)}</b></td><td><code>${esc(f.key)}</code></td>
+      <td>${f.expr?`<code class="expr">${esc(f.expr)}</code>`:`<span class="note">${esc((M[f.key]||[,,"Unknown metric"])[2])}</span>`}</td>
+      <td class="note">${esc((FORMATS.find(x=>x[0]===f.format)||[,f.format])[1])}</td>
+      <td><input type="checkbox" data-fshow="${pk}|${esc(f.key)}|showMember"${f.showMember!==false?" checked":""}${ro()} aria-label="Show ${esc(f.label)} for people"></td>
+      ${pr.roles?`<td><input type="checkbox" data-fshow="${pk}|${esc(f.key)}|showRole"${f.showRole!==false?" checked":""}${ro()} aria-label="Show ${esc(f.label)} for roles"></td>`:""}
+      <td><div class="rowacts"><button class="btn sm" type="button" data-act="edit-field" data-prof="${pk}" data-id="${esc(f.key)}"${ro()}>Edit</button><button class="btn sm ghost danger" type="button" data-act="del-field" data-prof="${pk}" data-id="${esc(f.key)}"${ro()}>Delete</button></div></td></tr>`).join("")+`</tbody></table></div>`;
+  return h+metricReference(pk,P);
+}
+function metricReference(pk,P){const M=PROFILES[pk].metrics;return`<details class="ref"><summary>Built-in metrics you can use in formulas and rules</summary><div class="tablewrap"><table class="wl"><thead><tr><th>Name</th><th>Meaning</th></tr></thead><tbody>`+
+  Object.entries(M).map(([k,[l,,d]])=>`<tr><td><code>${k}</code></td><td>${esc(d)}</td></tr>`).join("")+
+  `</tbody></table></div><p class="note">Operators: + − * / % ( ), comparisons &gt; &gt;= &lt; &lt;= = !=, and, or, not. Functions: min(a,b), max(a,b), abs(x), round(x, digits), if(condition, then, otherwise). Effort is in ${P.unit}.</p></details>`}
+function renderCfgRules(pk,cfg){
+  const pr=PROFILES[pk];const scopeLabel=v=>(pr.scopes.find(x=>x[0]===v)||[,v])[1];
+  let h=`<div class="viewhead" style="margin-top:-4px"><p class="note" style="margin:0;max-width:70ch">Rules raise a flag when their condition is true for ${pr.roles?"a person or a role":"a person"}. Conditions use metric names and field keys, for example <code>${esc(pr.example)}</code>.</p><div class="spacer"></div>
+    <div class="acts"><button class="btn ghost sm" type="button" data-act="reset-rules" data-prof="${pk}"${ro()}>Reset to defaults</button><button class="btn primary" type="button" data-act="new-rule" data-prof="${pk}"${ro()}>Add rule</button></div></div>
+    <div class="tablewrap"><table class="wl"><thead><tr><th>On</th><th>Rule</th><th>Applies to</th><th>Condition</th><th>Severity</th><th>Message</th><th></th></tr></thead><tbody>`+
+    cfg.rules.map(r=>{const err=checkExpr(r.when,knownNames(pk,cfg.fields));return`<tr${r.enabled===false?' class="off"':""}><td><input type="checkbox" data-rtoggle="${pk}|${esc(r.id)}"${r.enabled!==false?" checked":""}${ro()} aria-label="Turn ${esc(r.name)} on or off"></td>
+      <td><b>${esc(r.name)}</b></td><td class="note">${r.target==="role"?"Roles":"People"} · ${esc(scopeLabel(r.scope))}</td>
+      <td><code class="expr">${esc(r.when)}</code>${err?`<div class="err">${esc(err)}</div>`:""}</td><td>${sevPill(r.severity,sevLabel(pk,r.severity))}</td><td class="note">${esc(r.message||"")}</td>
+      <td><div class="rowacts"><button class="btn sm" type="button" data-act="edit-rule" data-prof="${pk}" data-id="${esc(r.id)}"${ro()}>Edit</button><button class="btn sm ghost danger" type="button" data-act="del-rule" data-prof="${pk}" data-id="${esc(r.id)}"${ro()}>Delete</button></div></td></tr>`}).join("")+`</tbody></table></div>`;
+  return h+metricReference(pk,profConfig("wl").params);
+}
+function renderWlParams(cfg){
+  const P=cfg.params;const levels=[...new Set(S.roles.flatMap(r=>r.levels||[]))];const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const num=(id,v,attrs="")=>`<input type="number" id="${id}" name="${id}" value="${esc(v)}" ${attrs}>`;
+  return`<form id="w-params" class="box params">
+    <div class="pgrid">
+      <label>Effort unit<select id="wp-unit" name="unit"><option value="points"${P.unit!=="hours"?" selected":""}>Story points</option><option value="hours"${P.unit==="hours"?" selected":""}>Hours</option></select></label>
+      <label>Default size for unestimated items${num("wp-defest",P.defaultEstimate,'min="0" step="0.5" name="defaultEstimate"')}</label>
+      <label>Capacity of a full-capacity person${num("wp-base",P.baseCapacity,'min="0" step="0.5" name="baseCapacity"')}<span class="note">${P.unit} per <b>${P.refDays}</b> working days, before level factor and buffer</span></label>
+      <label>…per this many working days${num("wp-ref",P.refDays,'min="1" step="1" name="refDays"')}</label>
+      <label>Sprint buffer %${num("wp-sb",P.sprintBuffer,'min="0" max="90" name="sprintBuffer"')}<span class="note">Kept free for bugs and interruptions</span></label>
+      <label>Quarter buffer %${num("wp-qb",P.quarterBuffer,'min="0" max="90" name="quarterBuffer"')}</label>
+      <label>Overloaded above %${num("wp-over",P.overloadAt,'min="1" name="overloadAt"')}</label>
+      <label>Healthy target %${num("wp-target",P.targetLoad,'min="1" name="targetLoad"')}<span class="note">Suggestions fill people up to this</span></label>
+      <label>Has room below %${num("wp-room",P.roomBelow,'min="0" name="roomBelow"')}</label>
+      <label>Due-date window (days)${num("wp-win",P.dueWindow,'min="1" name="dueWindow"')}</label>
+    </div>
+    <fieldset><legend>Weekend days</legend><div class="checks">${DAYS.map((d,i)=>`<label><input type="checkbox" name="weekend" id="wp-wk${i}" value="${i}"${P.weekend.includes(i)?" checked":""}>${d}</label>`).join("")}</div></fieldset>
+    <label class="blk">Public holidays<textarea id="wp-hol" name="holidays" placeholder="2026-10-21, 2026-10-22, 2026-11-08">${esc(P.holidays||"")}</textarea><span class="note">Dates as YYYY-MM-DD, separated by commas or new lines. They are taken out of everyone's working days.</span></label>
+    <fieldset><legend>Level factors</legend><p class="note">Share of the full capacity each level can plan for. Seniors and leads default lower than 1 because reviews, mentoring and coordination take part of their time. Leave blank to use the default shown.</p>
+      <div class="pgrid">${levels.length?levels.map((l,i)=>`<label>${esc(l)}${num("wp-lf"+i,P.levelFactors[l.toLowerCase()]??"",`min="0" max="2" step="0.05" data-level="${esc(l.toLowerCase())}" placeholder="${defaultLevelFactor(l)}"`)}</label>`).join(""):`<p class="note">Add roles and levels on the Team tab to set factors per level. Everyone uses ${defaultLevelFactor("")} until then.</p>`}</div></fieldset>
+    <div class="df" style="padding:0;border:0;margin:0"><button class="btn ghost" type="button" data-act="reset-params"${ro()}>Reset to defaults</button><div class="spacer"></div><button class="btn primary" type="submit"${ro()}>Save assumptions</button></div>
+  </form>
+  <div class="subhead"><h3>Per-person capacity</h3><p>Optional. Overrides the level-based capacity, in ${P.unit} per ${P.refDays} working days. Leave days are entered per sprint on the Results tab.</p></div>
+  <div class="tablewrap"><table class="wl"><thead><tr><th>Person</th><th>Level factor</th><th>From level</th><th>Override</th></tr></thead><tbody>`+
+    activeMembers().map(m=>`<tr><td><span class="who">${av(m)}<span><b>${esc(m.name)}</b><br><span class="note">${esc(roleText(m))}</span></span></span></td><td class="mono">${levelFactorOf(m,P)}</td>
+      <td class="mono">${fmtVal(P.baseCapacity*levelFactorOf(m,P),"effort",P)}</td>
+      <td><input class="leavein" type="number" min="0" step="0.5" data-mcap="${esc(m.id)}" value="${m.capacity||""}" placeholder="—" aria-label="Capacity override for ${esc(m.name)}"${ro()}></td></tr>`).join("")+`</tbody></table></div>`;
+}
+function fieldDialog(pk,f){
+  const pr=PROFILES[pk],M=pr.metrics;const cfg=profConfig(pk);const isNew=!f;f=f||{key:"",label:"",expr:"",format:"number",showMember:true,showRole:true};
+  const builtin=!isNew&&!f.expr&&M[f.key];
+  const avail=Object.keys(M).filter(k=>!cfg.fields.some(x=>x.key===k&&!x.expr));
+  openDialog(isNew?"Add field":"Edit field",`
+    <label class="full">Label<input name="label" id="wf-label" required maxlength="40" value="${esc(f.label)}"></label>
+    ${builtin?`<p class="full note">Built-in metric <code>${esc(f.key)}</code>: ${esc(M[f.key][2])}</p>`:`
+    <label>Source<select name="kind" id="wf-kind">${isNew&&avail.length?`<option value="metric">Built-in metric</option>`:""}<option value="formula"${isNew&&avail.length?"":" selected"}>Formula</option></select></label>
+    <label id="wf-metric-wrap">Metric<select name="metric" id="wf-metric">${avail.map(k=>`<option value="${k}">${esc(M[k][0])} (${k})</option>`).join("")}</select></label>
+    <label id="wf-key-wrap">Key (used in rules)<input name="key" id="wf-key" pattern="[A-Za-z_][A-Za-z0-9_]*" maxlength="30" value="${esc(f.key)}" placeholder="stress"></label>
+    <label class="full" id="wf-expr-wrap">Formula<textarea name="expr" id="wf-expr" placeholder="load/25 + overdue*2" style="font-family:var(--f-mono);min-height:70px">${esc(f.expr||"")}</textarea><span class="note" id="wf-check"></span></label>
+    <div class="full" id="wf-ins"><span class="note">Insert:</span> ${[...Object.keys(M),...cfg.fields.filter(x=>x.expr&&x.key!==f.key).map(x=>x.key)].map(k=>`<button type="button" class="tag ins" data-ins-name="${k}">${k}</button>`).join(" ")}</div>`}
+    <label>Format<select name="format" id="wf-format">${FORMATS.map(([v,l])=>`<option value="${v}"${f.format===v?" selected":""}>${l}</option>`).join("")}</select></label>
+    <div class="full checks"><label><input type="checkbox" name="showMember" id="wf-sm"${f.showMember!==false?" checked":""}>Show for people</label>${pr.roles?`<label><input type="checkbox" name="showRole" id="wf-sr"${f.showRole!==false?" checked":""}>Show for roles</label>`:""}</div>`,{submitLabel:isNew?"Add field":"Save"});
+  const kind=$("#wf-kind"),sync=()=>{if(!kind)return;const m=kind.value==="metric";$("#wf-metric-wrap").hidden=!m;$("#wf-key-wrap").hidden=m;$("#wf-expr-wrap").hidden=m;$("#wf-ins").hidden=m;
+    if(m&&isNew){const k=$("#wf-metric").value;if(k){if(!$("#wf-label").value)$("#wf-label").value=M[k][0];$("#wf-format").value=M[k][1]}}};
+  if(kind){kind.onchange=sync;$("#wf-metric").onchange=()=>{const k=$("#wf-metric").value;$("#wf-label").value=M[k][0];$("#wf-format").value=M[k][1]};sync()}
+  const ex=$("#wf-expr");if(ex){const chk=()=>{const e=ex.value.trim()?checkExpr(ex.value,knownNames(pk,cfg.fields,f.key)):"";const n=$("#wf-check");n.textContent=e||(ex.value.trim()?"Formula looks good.":"");n.className=e?"err":"note"};ex.oninput=chk;chk();
+    const lab=$("#wf-label"),key=$("#wf-key");if(isNew)lab.oninput=()=>{if(!key.dataset.touched)key.value=lab.value.replace(/[^A-Za-z0-9]+(.)?/g,(m,c)=>c?c.toUpperCase():"").replace(/^[^A-Za-z_]+/,"").replace(/^./,c=>c.toLowerCase())};key.oninput=()=>key.dataset.touched="1"}
+  onSubmit=fd=>{const label=String(fd.get("label")).trim();if(!label)return false;
+    const base={label,format:fd.get("format"),showMember:fd.get("showMember")==="on",showRole:pr.roles?fd.get("showRole")==="on":false};let nf;
+    if(builtin)nf={...f,...base};
+    else if(fd.get("kind")==="metric"){const k=fd.get("metric");nf={key:k,...base}}
+    else{const key=String(fd.get("key")||"").trim(),expr=String(fd.get("expr")||"").trim();
+      if(!/^[A-Za-z_]\w*$/.test(key)){toast("Give the field a key: letters, numbers and _ only, starting with a letter");return false}
+      if(M[key]){toast(`"${key}" is a built-in metric name. Choose another key.`);return false}
+      if(cfg.fields.some(x=>x.key===key&&x.key!==f.key)){toast(`Another field already uses the key "${key}"`);return false}
+      const err=checkExpr(expr,knownNames(pk,cfg.fields,f.key));if(err){toast(err);return false}
+      nf={key,expr,...base}}
+    const fields=isNew?[...cfg.fields,nf]:cfg.fields.map(x=>x.key===f.key?nf:x);
+    let rules=cfg.rules;
+    if(!isNew&&f.key!==nf.key){const re=new RegExp("\\b"+f.key+"\\b","g");rules=rules.map(r=>({...r,when:r.when.replace(re,nf.key),message:String(r.message||"").replace(new RegExp("\\{"+f.key+"\\}","g"),"{"+nf.key+"}")}))}
+    return saveProf(pk,{fields,rules},isNew?"Field added":"Field saved")};
+}
+function ruleDialog(pk,r){
+  const pr=PROFILES[pk];const cfg=profConfig(pk);const isNew=!r;r=r||{id:"r-"+Date.now().toString(36),name:"",target:"member",scope:pr.scopes[0][0],when:"",severity:"warn",message:"",enabled:true};
+  const names=[...Object.keys(pr.metrics),...cfg.fields.filter(x=>x.expr).map(x=>x.key)];
+  openDialog(isNew?"Add rule":"Edit rule",`
+    <label class="full">Name<input name="name" id="wr-name" required maxlength="60" value="${esc(r.name)}" placeholder="Too many urgent tasks"></label>
+    ${pr.roles?`<label>Applies to<select name="target" id="wr-target"><option value="member"${r.target!=="role"?" selected":""}>Each person</option><option value="role"${r.target==="role"?" selected":""}>Each role</option></select></label>`:`<input type="hidden" name="target" value="member">`}
+    <label>${esc(pr.scopeLabel)}<select name="scope" id="wr-scope">${pr.scopes.map(([v,l])=>`<option value="${v}"${r.scope===v?" selected":""}>${l}</option>`).join("")}</select></label>
+    <label class="full">Condition<textarea name="when" id="wr-when" required style="font-family:var(--f-mono);min-height:60px" placeholder="${esc(pr.example)}">${esc(r.when)}</textarea><span class="note" id="wr-check"></span></label>
+    <div class="full"><span class="note">Insert:</span> ${names.map(k=>`<button type="button" class="tag ins" data-ins-name="${k}" data-ins-into="wr-when">${k}</button>`).join(" ")}</div>
+    <label>Severity<select name="severity" id="wr-sev">${SEVERITY.map(([v])=>`<option value="${v}"${r.severity===v?" selected":""}>${esc(sevLabel(pk,v))}</option>`).join("")}</select></label>
+    <label class="checks" style="align-self:end"><input type="checkbox" name="enabled" id="wr-on"${r.enabled!==false?" checked":""}>Turned on</label>
+    <label class="full">Message<input name="message" id="wr-msg" maxlength="200" value="${esc(r.message||"")}" placeholder="{highPriority} urgent tasks at {load} load."><span class="note">Use {name} or any metric or field key in braces to include its value.</span></label>`,{submitLabel:isNew?"Add rule":"Save"});
+  const w=$("#wr-when"),chk=()=>{const e=w.value.trim()?checkExpr(w.value,knownNames(pk,cfg.fields)):"";const n=$("#wr-check");n.textContent=e||(w.value.trim()?"Condition looks good.":"");n.className=e?"err":"note"};w.oninput=chk;chk();
+  onSubmit=fd=>{const nr={id:r.id,name:String(fd.get("name")).trim(),target:fd.get("target"),scope:fd.get("scope"),when:String(fd.get("when")).trim(),severity:fd.get("severity"),message:String(fd.get("message")||"").trim(),enabled:fd.get("enabled")==="on"};
+    if(!nr.name)return false;const err=checkExpr(nr.when,knownNames(pk,cfg.fields));if(err){toast(err);return false}
+    return saveProf(pk,{rules:isNew?[...cfg.rules,nr]:cfg.rules.map(x=>x.id===r.id?nr:x)},isNew?"Rule added":"Rule saved")};
+}
+
+
+/* ---------- REVIEWS: sprint retros and quarterly / half-yearly / yearly performance reviews ---------- */
+const RMETRICS={
+  committed:["Committed","count","Tasks they owned in the period (planned, due or finished in it)"],
+  completed:["Completed","count","Tasks they finished in the period"],
+  unfinished:["Unfinished","count","Owned tasks not finished in the period"],
+  completionRate:["Completion rate","percent","Completed ÷ committed"],
+  effortCommitted:["Effort committed","effort","Effort of the work they owned (task and subtask estimates)"],
+  effortDone:["Effort done","effort","Effort of the work they finished"],
+  expectedEffort:["Expected effort","effort","What their capacity allowed so far, from the Workload assumptions, their level, holidays and leave"],
+  deliveryVsExpected:["Delivery vs expected","percent","Effort done ÷ expected effort"],
+  effortVsTeam:["Effort vs team","percent","Effort done compared with the team average (100 = average)"],
+  doneWithDue:["Done with a due date","count","Finished tasks that had a due date"],
+  onTime:["On time","count","Finished on or before the due date (plus grace days)"],
+  late:["Late","count","Finished after the due date"],
+  onTimeRate:["On-time rate","percent","On time ÷ finished tasks with a due date (100 if none had one)"],
+  overdueNow:["Overdue at end","count","Open tasks past their due date at the end of the period"],
+  carriedOver:["Carried over","count","Their tasks moved on to a later sprint"],
+  avgCycleDays:["Avg. cycle time","days","Average days from start to finish for finished tasks"],
+  cycleVsTeam:["Cycle vs team","percent","Their cycle time compared with the team average (100 = average, higher is slower)"],
+  subtasksDone:["Subtasks done","count","Subtasks they finished"],
+  highPriorityDone:["High priority done","count","Urgent or high-priority tasks they finished"],
+  epicsContributed:["Epics","count","Different epics among the tasks they finished"],
+  meetingsHeld:["Meetings held","count","Meetings logged in the period"],
+  meetingsAttended:["Meetings attended","count","Meetings that list them as an attendee"],
+  attendance:["Attendance","percent","Meetings attended ÷ meetings held (100 if none were logged)"],
+  sprintsInPeriod:["Sprints","count","Sprints that started in the period"],
+  sprintsWithDone:["Sprints with output","count","Sprints in the period where they finished at least one task"],
+  unestimated:["Unestimated","count","Finished items with no estimate (the default size was used)"],
+  rating:["Rating","number","The 1–5 rating saved in their review for this period (0 if none)"],
+  levelFactor:["Level factor","number","Capacity factor for their level (from Workload assumptions)"],
+  leaveDays:["Leave days","days","Leave recorded on sprints in the period"],
+  members:["People","count","Always 1 for a person"],
+};
+const rField=(key)=>({key,label:RMETRICS[key][0],format:RMETRICS[key][1],showMember:true,showRole:false});
+const DEFAULT_RFIELDS=[rField("completed"),rField("completionRate"),rField("effortDone"),rField("deliveryVsExpected"),rField("onTimeRate"),rField("late"),
+  rField("carriedOver"),rField("avgCycleDays"),rField("highPriorityDone"),rField("attendance"),
+  {key:"score",label:"Score",expr:"min(completionRate, 100)*0.35 + min(onTimeRate, 100)*0.25 + min(deliveryVsExpected, 100)*0.25 + min(attendance, 100)*0.15",format:"number",showMember:true,showRole:false}];
+const DEFAULT_RRULES=[
+  {id:"v-delivered",name:"Delivered the commitment",target:"member",scope:"all",when:"committed >= 2 and completionRate >= 90",severity:"good",message:"Finished {completed} of {committed} tasks ({completionRate}).",enabled:true},
+  {id:"v-ontime",name:"Reliable on deadlines",target:"member",scope:"all",when:"doneWithDue >= 3 and onTimeRate >= 90",severity:"good",message:"{onTimeRate} of dated tasks finished on time.",enabled:true},
+  {id:"v-hp",name:"Handled high-priority work",target:"member",scope:"all",when:"highPriorityDone >= 3",severity:"good",message:"Finished {highPriorityDone} urgent or high-priority tasks.",enabled:true},
+  {id:"v-above",name:"Delivered above expectation",target:"member",scope:"all",when:"expectedEffort > 0 and deliveryVsExpected >= 110",severity:"good",message:"Delivered {effortDone} against an expected {expectedEffort} ({deliveryVsExpected}).",enabled:true},
+  {id:"v-consistent",name:"Consistent output",target:"member",scope:"period",when:"sprintsInPeriod >= 3 and sprintsWithDone >= sprintsInPeriod * 0.8",severity:"good",message:"Finished work in {sprintsWithDone} of {sprintsInPeriod} sprints.",enabled:true},
+  {id:"v-low",name:"Low completion",target:"member",scope:"all",when:"committed >= 2 and completionRate >= 40 and completionRate < 70",severity:"warn",message:"Finished {completed} of {committed} tasks ({completionRate}).",enabled:true},
+  {id:"v-verylow",name:"Most work unfinished",target:"member",scope:"all",when:"committed >= 2 and completionRate < 40",severity:"high",message:"Only {completed} of {committed} tasks finished ({completionRate}). Look for blockers or overcommitment.",enabled:true},
+  {id:"v-late",name:"Often late",target:"member",scope:"all",when:"late >= 2 and onTimeRate < 70",severity:"warn",message:"{late} tasks finished after their due date ({onTimeRate} on time).",enabled:true},
+  {id:"v-overdue",name:"Overdue work piling up",target:"member",scope:"all",when:"overdueNow >= 3",severity:"high",message:"{overdueNow} open tasks were overdue at the end of the period.",enabled:true},
+  {id:"v-carry",name:"Repeated carry-over",target:"member",scope:"all",when:"carriedOver >= 2",severity:"warn",message:"{carriedOver} tasks were moved on to a later sprint.",enabled:true},
+  {id:"v-slow",name:"Slower than the team",target:"member",scope:"all",when:"completed >= 3 and cycleVsTeam >= 150",severity:"warn",message:"Takes {avgCycleDays} per task on average ({cycleVsTeam} of the team average). Check task size and blockers.",enabled:true},
+  {id:"v-below",name:"Delivery below expectation",target:"member",scope:"period",when:"expectedEffort > 0 and deliveryVsExpected < 60",severity:"warn",message:"Delivered {effortDone} against an expected {expectedEffort} ({deliveryVsExpected}). Check for hidden work, blockers or unrealistic estimates.",enabled:true},
+  {id:"v-attend",name:"Low meeting attendance",target:"member",scope:"all",when:"meetingsHeld >= 4 and attendance < 70",severity:"info",message:"Attended {meetingsAttended} of {meetingsHeld} meetings.",enabled:true},
+  {id:"v-nowork",name:"No work in this period",target:"member",scope:"all",when:"committed = 0",severity:"info",message:"No tasks owned or finished in this period.",enabled:true},
+  {id:"v-unest",name:"Missing estimates",target:"member",scope:"all",when:"unestimated >= 3",severity:"info",message:"{unestimated} finished items had no estimate, so effort numbers are approximate.",enabled:true},
+];
+const DEFAULT_RPARAMS={lateGraceDays:0};
+PROFILES.wl={doc:"config",metrics:METRICS,fields:DEFAULT_FIELDS,rules:DEFAULT_RULES,params:DEFAULT_PARAMS,roles:true,noun:"analysis",
+  scopeLabel:"When planning",scopes:[["both","Sprint and quarter"],["sprint","Sprint only"],["quarter","Quarter only"]],sev:SEVLABEL,
+  example:"levelFactor < 0.75 and highPriority >= 3"};
+PROFILES.rv={doc:"review",metrics:RMETRICS,fields:DEFAULT_RFIELDS,rules:DEFAULT_RRULES,params:DEFAULT_RPARAMS,roles:false,noun:"review",
+  scopeLabel:"Use in",scopes:[["all","Retros and all reviews"],["sprint","Sprint retros only"],["period","All performance reviews"],["quarter","Quarterly reviews only"],["half","Half-yearly reviews only"],["year","Yearly reviews only"]],
+  sev:{high:"Needs support",warn:"Watch",info:"Note",good:"Strength"},example:"committed >= 2 and completionRate < 70"};
+const RATINGS=[["","No rating"],["1","1 · Needs significant improvement"],["2","2 · Below expectations"],["3","3 · Meets expectations"],["4","4 · Exceeds expectations"],["5","5 · Outstanding"]];
+
+function addMonths(s,n){const[y,m,d]=s.split("-").map(Number);const t=new Date(Date.UTC(y,m-1+n,1));const last=new Date(Date.UTC(t.getUTCFullYear(),t.getUTCMonth()+1,0)).getUTCDate();
+  return t.getUTCFullYear()+"-"+pad(t.getUTCMonth()+1)+"-"+pad(Math.min(d,last))}
+function defaultRetroSprint(){const done=S.sprints.filter(s=>s.status==="completed").sort((a,b)=>(b.endDate||"").localeCompare(a.endDate||""));return(done[0]||currentSprint()||{}).id||null}
+/* The window being reviewed. Half-yearly and yearly reviews end on the chosen date (today by default) and reach back 6 or 12 months. */
+function reviewWindow(){const F=S.f.rv;
+  if(F.tab==="retro"){const sp=sprintById(F.sprint);if(!sp)return null;return{mode:"sprint",key:"sprint-"+sp.id,label:sp.name+" · "+fmt(sp.startDate)+" – "+fmtY(sp.endDate),start:sp.startDate,end:sp.endDate,sprint:sp}}
+  if(F.period==="quarter"){const[a,b]=quarterRange(F.quarter);return{mode:"quarter",key:"quarter-"+F.quarter,label:"Quarterly · "+qLabel(F.quarter),start:a,end:b}}
+  const end=F.end||today();const months=F.period==="half"?6:12;const start=addDays(addMonths(end,-months),1);
+  return{mode:F.period,key:F.period+"-"+end,label:(months===6?"Half-yearly":"Yearly")+" · "+fmtY(start)+" – "+fmtY(end),start,end};
+}
+const reviewDocId=(key,mid)=>(key+"--"+mid).replace(/[^A-Za-z0-9_.~:@+-]/g,"_");
+const reviewOf=(key,mid)=>S.reviews.find(x=>x.id===reviewDocId(key,mid));
+function runReview(){
+  const win=reviewWindow();if(!win){toast("Pick a sprint first");return}
+  const cfg=profConfig("rv"),RP=cfg.params,WP=profConfig("wl").params;
+  const inWin=d=>!!d&&d>=win.start&&d<=win.end;const sprintMode=win.mode==="sprint";
+  const asOf=win.end<today()?win.end:today();
+  const eff=x=>+x.estimate>0?+x.estimate:+WP.defaultEstimate||0;
+  const sprintsIn=sprintMode?[win.sprint]:S.sprints.filter(s=>inWin(s.startDate));const sprintIds=new Set(sprintsIn.map(s=>s.id));
+  const inScope=t=>sprintMode?(t.sprintId===win.sprint.id||(t.sprintHistory||[]).includes(win.sprint.id))
+    :(inWin(isoDay(t.completedAt))||(t.sprintId&&sprintIds.has(t.sprintId))||(t.sprintHistory||[]).some(x=>sprintIds.has(x))||(!t.sprintId&&inWin(t.dueDate)));
+  const doneIn=t=>t.status==="done"&&(sprintMode?t.sprintId===win.sprint.id:inWin(isoDay(t.completedAt)));
+  const subDone=x=>x.status==="done"&&(sprintMode||inWin(isoDay(x.completedAt)));
+  const scopeTasks=S.tasks.filter(inScope);
+  const people=new Map();
+  const row=id=>{if(!id||!memberById(id))return null;if(!people.has(id))people.set(id,{m:memberById(id),committed:0,completed:0,effortCommitted:0,effortDone:0,doneWithDue:0,onTime:0,late:0,
+    overdueNow:0,carriedOver:0,cycles:[],subtasksDone:0,highPriorityDone:0,epics:new Set(),unestimated:0,sprintsDone:new Set(),doneList:[],openList:[],lateList:[]});return people.get(id)};
+  activeMembers().forEach(m=>row(m.id));
+  let unassignedOpen=0;
+  for(const t of scopeTasks){
+    const done=doneIn(t);const r=row(t.assigneeId);
+    if(!r){if(!done)unassignedOpen++}
+    else{r.committed++;
+      if(done){r.completed++;r.doneList.push(t.id);
+        if(t.dueDate){r.doneWithDue++;const cd=isoDay(t.completedAt)||asOf;if(cd<=addDays(t.dueDate,+RP.lateGraceDays||0))r.onTime++;else{r.late++;r.lateList.push(t.id)}}
+        const st=t.startDate||isoDay(t.createdAt);if(st&&t.completedAt)r.cycles.push(Math.max(0,(utc(isoDay(t.completedAt))-utc(st))/864e5));
+        if(t.priority==="urgent"||t.priority==="high")r.highPriorityDone++;if(t.epicId)r.epics.add(t.epicId);
+        if(t.sprintId)r.sprintsDone.add(t.sprintId)}
+      else{r.openList.push(t.id);if(t.dueDate&&t.dueDate<asOf)r.overdueNow++}
+      if((t.carryCount||0)>0&&(!sprintMode||(t.sprintHistory||[]).includes(win.sprint.id)))r.carriedOver++}
+    const subs=subsOf(t.id),subEst=subs.some(x=>+x.estimate>0);
+    const units=subEst?subs.map(x=>({o:x.assigneeId||t.assigneeId,e:eff(x),done:subDone(x)||done,est:+x.estimate>0})):[{o:t.assigneeId,e:eff(t),done,est:+t.estimate>0}];
+    for(const u of units){const ro=row(u.o);if(!ro)continue;ro.effortCommitted+=u.e;if(u.done){ro.effortDone+=u.e;if(!u.est)ro.unestimated++}}
+    for(const x of subs){const rx=row(x.assigneeId);if(rx&&subDone(x))rx.subtasksDone++}
+  }
+  const meetings=S.meetings.filter(m=>inWin(m.date));
+  const buffer=(sprintMode?WP.sprintBuffer:WP.quarterBuffer)/100;const elapsed=workDaysBetween(win.start,asOf,WP);
+  const rows=[...people.values()].filter(r=>isActive(r.m)||r.committed).map(r=>{const m=r.m;
+    const leave=sprintsIn.reduce((a,s)=>a+(+((s.leave||{})[m.id])||0),0);const lf=levelFactorOf(m,WP);const base=+m.capacity>0?+m.capacity:WP.baseCapacity*lf;
+    const expected=base*Math.max(0,elapsed-leave)/(+WP.refDays||10)*(1-buffer);
+    const att=meetings.filter(x=>(x.attendees||[]).includes(m.id)).length;const rv=reviewOf(win.key,m.id);
+    return{id:m.id,name:m.name,member:m,roleId:m.roleId||"",committed:r.committed,completed:r.completed,unfinished:r.committed-r.completed,
+      completionRate:r.committed?r.completed/r.committed*100:0,effortCommitted:r.effortCommitted,effortDone:r.effortDone,expectedEffort:expected,
+      deliveryVsExpected:expected>0?r.effortDone/expected*100:0,doneWithDue:r.doneWithDue,onTime:r.onTime,late:r.late,onTimeRate:r.doneWithDue?r.onTime/r.doneWithDue*100:100,
+      overdueNow:r.overdueNow,carriedOver:r.carriedOver,avgCycleDays:r.cycles.length?r.cycles.reduce((a,b)=>a+b,0)/r.cycles.length:0,subtasksDone:r.subtasksDone,
+      highPriorityDone:r.highPriorityDone,epicsContributed:r.epics.size,meetingsHeld:meetings.length,meetingsAttended:att,attendance:meetings.length?att/meetings.length*100:100,
+      sprintsInPeriod:sprintsIn.length,sprintsWithDone:[...r.sprintsDone].filter(x=>sprintIds.has(x)).length,unestimated:r.unestimated,rating:rv&&+rv.rating||0,
+      levelFactor:lf,leaveDays:leave,members:1,doneList:r.doneList,openList:r.openList,lateList:r.lateList}});
+  const act=rows.filter(r=>r.committed>0);const avgEff=act.length?act.reduce((a,r)=>a+r.effortDone,0)/act.length:0;
+  const cyc=rows.filter(r=>r.completed>0);const avgCyc=cyc.length?cyc.reduce((a,r)=>a+r.avgCycleDays,0)/cyc.length:0;
+  rows.forEach(r=>{r.effortVsTeam=avgEff>0?r.effortDone/avgEff*100:0;r.cycleVsTeam=avgCyc>0&&r.completed?r.avgCycleDays/avgCyc*100:0});
+  rows.sort((a,b)=>a.name.localeCompare(b.name));
+  const ruleOn=rule=>rule.scope==="all"||rule.scope===win.mode||(!sprintMode&&rule.scope==="period");
+  const{errors,findings}=evalFieldsAndRules("rv",cfg,[{target:"member",rows}],ruleOn,WP);
+  const sum=f=>rows.reduce((a,r)=>a+r[f],0);const dw=sum("doneWithDue");
+  S.rv={win,tab:S.f.rv.tab,rows,findings,errors,fields:cfg.fields,P:WP,at:new Date(),
+    team:{committed:sum("committed"),completed:sum("completed"),effortDone:sum("effortDone"),expected:sum("expectedEffort"),onTimeRate:dw?sum("onTime")/dw*100:100,
+      unfinished:sum("unfinished"),carried:sum("carriedOver"),unassignedOpen,meetings:meetings.length,days:workDaysBetween(win.start,win.end,WP),elapsed}};
+  render();
+}
+function renderReviews(){
+  const F=S.f.rv;const cfg=profConfig("rv");
+  if(!F.sprint||!sprintById(F.sprint))F.sprint=defaultRetroSprint();
+  if(!F.quarter)F.quarter=curQuarter();if(!F.end)F.end=today();
+  let h=`<div class="viewhead"><div><h2>Reviews</h2><p>Sprint retros and quarterly, half-yearly and yearly performance reviews, based on each person's work.</p></div></div>${banners()}
+    <div class="seg" role="group" style="margin-bottom:14px">${[["retro","Sprint retro"],["perf","Performance review"],["fields","Fields",cfg.fields.length],["rules","Rules",cfg.rules.filter(r=>r.enabled!==false).length],["params","Assumptions"]].map(([v,l,n])=>`<button type="button" data-rvtab="${v}" aria-pressed="${F.tab===v}">${l}${n!=null?`<span class="n">${n}</span>`:""}</button>`).join("")}</div>`;
+  if(loading())return h+`<div class="emptystate"><p>Loading…</p></div>`;
+  if(F.tab==="fields")return h+renderCfgFields("rv",cfg);
+  if(F.tab==="rules")return h+renderCfgRules("rv",cfg);
+  if(F.tab==="params")return h+renderRvParams(cfg);
+  const retro=F.tab==="retro";const sprints=S.sprints.slice().sort(byStart).reverse();
+  h+=`<div class="filters">${retro?(sprints.length?`<label class="fld"><span>Sprint</span><select id="rv-sprint">${sprints.map(s=>sprintOpt(s,F.sprint)).join("")}</select></label>`:`<div class="fld"><span>Sprint</span><div class="hint">No sprints yet. <a href="#sprints">Create one</a></div></div>`)
+    :`<div class="fld"><span>Review period</span><div class="seg" role="group">${[["quarter","Quarterly"],["half","Half-yearly"],["year","Yearly"]].map(([v,l])=>`<button type="button" data-rvperiod="${v}" aria-pressed="${F.period===v}">${l}</button>`).join("")}</div></div>
+      ${F.period==="quarter"?`<label class="fld"><span>Quarter</span><select id="rv-quarter">${quarterOptions(F.quarter)}</select></label>`
+        :`<label class="fld"><span>Ending on</span><input type="date" id="rv-end" value="${esc(F.end)}"></label><div class="fld"><span>Covers</span><div class="hint">${fmtY(addDays(addMonths(F.end,F.period==="half"?-6:-12),1))} – ${fmtY(F.end)}</div></div>`}`}
+    <label class="fld"><span>Role</span><select id="rv-role">${roleOptions(F.role)}</select></label>
+    <div class="spacer"></div><button class="btn primary" type="button" data-act="run-review">${retro?"Run retro":"Run review"}</button></div>`;
+  const R=S.rv;const win=reviewWindow();
+  if(!R||R.tab!==F.tab||!win||R.win.key!==win.key)return h+`<div class="emptystate"><h3>${retro?"Run the sprint retro":"Run the performance review"}</h3><p>${retro?"Pick a sprint":"Pick a period"} and press the button. It checks ${cfg.rules.filter(r=>r.enabled!==false).length} rules across ${cfg.fields.length} fields for each person, using their tasks, subtasks, estimates, due dates and meeting attendance. ${cfg.saved?"":"These are the built-in defaults; change them on the Fields, Rules and Assumptions tabs."}</p>
+    <div class="acts"><button class="btn primary" type="button" data-act="run-review">${retro?"Run retro":"Run review"}</button></div></div>`;
+  const P=R.P,T=R.team;const rows=R.rows.filter(r=>F.role==="all"||r.roleId===F.role);
+  h+=`<p class="note" style="margin:-4px 0 6px">Results for <b>${esc(R.win.label)}</b>${T.elapsed<T.days?` · ${T.elapsed} of ${T.days} working days so far`:` · ${T.days} working days`} · analyzed ${R.at.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}.</p>
+    <p class="note" style="margin:0 0 12px">Treat these as conversation starters, not a verdict. The numbers can't see helping others, reviews, mentoring or unplanned work.</p>
+    ${R.errors.length?`<div class="banner">Some formulas couldn't run: ${R.errors.map(esc).join(" · ")}</div>`:""}
+    <div class="tiles">
+      <div class="tile"><span>Completed</span><b>${T.completed}<small style="font-size:14px"> of ${T.committed}</small></b><small>${T.committed?Math.round(T.completed/T.committed*100):0}% of owned tasks</small></div>
+      <div class="tile"><span>Effort done</span><b>${fmtVal(T.effortDone,"effort",P)}</b><small>${T.expected>0?Math.round(T.effortDone/T.expected*100)+"% of expected ("+fmtVal(T.expected,"effort",P)+")":"No expected capacity"}</small></div>
+      <div class="tile"><span>On time</span><b>${fmtVal(T.onTimeRate,"percent",P)}</b><small>of finished tasks with a due date</small></div>
+      <div class="tile"><span>Unfinished</span><b>${T.unfinished}</b><small>${T.carried} carried over${T.unassignedOpen?` · ${T.unassignedOpen} unassigned open`:""}</small></div></div>`;
+  const fs=R.findings.filter(f=>F.role==="all"||(R.rows.find(r=>r.id===f.rowId)||{}).roleId===F.role);
+  h+=`<div class="subhead"><h3>Findings</h3><p>${fs.length} from your rules</p></div>`;
+  h+=fs.length?`<div class="findings">${["good","high","warn","info"].map(sev=>{const g=fs.filter(f=>f.rule.severity===sev);return g.length?`<div class="fgroup"><div class="fhead">${sevPill(sev,sevLabel("rv",sev))}<span class="note">${g.length}</span></div>${g.map(f=>`<div class="finding"><b>${esc(f.name)}</b> · ${esc(f.rule.name)}<div class="note">${esc(f.msg)}</div></div>`).join("")}</div>`:""}).join("")}</div>`
+    :`<div class="emptystate"><p>No rule matched for this ${retro?"sprint":"period"}.</p></div>`;
+  const mf=R.fields.filter(f=>f.showMember!==false);
+  h+=`<div class="subhead"><h3>People</h3><p>${rows.length} ${F.role==="all"?"people":"in this role"} · open a person to see their work and write the ${retro?"retro note":"review"}</p></div>
+    <div class="tablewrap"><table class="wl"><thead><tr><th>Person</th>${mf.map(f=>`<th title="${esc(f.expr||(RMETRICS[f.key]||[,,""])[2])}">${esc(f.label)}</th>`).join("")}<th>Flags</th></tr></thead><tbody>`+
+    rows.map(r=>{const rv=reviewOf(R.win.key,r.id);return`<tr><td class="stick"><span class="who">${av(r.member)}<span><b>${esc(r.name)}</b><br><span class="note">${esc(roleText(r.member))}</span></span></span>
+      <button class="btn sm rvbtn${rv?"":" primary"}" type="button" data-act="open-review" data-id="${esc(r.id)}">${rv?"✓ Reviewed"+(rv.rating?" · "+rv.rating+"/5":""):retro?"Add note":"Review"}</button></td>
+      ${mf.map(f=>`<td class="mono">${fmtVal(r.values[f.key],f.format,P)}</td>`).join("")}
+      <td><div class="flags">${r.flags.map(x=>`<span class="pill sev-${x.rule.severity}" title="${esc(x.msg)}">${esc(x.rule.name)}</span>`).join("")||'<span class="note">–</span>'}</div></td></tr>`}).join("")+`</tbody></table></div>`;
+  if(retro){const sp=R.win.sprint&&sprintById(R.win.sprint.id);const rt=(sp&&sp.retro)||{};
+    h+=`<div class="subhead"><h3>Team retro</h3><p>Notes for the whole team, saved with ${esc(sp?sp.name:"the sprint")}</p></div>
+    <form id="rv-retro" class="box params"><div class="pgrid">
+      <label>What went well<textarea name="well" id="rt-well" placeholder="Shipped the payment API early">${esc(rt.well||"")}</textarea></label>
+      <label>What to improve<textarea name="improve" id="rt-improve" placeholder="Too many tasks waited on review">${esc(rt.improve||"")}</textarea></label>
+      <label>Action items<textarea name="actions" id="rt-actions" placeholder="Pair on reviews every afternoon (Asha)">${esc(rt.actions||"")}</textarea></label></div>
+      <div class="df" style="padding:0;border:0;margin:0"><span class="note">${rt.updatedAt?"Last saved "+fmtY(isoDay(rt.updatedAt)):""}</span><div class="spacer"></div><button class="btn primary" type="submit"${ro()}>Save retro notes</button></div></form>`}
+  else{const past=S.reviews.filter(x=>x.mode&&x.mode!=="sprint").sort((a,b)=>(b.end||"").localeCompare(a.end||""));
+    if(past.length)h+=`<div class="subhead"><h3>Saved reviews</h3><p>${past.length} across all periods</p></div><div class="tablewrap"><table class="wl"><thead><tr><th>Person</th><th>Period</th><th>Rating</th><th>Updated</th></tr></thead><tbody>`+
+      past.slice(0,50).map(x=>`<tr><td>${who(x.memberId)}</td><td>${esc(x.periodLabel||x.periodKey)}</td><td class="mono">${x.rating?x.rating+"/5":"–"}</td><td class="mono">${fmtY(isoDay(x.updatedAt))}</td></tr>`).join("")+`</tbody></table></div>`}
+  return h;
+}
+function renderRvParams(cfg){const P=cfg.params;
+  return`<form id="rv-params" class="box params"><div class="pgrid">
+    <label>Grace days for "on time"<input type="number" id="rp-grace" name="lateGraceDays" min="0" step="1" value="${esc(P.lateGraceDays)}"><span class="note">A task finished this many days after its due date still counts as on time.</span></label></div>
+    <p class="note">Expected effort uses the Workload assumptions: capacity per working day, level factors, weekends, public holidays, buffers and leave on sprints. <a href="#workload" data-act="goto-wl-params">Open Workload assumptions</a>.</p>
+    <div class="df" style="padding:0;border:0;margin:0"><button class="btn ghost" type="button" data-act="reset-params" data-prof="rv"${ro()}>Reset to defaults</button><div class="spacer"></div><button class="btn primary" type="submit"${ro()}>Save assumptions</button></div></form>`}
+function reviewDialog(mid){
+  const R=S.rv;if(!R)return;const r=R.rows.find(x=>x.id===mid);if(!r)return;const win=R.win;const id=reviewDocId(win.key,mid);const rv=reviewOf(win.key,mid)||{};const retro=win.mode==="sprint";
+  const tl=ids=>ids.length?`<ul class="tlist">${ids.map(i=>{const t=S.tasks.find(x=>x.id===i);return t?`<li><span class="key">${esc(taskKey(t))}</span> ${esc(t.title)}${r.lateList.includes(i)?' <span class="pill st-overdue">late</span>':""}</li>`:""}).join("")}</ul>`:`<span class="note">None</span>`;
+  const past=S.reviews.filter(x=>x.memberId===mid&&x.id!==id).sort((a,b)=>(b.end||"").localeCompare(a.end||"")).slice(0,6);
+  openDialog(`${r.name} · ${win.label}`,`
+    <div class="full kv">${R.fields.filter(f=>f.showMember!==false).map(f=>`<div><span>${esc(f.label)}</span><b>${fmtVal(r.values[f.key],f.format,R.P)}</b></div>`).join("")}</div>
+    ${r.flags.length?`<div class="full flags">${r.flags.map(x=>`<span class="pill sev-${x.rule.severity}" title="${esc(x.msg)}">${esc(x.rule.name)}</span>`).join("")}</div><ul class="full tlist">${r.flags.map(x=>`<li><b>${esc(x.rule.name)}:</b> ${esc(x.msg)}</li>`).join("")}</ul>`:""}
+    <div><b class="sec-h">Finished (${r.doneList.length})</b>${tl(r.doneList)}</div><div><b class="sec-h">Not finished (${r.openList.length})</b>${tl(r.openList)}</div>
+    ${past.length?`<div class="full"><b class="sec-h">Earlier reviews</b><ul class="tlist">${past.map(x=>`<li>${esc(x.periodLabel||x.periodKey)}${x.rating?` · <b>${x.rating}/5</b>`:""}${x.improvements?` · <span class="note">${esc(x.improvements.slice(0,90))}</span>`:""}</li>`).join("")}</ul></div>`:""}
+    <label>Rating<select name="rating" id="rv-rating">${RATINGS.map(([v,l])=>`<option value="${v}"${String(rv.rating||"")===v?" selected":""}>${l}</option>`).join("")}</select></label><div></div>
+    <label class="full">${retro?"What went well":"Strengths"}<textarea name="strengths" id="rv-str">${esc(rv.strengths||"")}</textarea></label>
+    <label class="full">${retro?"What to improve":"Areas to improve"}<textarea name="improvements" id="rv-imp">${esc(rv.improvements||"")}</textarea></label>
+    <label class="full">${retro?"Commitments for next sprint":"Goals for the next period"}<textarea name="goals" id="rv-goals">${esc(rv.goals||"")}</textarea></label>
+    <p class="note full">Saved with the board's data (data/reviews in the repository), so anyone who can read the board's data can read it.</p>`,
+    {wide:true,submitLabel:"Save review",delLabel:rv.id?`the review of ${r.name} for ${win.label}`:"",del:rv.id?()=>write(db=>db.doc("reviews/"+id).delete(),"Review deleted"):null});
+  onSubmit=fd=>{const now=new Date().toISOString();
+    const data={memberId:mid,periodKey:win.key,periodLabel:win.label,mode:win.mode,start:win.start,end:win.end,rating:fd.get("rating")?+fd.get("rating"):null,
+      strengths:String(fd.get("strengths")||""),improvements:String(fd.get("improvements")||""),goals:String(fd.get("goals")||""),createdAt:rv.createdAt||now,updatedAt:now};
+    return write(db=>db.doc("reviews/"+id).set(data),"Review saved").then(ok=>{if(ok&&S.rv){const x=S.rv.rows.find(y=>y.id===mid);if(x)x.rating=data.rating||0;render()}return ok})};
+}
 /* ---------- render ---------- */
-const VIEWS={tasks:renderTasks,sprints:renderSprints,team:renderTeam,meetings:renderMeetings,docs:renderDocs,archive:renderArchive};
+const VIEWS={tasks:renderTasks,epics:renderEpics,sprints:renderSprints,workload:renderWorkload,reviews:renderReviews,team:renderTeam,meetings:renderMeetings,docs:renderDocs,archive:renderArchive};
 function render(){
   renderClock();
   const main=$("#main");
@@ -1190,7 +2063,7 @@ form.addEventListener("submit",async e=>{e.preventDefault();if(!onSubmit)return;
 
 function taskDialog(t,preset={}){
   const isNew=!t;
-  if(isNew){const f=S.f.tasks;const cs=currentSprint();t={status:"todo",priority:"medium",sprintId:f.mode==="sprint"&&f.sprint?f.sprint:cs?cs.id:null,...preset}}
+  if(isNew){const f=S.f.tasks;const cs=currentSprint();t={status:"todo",priority:"medium",sprintId:f.mode==="sprint"&&f.sprint?f.sprint:cs?cs.id:null,epicId:f.epic!=="all"&&f.epic!=="none"?f.epic:null,...preset}}
   const sprints=openSprints();const cur=sprintById(t.sprintId);if(cur&&cur.status==="completed")sprints.push(cur);
   const assignees=activeMembers();const curM=memberById(t.assigneeId);if(curM&&!isActive(curM))assignees.push(curM);
   openTaskId=isNew?null:t.id;
@@ -1200,6 +2073,9 @@ function taskDialog(t,preset={}){
     <label>Assignee<select name="assigneeId" id="t-assignee"><option value="">Unassigned</option>${mOpts(assignees,t.assigneeId||"")}</select></label>
     <label>Status<select name="status" id="t-status">${STATUSES.map(([v,l])=>`<option value="${v}"${t.status===v?" selected":""}>${l}</option>`).join("")}</select></label>
     <label>Sprint<select name="sprintId" id="t-sprint"><option value="">Backlog (no sprint)</option>${sprints.map(s=>sprintOpt(s,t.sprintId)).join("")}</select></label>
+    <label>Epic<select name="epicId" id="t-epic">${epicOptions(t.epicId||"")}</select></label>
+    <label>Estimate (${analysisConfig().params.unit})<input type="number" min="0" step="0.5" name="estimate" id="t-est" value="${t.estimate??""}" placeholder="e.g. 3"></label>
+    <label>Role needed<select name="roleId" id="t-roleneed"><option value="">Any role</option>${sortedRoles().map(r=>`<option value="${esc(r.id)}"${t.roleId===r.id?" selected":""}>${esc(r.name)}</option>`).join("")}</select></label>
     <label>Priority<select name="priority" id="t-prio">${prioOptions(t.priority||"medium")}</select></label>
     <label>Start date<input type="date" name="startDate" id="t-start" value="${esc(t.startDate||(isNew?today():isoDay(t.createdAt)))}"></label>
     <label>Due date<input type="date" name="dueDate" id="t-due" value="${esc(t.dueDate||"")}"></label>
@@ -1214,7 +2090,7 @@ function taskDialog(t,preset={}){
   onSubmit=fd=>{
     const now=new Date().toISOString();const status=fd.get("status");
     const data={title:String(fd.get("title")).trim(),description:String(fd.get("description")||""),assigneeId:fd.get("assigneeId")||null,status,
-      sprintId:fd.get("sprintId")||null,priority:fd.get("priority"),dueDate:fd.get("dueDate")||null,startDate:fd.get("startDate")||null,
+      sprintId:fd.get("sprintId")||null,epicId:fd.get("epicId")||null,estimate:fd.get("estimate")===""?null:+fd.get("estimate"),roleId:fd.get("roleId")||null,priority:fd.get("priority"),dueDate:fd.get("dueDate")||null,startDate:fd.get("startDate")||null,
       tags:String(fd.get("tags")||"").split(",").map(s=>s.trim()).filter(Boolean),updatedAt:now};
     if(!data.title)return false;
     if(data.startDate&&data.dueDate&&data.startDate>data.dueDate){toast("The due date must be on or after the start date");return false}
@@ -1233,6 +2109,7 @@ function refreshTaskExtras(){
   subs.forEach(x=>{const m=memberById(x.assigneeId);if(m&&!isActive(m)&&!people.includes(m))people.push(m)});
   el.innerHTML=subs.length?subs.map(x=>`<div class="st-row${x.status==="done"?" is-done":""}"><span class="key">${esc(subKey(x))}</span>
     <input class="st-title" data-sid="${esc(x.id)}" value="${esc(x.title)}" aria-label="Subtask ${esc(subKey(x))} title" maxlength="200"${ro()}>
+    <input class="st-est" type="number" min="0" step="0.5" data-sest="${esc(x.id)}" value="${x.estimate??""}" placeholder="Est." aria-label="${esc(subKey(x))} estimate"${ro()}>
     <select data-sstatus="${esc(x.id)}" aria-label="Status"${ro()}>${STATUSES.map(([v,l])=>`<option value="${v}"${(x.status||"todo")===v?" selected":""}>${l}</option>`).join("")}</select>
     <select data-sassign="${esc(x.id)}" aria-label="Assignee"${ro()}><option value="">Unassigned</option>${mOpts(people,x.assigneeId||"")}</select>
     <button type="button" class="x" data-act="del-subtask" data-id="${esc(x.id)}" aria-label="Delete ${esc(subKey(x))}" title="Delete subtask"${ro()}>×</button></div>`).join(""):`<span class="note">No subtasks yet.</span>`;
@@ -1257,7 +2134,7 @@ function memberDialog(m){
     <label>Level<select name="level" id="mm-level"></select></label>
     <label>Email (optional)<input type="email" name="email" id="mm-email" value="${esc(m.email||"")}"></label>
     <label>Status<select name="status" id="mm-status"><option value="active"${isActive(m)?" selected":""}>Active</option><option value="inactive"${isActive(m)?"":" selected"}>Inactive</option></select></label>
-    <div class="full"><label>Color</label><div class="swatches">${COLORS.map((c,i)=>`<label><input type="radio" name="color" id="mm-c${i}" value="${c}"${m.color===c?" checked":""}><span style="background:${c}"></span></label>`).join("")}</div></div>
+    <div class="full"><label>Color</label>${colorPicker("color","mm-c",COLORS,m.color)}</div>
     <p class="note full">Inactive members move to the Archive and drop out of assignment lists. ${open?`${open} open task${open===1?"":"s"} stay assigned to them until you reassign.`:"Their history stays linked."}</p>`,
     {submitLabel:isNew?"Add member":"Save",delLabel:"member "+(m.name||""),del:isNew?null:()=>write(db=>db.doc("members/"+m.id).delete(),"Member removed. Their tasks show as unassigned.")});
   const rs=$("#mm-role"),ls=$("#mm-level");
@@ -1267,8 +2144,9 @@ function memberDialog(m){
     const data={name:String(fd.get("name")).trim(),roleId:fd.get("roleId")||null,level:fd.get("level")||null,email:String(fd.get("email")||"").trim(),color:fd.get("color")||COLORS[0],status,
       inactiveSince:status==="inactive"?(m.status==="inactive"&&m.inactiveSince?m.inactiveSince:new Date().toISOString()):null};
     if(!data.name)return false;
-    if(isNew){data.createdAt=new Date().toISOString();return write(db=>db.collection("members").add(data),"Member added")}
-    return write(db=>db.doc("members/"+m.id).update(data),status!==(m.status||"active")?(status==="inactive"?"Moved to Archive":"Member reactivated"):"Member saved")};
+    data.color=normColor(data.color)||COLORS[0];
+    if(isNew){data.createdAt=new Date().toISOString();return write(async db=>{await ensurePalette(db,data.color);await db.collection("members").add(data)},"Member added")}
+    return write(async db=>{await ensurePalette(db,data.color);await db.doc("members/"+m.id).update(data)},status!==(m.status||"active")?(status==="inactive"?"Moved to Archive":"Member reactivated"):"Member saved")};
 }
 function sprintDialog(s){
   const isNew=!s;
@@ -1302,7 +2180,7 @@ function completeDialog(s){
     <label class="full">Review notes (optional)<textarea name="review" id="cd-review" placeholder="What went well, what to change">${esc(s.review||"")}</textarea></label>`,{submitLabel:"Complete sprint"});
   onSubmit=fd=>{const dest=fd.get("dest")||null;
     return write(async db=>{
-      if(unfinished.length)await moveTasks(unfinished,{sprintId:dest});
+      for(const t of unfinished)await db.doc("tasks/"+t.id).update({sprintId:dest,carryCount:(t.carryCount||0)+1,sprintHistory:[...new Set([...(t.sprintHistory||[]),s.id])],updatedAt:new Date().toISOString()});
       await db.doc("sprints/"+s.id).update({status:"completed",completedAt:new Date().toISOString(),review:String(fd.get("review")||""),carriedOver:unfinished.length,doneCount:list.length-unfinished.length});
       if(dest){const d=sprintById(dest);if(d&&d.status!=="active"&&!S.sprints.some(x=>x.status==="active"&&x.id!==s.id))await db.doc("sprints/"+dest).update({status:"active"})}
     },s.name+" completed and archived")};
@@ -1333,115 +2211,82 @@ function meetingDialog(m,type){
     return write(db=>db.doc("meetings/"+m.id).update(data),"Meeting saved")};
 }
 
-/* ---------- delete confirmation challenge ---------- */
+/* ---------- delete confirmation: type a short word ---------- */
 const cdlg=$("#cdlg");
-const SHAPES={circle:"circle",triangle:"triangle",square:"square"};
+const CF_WORDS=["poof","zap","toss","scrap","bye","drop","yeet","bin","nuke","gone"];
 function confirmDelete(what){
   return new Promise(resolve=>{
-    let solved=false,mode=Math.random()<.5?"puzzle":"draw",fails=0;
+    const word=CF_WORDS[Math.floor(Math.random()*CF_WORDS.length)];
     const finish=v=>{cdlg.onclose=null;if(cdlg.open)cdlg.close();resolve(v)};
     cdlg.onclose=()=>resolve(false);
-    const shell=()=>{
-      cdlg.innerHTML=`<div class="cf"><h2 class="dh">Delete ${esc(what)}?</h2>
-        <p class="cf-sub">This can't be undone. ${mode==="puzzle"?"Put the scrambled picture back together to confirm.":"Draw the shape below to confirm."}</p>
-        <div class="cf-body" id="cf-body"></div>
-        <p class="cf-msg" id="cf-msg" role="status"></p>
-        <div class="df"><button type="button" class="btn ghost sm" id="cf-switch">${mode==="puzzle"?"Draw a shape instead":"Solve a picture puzzle instead"}</button><div class="spacer"></div>
-          <button type="button" class="btn" id="cf-cancel">Cancel</button><button type="button" class="btn danger armed" id="cf-ok" disabled>Delete</button></div></div>`;
-      $("#cf-cancel").onclick=()=>finish(false);
-      $("#cf-ok").onclick=()=>{if(solved)finish(true)};
-      $("#cf-switch").onclick=()=>{mode=mode==="puzzle"?"draw":"puzzle";solved=false;fails=0;shell()};
-      const ok=v=>{solved=v;$("#cf-ok").disabled=!v};
-      if(mode==="puzzle")puzzle($("#cf-body"),ok);else drawShape($("#cf-body"),ok,()=>{fails++;if(fails>=3)$("#cf-msg").textContent+=" You can switch to the picture puzzle below."});
-    };
-    shell();cdlg.showModal();
+    cdlg.innerHTML=`<div class="cf"><h2 class="dh">Delete ${esc(what)}?</h2>
+      <p class="cf-sub">This can't be undone. Type the word to confirm.</p>
+      <div class="cf-body"><div class="ty-word" id="ty-word" aria-hidden="true">${[...word].map(c=>`<span>${c}</span>`).join("")}</div>
+        <input id="ty-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="${word.length}" aria-label="Type ${word} to confirm"></div>
+      <p class="cf-msg" id="cf-msg" role="status">Type <b>${word.toUpperCase()}</b>, then press Enter</p>
+      <div class="df"><div class="spacer"></div><button type="button" class="btn" id="cf-cancel">Cancel</button><button type="button" class="btn danger armed" id="cf-ok" disabled>Delete</button></div></div>`;
+    const inp=$("#ty-in"),box=$("#ty-word"),btn=$("#cf-ok"),msg=$("#cf-msg");let prev="";
+    const upd=()=>{const v=inp.value.toLowerCase();let n=0;while(n<v.length&&v[n]===word[n])n++;
+      if(v.length>prev.length&&n<v.length){box.classList.remove("shake");void box.offsetWidth;box.classList.add("shake")}
+      prev=v;[...box.children].forEach((el,i)=>{el.classList.toggle("hit",i<n);el.classList.toggle("cur",i===n&&n<word.length)});
+      const ok=v===word;btn.disabled=!ok;msg.innerHTML=ok?"Press <b>Enter</b> or Delete":n<v.length?"Not quite, check the letters":`Type <b>${word.toUpperCase()}</b>, then press Enter`};
+    inp.oninput=upd;
+    inp.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();if(!btn.disabled)finish(true)}};
+    $("#cf-cancel").onclick=()=>finish(false);
+    btn.onclick=()=>{if(!btn.disabled)finish(true)};
+    upd();cdlg.showModal();inp.focus();
   });
-}
-/* --- picture puzzle: a generated picture cut into 3x3 tiles, shuffled; swap tiles until it's whole --- */
-function puzzle(host,ok){
-  const N=3,SZ=240,cv=document.createElement("canvas");cv.width=cv.height=SZ;const g=cv.getContext("2d");
-  const hue=Math.floor(Math.random()*360);
-  const grd=g.createLinearGradient(0,0,SZ,SZ);grd.addColorStop(0,`hsl(${hue} 70% 55%)`);grd.addColorStop(1,`hsl(${(hue+140)%360} 65% 40%)`);
-  g.fillStyle=grd;g.fillRect(0,0,SZ,SZ);
-  g.fillStyle=`hsl(${(hue+60)%360} 90% 70%)`;g.beginPath();g.arc(SZ*.25,SZ*.27,38,0,7);g.fill();
-  g.fillStyle="rgba(255,255,255,.85)";g.beginPath();g.moveTo(SZ*.62,SZ*.12);g.lineTo(SZ*.92,SZ*.52);g.lineTo(SZ*.5,SZ*.48);g.closePath();g.fill();
-  g.strokeStyle="rgba(0,0,0,.35)";g.lineWidth=6;g.beginPath();for(let x=0;x<=SZ;x+=8)g.lineTo(x,SZ*.78+Math.sin(x/16)*14);g.stroke();
-  const word=["SPRINT","DEPLOY","BACKLOG","REVIEW","RELEASE","SHIP IT"][Math.floor(Math.random()*6)];
-  g.font="700 34px 'Bricolage Grotesque', system-ui, sans-serif";g.textAlign="center";g.fillStyle="#fff";g.strokeStyle="rgba(0,0,0,.5)";g.lineWidth=4;
-  g.strokeText(word,SZ/2,SZ*.68);g.fillText(word,SZ/2,SZ*.68);
-  const url=cv.toDataURL();
-  let order=[...Array(N*N).keys()];
-  do{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}}while(order.filter((v,i)=>v===i).length>2);
-  let pick=null;
-  host.innerHTML=`<div class="pz-wrap"><div class="pz" id="pz" role="grid" aria-label="Scrambled picture"></div>
-    <figure class="pz-ref"><img src="${url}" alt="The picture to rebuild"><figcaption>Target</figcaption></figure></div>`;
-  const grid=host.querySelector("#pz");const step=100/(N-1);
-  const draw=()=>{grid.innerHTML=order.map((piece,slot)=>`<button type="button" class="pz-t${pick===slot?" sel":""}${piece===slot?" ok":""}" data-slot="${slot}" aria-label="Tile ${slot+1}${pick===slot?", selected":""}" style="background-image:url(${url});background-position:${(piece%N)*step}% ${Math.floor(piece/N)*step}%"></button>`).join("");
-    const solved=order.every((v,i)=>v===i);ok(solved);
-    $("#cf-msg").textContent=solved?"Picture restored. You can delete now.":pick==null?"Click a tile, then click where it belongs to swap them.":"Now click the tile to swap with."};
-  grid.onclick=e=>{const t=e.target.closest(".pz-t");if(!t)return;const s=+t.dataset.slot;
-    if(pick==null)pick=s;else{if(pick!==s)[order[pick],order[s]]=[order[s],order[pick]];pick=null}
-    draw();const f=grid.querySelector(`[data-slot="${s}"]`);f&&f.focus()};
-  draw();
-}
-/* --- draw a shape: recognise circle / triangle / square from the stroke --- */
-function drawShape(host,ok,onFail){
-  const target=Object.keys(SHAPES)[Math.floor(Math.random()*3)];
-  host.innerHTML=`<div class="dr-wrap"><div class="dr-target"><svg viewBox="0 0 60 60" width="56" height="56" aria-hidden="true">${target==="circle"?'<circle cx="30" cy="30" r="22"/>':target==="triangle"?'<path d="M30 7 L54 51 L6 51 Z"/>':'<rect x="9" y="9" width="42" height="42"/>'}</svg>
-    <span>Draw a <b>${target}</b> in one stroke</span></div>
-    <canvas id="dr" width="320" height="220" aria-label="Drawing area"></canvas>
-    <button type="button" class="btn sm ghost" id="dr-clear">Clear</button></div>`;
-  const cv=host.querySelector("#dr"),g=cv.getContext("2d");let pts=[],down=false;
-  const css=getComputedStyle(document.documentElement);
-  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
-  const clear=()=>{g.clearRect(0,0,cv.width,cv.height);pts=[];ok(false)};
-  host.querySelector("#dr-clear").onclick=()=>{clear();$("#cf-msg").textContent=""};
-  cv.addEventListener("pointerdown",e=>{e.preventDefault();cv.setPointerCapture(e.pointerId);clear();down=true;pts.push(pos(e));
-    g.strokeStyle=css.getPropertyValue("--accent").trim()||"#1d6b58";g.lineWidth=4;g.lineCap=g.lineJoin="round";g.beginPath();g.moveTo(...pts[0])});
-  cv.addEventListener("pointermove",e=>{if(!down)return;const p=pos(e);pts.push(p);g.lineTo(...p);g.stroke()});
-  const up=()=>{if(!down)return;down=false;const got=classify(pts);const msg=$("#cf-msg");
-    if(got===target){ok(true);msg.textContent=`That's a ${target}. You can delete now.`}
-    else{ok(false);msg.textContent=got?`That looks like a ${got}. Try drawing a ${target}.`:`Couldn't recognise that. Draw a bigger, closed ${target}.`;onFail()}};
-  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
-}
-function classify(p){
-  if(p.length<12)return null;
-  const xs=p.map(q=>q[0]),ys=p.map(q=>q[1]);const w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys),d=Math.hypot(w,h);
-  if(Math.max(w,h)<50)return null;
-  const gap=Math.hypot(p[0][0]-p[p.length-1][0],p[0][1]-p[p.length-1][1]);if(gap>d*.3)return null;
-  const cx=xs.reduce((a,b)=>a+b)/p.length,cy=ys.reduce((a,b)=>a+b)/p.length;
-  const rs=p.map(q=>Math.hypot(q[0]-cx,q[1]-cy));const mr=rs.reduce((a,b)=>a+b)/rs.length;
-  const cvr=Math.sqrt(rs.reduce((a,r)=>a+(r-mr)**2,0)/rs.length)/mr;
-  /* corners: simplify the closed path, then count sharp turns */
-  const rdp=(pts,eps)=>{if(pts.length<3)return pts;let i0=0,dm=0;const[a,b]=[pts[0],pts[pts.length-1]];const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
-    for(let i=1;i<pts.length-1;i++){const q=pts[i];const dd=Math.abs((b[0]-a[0])*(a[1]-q[1])-(a[0]-q[0])*(b[1]-a[1]))/L;if(dd>dm){dm=dd;i0=i}}
-    return dm>eps?[...rdp(pts.slice(0,i0+1),eps).slice(0,-1),...rdp(pts.slice(i0),eps)]:[a,b]};
-  /* split at the point farthest from the start so the closed loop simplifies cleanly */
-  let far=0,fd=0;p.forEach((q,i)=>{const dd=Math.hypot(q[0]-p[0][0],q[1]-p[0][1]);if(dd>fd){fd=dd;far=i}});
-  const eps=Math.max(w,h)*.09;
-  let poly=[...rdp(p.slice(0,far+1),eps).slice(0,-1),...rdp(p.slice(far),eps)];
-  if(Math.hypot(poly[0][0]-poly[poly.length-1][0],poly[0][1]-poly[poly.length-1][1])<d*.3)poly.pop();
-  const n=poly.length;let corners=0;
-  for(let i=0;i<n;i++){const a=poly[(i-1+n)%n],b=poly[i],c=poly[(i+1)%n];
-    const v1=[a[0]-b[0],a[1]-b[1]],v2=[c[0]-b[0],c[1]-b[1]];const ang=Math.acos(Math.max(-1,Math.min(1,(v1[0]*v2[0]+v1[1]*v2[1])/((Math.hypot(...v1)*Math.hypot(...v2))||1))))*180/Math.PI;
-    if(ang<140)corners++}
-  if(cvr<.16&&corners!==3&&corners!==4)return"circle";
-  if(corners===3)return"triangle";
-  if(corners===4)return"square";
-  if(cvr<.2)return"circle";
-  return null;
 }
 
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{
-  const b=e.target.closest("[data-act],[data-mode],[data-mtype],[data-atab],[data-ttab]");if(!b)return;
+  const rc=e.target.closest('[data-act="rm-color"]');
+  if(rc){e.preventDefault();e.stopPropagation();const c=rc.dataset.color;const lab=rc.closest("label");
+    confirmDelete(`color ${c} from the team palette`).then(ok=>ok&&write(db=>db.doc("settings/palette").set({colors:paletteColors().filter(x=>x!==c),updatedAt:new Date().toISOString()}),"Color removed from the palette").then(done=>{
+      if(done&&lab){const inp=lab.querySelector("input");const wasChecked=inp&&inp.checked;const box=lab.parentElement;lab.remove();if(wasChecked&&box){const first=box.querySelector("input[type=radio]");if(first)first.checked=true}}}));return}
+  const b=e.target.closest("[data-act],[data-mode],[data-mtype],[data-atab],[data-ttab],[data-group],[data-eshow],[data-wtab],[data-wscope],[data-ins-name],[data-rvtab],[data-rvperiod]");if(!b)return;
+  if(b.dataset.rvtab){S.f.rv.tab=b.dataset.rvtab;return render()}
+  if(b.dataset.rvperiod){S.f.rv.period=b.dataset.rvperiod;return render()}
+  if(b.dataset.wtab){S.f.wl.tab=b.dataset.wtab;return render()}
+  if(b.dataset.wscope){S.f.wl.scope=b.dataset.wscope;return render()}
+  if(b.dataset.insName){const ta=document.getElementById(b.dataset.insInto||"wf-expr");if(!ta)return;const st=ta.selectionStart??ta.value.length,en=ta.selectionEnd??st;
+    const before=ta.value.slice(0,st),ins=(before&&!/\s$/.test(before)?" ":"")+b.dataset.insName+" ";ta.setRangeText(ins,st,en,"end");ta.focus();ta.dispatchEvent(new Event("input"));return}
+  if(b.dataset.group){S.f.tasks.group=b.dataset.group;LS.set("tsb-group",b.dataset.group);return render()}
+  if(b.dataset.eshow){S.f.epics.show=b.dataset.eshow;return render()}
   if(b.dataset.mode){S.f.tasks.mode=b.dataset.mode;LS.set("tsb-mode",S.f.tasks.mode);return render()}
   if(b.dataset.mtype){S.f.mtg.type=b.dataset.mtype;return render()}
   if(b.dataset.atab){S.f.arch.tab=b.dataset.atab;return render()}
   if(b.dataset.ttab){e.preventDefault();S.f.team.tab=b.dataset.ttab;return render()}
-  const id=b.dataset.id,a=b.dataset.act;
+  const id=b.dataset.id,a=b.dataset.act;const pk=b.dataset.prof||"wl";
   if(a==="new-task")taskDialog(null,S.f.tasks.member!=="all"&&S.f.tasks.member!=="none"?{assigneeId:S.f.tasks.member}:{});
   else if(a==="new-backlog")taskDialog(null,{sprintId:null});
+  else if(a==="new-epic")epicDialog();
+  else if(a==="run-analysis")runAnalysis();
+  else if(a==="sprint-workload"){S.f.wl={...S.f.wl,tab:"results",scope:"sprint",sprint:id};location.hash="workload";render();runAnalysis()}
+  else if(a==="apply-move"){const t=S.tasks.find(x=>x.id===id),to=b.dataset.to,from=t&&t.assigneeId;if(!t)return;const now=new Date().toISOString();
+    write(async db=>{await db.doc("tasks/"+id).update({assigneeId:to,updatedAt:now});for(const x of subsOf(id).filter(x=>from&&x.assigneeId===from))await db.doc("subtasks/"+x.id).update({assigneeId:to,updatedAt:now})},
+      taskKey(t)+" assigned to "+((memberById(to)||{}).name||"")).then(ok=>ok&&runAnalysis())}
+  else if(a==="new-field")fieldDialog(pk);
+  else if(a==="edit-field")fieldDialog(pk,profConfig(pk).fields.find(f=>f.key===id));
+  else if(a==="del-field"){const c=profConfig(pk);const f=c.fields.find(x=>x.key===id);const used=c.rules.filter(r=>new RegExp("\\b"+id+"\\b").test(r.when)).length;
+    confirmDelete(`field "${f.label}"${used?` (used by ${used} rule${used>1?"s":""})`:""}`).then(ok=>ok&&saveProf(pk,{fields:c.fields.filter(x=>x.key!==id)},"Field deleted"))}
+  else if(a==="field-move"){const c=profConfig(pk);const i=c.fields.findIndex(x=>x.key===id),j=i+(+b.dataset.dir);if(i<0||j<0||j>=c.fields.length)return;
+    const fs=c.fields.slice();[fs[i],fs[j]]=[fs[j],fs[i]];saveProf(pk,{fields:fs})}
+  else if(a==="reset-fields")confirmDelete("your custom fields (the default fields come back)").then(ok=>ok&&saveProf(pk,{fields:PROFILES[pk].fields},"Fields reset to defaults"));
+  else if(a==="new-rule")ruleDialog(pk);
+  else if(a==="edit-rule")ruleDialog(pk,profConfig(pk).rules.find(r=>r.id===id));
+  else if(a==="del-rule"){const c=profConfig(pk);const r=c.rules.find(x=>x.id===id);confirmDelete(`rule "${r.name}"`).then(ok=>ok&&saveProf(pk,{rules:c.rules.filter(x=>x.id!==id)},"Rule deleted"))}
+  else if(a==="reset-rules")confirmDelete("your custom rules (the default rules come back)").then(ok=>ok&&saveProf(pk,{rules:PROFILES[pk].rules},"Rules reset to defaults"));
+  else if(a==="reset-params")confirmDelete("your custom assumptions (the defaults come back)").then(ok=>ok&&saveProf(pk,{params:PROFILES[pk].params},"Assumptions reset to defaults"));
+  else if(a==="run-review")runReview();
+  else if(a==="open-review")reviewDialog(id);
+  else if(a==="sprint-retro"){S.f.rv={...S.f.rv,tab:"retro",sprint:id};location.hash="reviews";render();runReview()}
+  else if(a==="goto-wl-params"){S.f.wl.tab="params"}
+  else if(a==="edit-epic")epicDialog(epicById(id));
+  else if(a==="epic-add-task")taskDialog(null,{epicId:id});
+  else if(a==="epic-board"){S.f.tasks.epic=id;S.f.tasks.group="subtasks";location.hash="tasks";render()}
+  else if(a==="toggle-lane"){S.collapsed.has(id)?S.collapsed.delete(id):S.collapsed.add(id);LS.set("tsb-lanes",[...S.collapsed]);render()}
+  else if(a==="parent-done")setStatus(id,"done");
   else if(a==="edit-task")taskDialog(S.tasks.find(t=>t.id===id));
   else if(a==="new-member")memberDialog();
   else if(a==="edit-member")memberDialog(memberById(id));
@@ -1502,28 +2347,58 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("st-title")){e.preventDefault();e.target.blur();return}
   if(e.key==="Enter"&&e.target.id==="de-tsearch"){e.preventDefault();const f=document.querySelector("#de-tres button");f&&f.click();return}
   if(e.key==="Enter"&&e.target.id&&(e.target.id.startsWith("lvl-")||e.target.id==="new-role"||e.target.id==="new-role-levels")){e.preventDefault();const btn=e.target.id.startsWith("lvl-")?e.target.nextElementSibling:$('[data-act="add-role"]');btn&&btn.click();return}if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-act][tabindex]")){e.preventDefault();e.target.click()}});
-const FMAP={"f-sprint":["tasks","sprint"],"f-quarter":["tasks","quarter"],"f-from":["tasks","from"],"f-to":["tasks","to"],"f-member":["tasks","member"],"f-prio":["tasks","prio"],"f-timing":["tasks","timing"],"f-q":["tasks","q"],
+const FMAP={"f-sprint":["tasks","sprint"],"f-quarter":["tasks","quarter"],"f-from":["tasks","from"],"f-to":["tasks","to"],"f-member":["tasks","member"],"f-prio":["tasks","prio"],"f-timing":["tasks","timing"],"f-epic":["tasks","epic"],"w-sprint":["wl","sprint"],"rv-sprint":["rv","sprint"],"rv-quarter":["rv","quarter"],"rv-end":["rv","end"],"rv-role":["rv","role"],"w-quarter":["wl","quarter"],"w-role":["wl","role"],"a-epic":["arch","epic"],"f-q":["tasks","q"],
   "f-role":["tasks","role"],"f-level":["tasks","level"],"a-role":["arch","role"],"a-level":["arch","level"],"tm-role":["team","role"],"tm-level":["team","level"],"tm-q":["team","q"],
   "d-q":["docs","q"],"d-cat":["docs","cat"],"d-kind":["docs","kind"],
   "a-q":["arch","q"],"a-member":["arch","member"],"a-sprint":["arch","sprint"],"a-quarter":["arch","quarter"],"a-prio":["arch","prio"],"a-tag":["arch","tag"],"a-from":["arch","from"],"a-to":["arch","to"],
   "m-from":["mtg","from"],"m-to":["mtg","to"],"m-member":["mtg","member"],"m-q":["mtg","q"]};
 let qt;
+/* "+" swatch: show the picked color as a new selected swatch while the picker is open. */
+document.addEventListener("input",e=>{const name=e.target.dataset&&e.target.dataset.cpick;if(!name)return;const c=normColor(e.target.value);if(!c)return;
+  const box=e.target.closest(".swatches");let ex=[...box.querySelectorAll("input[type=radio]")].find(i=>i.value===c&&!i.closest(".pending"));
+  const pend=box.querySelector("label.pending");
+  if(ex){if(pend)pend.remove();ex.checked=true;return}
+  let lab=pend;if(!lab){lab=document.createElement("label");lab.className="pending";lab.innerHTML=`<input type="radio" name="${name}"><span></span>`;box.insertBefore(lab,e.target.closest("label.add"))}
+  const r=lab.querySelector("input");r.value=c;r.id=e.target.id.replace(/pick$/,"new");r.checked=true;lab.title=c;lab.querySelector("span").style.background=c;
+});
 document.addEventListener("input",e=>{const m=FMAP[e.target.id];if(!m)return;S.f[m[0]][m[1]]=e.target.value;
   if(m[1]==="role"){const f=S.f[m[0]];if(f.level!=="all"&&!levelChoices(f.role).includes(f.level))f.level="all"}
   if(e.target.type==="search"){clearTimeout(qt);qt=setTimeout(render,180)}else render()});
 document.addEventListener("change",e=>{
   if(e.target.dataset.status)setStatus(e.target.dataset.status,e.target.value);
-  else if(e.target.dataset.sstatus){const v=e.target.value,now=new Date().toISOString();write(db=>db.doc("subtasks/"+e.target.dataset.sstatus).update({status:v,updatedAt:now,completedAt:v==="done"?now:null}))}
+  else if(e.target.dataset.sstatus)setSubStatus(e.target.dataset.sstatus,e.target.value);
+  else if(e.target.dataset.sest){const v=e.target.value;write(db=>db.doc("subtasks/"+e.target.dataset.sest).update({estimate:v===""?null:+v,updatedAt:new Date().toISOString()}),"Estimate saved")}
+  else if(e.target.dataset.fshow){const[pk,k,flag]=e.target.dataset.fshow.split("|");const c=profConfig(pk);saveProf(pk,{fields:c.fields.map(f=>f.key===k?{...f,[flag]:e.target.checked}:f)})}
+  else if(e.target.dataset.rtoggle){const[pk,rid]=e.target.dataset.rtoggle.split("|");const c=profConfig(pk);saveProf(pk,{rules:c.rules.map(r=>r.id===rid?{...r,enabled:e.target.checked}:r)},e.target.checked?"Rule turned on":"Rule turned off")}
+  else if(e.target.dataset.leave){const sp=sprintById(S.wl&&S.wl.sprintId);if(!sp)return;const v=e.target.value;const leave={...(sp.leave||{})};if(v===""||+v===0)delete leave[e.target.dataset.leave];else leave[e.target.dataset.leave]=+v;
+    write(db=>db.doc("sprints/"+sp.id).update({leave}),"Leave saved").then(ok=>ok&&runAnalysis())}
+  else if(e.target.dataset.mcap){const v=e.target.value;write(db=>db.doc("members/"+e.target.dataset.mcap).update({capacity:v===""?null:+v}),"Capacity saved")}
   else if(e.target.dataset.sassign!==undefined&&e.target.dataset.sassign)write(db=>db.doc("subtasks/"+e.target.dataset.sassign).update({assigneeId:e.target.value||null,updatedAt:new Date().toISOString()}));
   else if(e.target.dataset.sid){const v=e.target.value.trim();const x=S.subtasks.find(y=>y.id===e.target.dataset.sid);if(v&&x&&v!==x.title)write(db=>db.doc("subtasks/"+x.id).update({title:v,updatedAt:new Date().toISOString()}),"Subtask renamed")}
   else if(e.target.dataset.move!==undefined&&e.target.value){const v=e.target.value;write(db=>db.doc("tasks/"+e.target.dataset.move).update({sprintId:v,updatedAt:new Date().toISOString()}),"Moved to "+sprintName(v))}
 });
+document.addEventListener("submit",e=>{
+  if(e.target.id==="rv-params"){e.preventDefault();const v=+new FormData(e.target).get("lateGraceDays");saveProf("rv",{params:{lateGraceDays:Number.isNaN(v)?0:Math.max(0,v)}},"Assumptions saved");return}
+  if(e.target.id==="rv-retro"){e.preventDefault();const sp=S.rv&&S.rv.win.sprint&&sprintById(S.rv.win.sprint.id);if(!sp)return;const fd=new FormData(e.target);
+    write(db=>db.doc("sprints/"+sp.id).update({retro:{well:String(fd.get("well")||""),improve:String(fd.get("improve")||""),actions:String(fd.get("actions")||""),updatedAt:new Date().toISOString()}}),"Retro notes saved");return}
+  if(e.target.id!=="w-params")return;e.preventDefault();const fd=new FormData(e.target);const n=(k,d)=>{const v=fd.get(k);return v===""||v==null||Number.isNaN(+v)?d:+v};
+  const levelFactors={};e.target.querySelectorAll("[data-level]").forEach(i=>{if(i.value!=="")levelFactors[i.dataset.level]=+i.value});
+  const params={unit:fd.get("unit"),defaultEstimate:n("defaultEstimate",3),baseCapacity:n("baseCapacity",20),refDays:Math.max(1,n("refDays",10)),sprintBuffer:n("sprintBuffer",20),quarterBuffer:n("quarterBuffer",25),
+    overloadAt:n("overloadAt",100),targetLoad:n("targetLoad",90),roomBelow:n("roomBelow",70),dueWindow:Math.max(1,n("dueWindow",3)),weekend:fd.getAll("weekend").map(Number),holidays:String(fd.get("holidays")||"").trim(),levelFactors};
+  saveAnalysisConfig({params},"Assumptions saved");
+});
 /* drag & drop */
-let dragId=null;
-document.addEventListener("dragstart",e=>{const c=e.target.closest&&e.target.closest(".card");if(!c)return;dragId=c.dataset.id;c.classList.add("dragging");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",dragId)}catch(_){}});
-document.addEventListener("dragend",()=>{document.querySelectorAll(".dragging,.over").forEach(x=>x.classList.remove("dragging","over"));dragId=null});
-document.addEventListener("dragover",e=>{const col=e.target.closest&&e.target.closest("[data-drop]");if(!col||!dragId)return;e.preventDefault();document.querySelectorAll(".over").forEach(x=>x!==col&&x.classList.remove("over"));col.classList.add("over")});
-document.addEventListener("drop",e=>{const col=e.target.closest&&e.target.closest("[data-drop]");if(!col||!dragId)return;e.preventDefault();col.classList.remove("over");if(!S.readOnly)setStatus(dragId,col.dataset.drop)});
+let dragId=null,dragSub=null;
+/* Task cards drop on [data-drop]; subtask cards drop only on cells of their own parent's lane ([data-sdrop][data-task]). */
+const dropTarget=e=>{const col=e.target.closest&&e.target.closest("[data-drop],[data-sdrop]");if(!col)return null;
+  if(dragId&&col.dataset.drop)return col;
+  if(dragSub&&col.dataset.sdrop){const x=S.subtasks.find(y=>y.id===dragSub);if(x&&col.dataset.task===x.taskId)return col}
+  return null};
+document.addEventListener("dragstart",e=>{const c=e.target.closest&&e.target.closest(".card");if(!c)return;dragId=c.dataset.id||null;dragSub=c.dataset.subid||null;c.classList.add("dragging");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",dragId||dragSub)}catch(_){}});
+document.addEventListener("dragend",()=>{document.querySelectorAll(".dragging,.over").forEach(x=>x.classList.remove("dragging","over"));dragId=null;dragSub=null});
+document.addEventListener("dragover",e=>{const col=dropTarget(e);if(!col)return;e.preventDefault();document.querySelectorAll(".over").forEach(x=>x!==col&&x.classList.remove("over"));col.classList.add("over")});
+document.addEventListener("drop",e=>{const col=dropTarget(e);if(!col)return;e.preventDefault();col.classList.remove("over");if(S.readOnly)return;
+  if(dragSub)setSubStatus(dragSub,col.dataset.sdrop);else setStatus(dragId,col.dataset.drop)});
 
 window.addEventListener("hashchange",route);
 setInterval(()=>{if(!dlg.open&&!cdlg.open&&S.view!=="docs")render()},5*60*1000);
